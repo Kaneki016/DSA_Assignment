@@ -4,23 +4,27 @@
  */
 package entities;
 
-public class Skill {
-    private String skillId;
+/**
+ *
+ * @author MAMBA
+ */
+public class JobRequirements {
+
+    private static int nextId = 1;  // Auto-increment ID counter
+    private String jobRequirementsId;
     private String name;
     private String category;
-    private int proficiency_level;
-    
-    private static int nextId = 1;  // Auto-increment ID counter
+    private int proficiency_level; //1-5
 
-    public Skill(String name, String category, int proficiency_level) {
-        this.skillId = String.format("S%03d", nextId++); 
+    public JobRequirements(String name, String category, int proficiency_level) {
+        this.jobRequirementsId = String.format("JR%03d", nextId++);  
         this.name = name;
         this.category = category;
         this.proficiency_level = proficiency_level;
     }
 
-    public String getSkillId() {
-        return skillId;
+    public String getJobRequirementsId() {
+        return jobRequirementsId;
     }
 
     public String getName() {
@@ -35,12 +39,8 @@ public class Skill {
         return proficiency_level;
     }
 
-    public static int getNextId() {
-        return nextId;
-    }
-
-    public void setSkillId(String skillId) {
-        this.skillId = skillId;
+    public void setJobRequirementsId(String jobRequirementsId) {
+        this.jobRequirementsId = jobRequirementsId;
     }
 
     public void setName(String name) {
@@ -54,14 +54,5 @@ public class Skill {
     public void setProficiency_level(int proficiency_level) {
         this.proficiency_level = proficiency_level;
     }
-
-    public static void setNextId(int nextId) {
-        Skill.nextId = nextId;
-    }
-
-    @Override
-    public String toString() {
-        return "Skill{" + "skillId=" + skillId + ", name=" + name + ", category=" + category + ", proficiency_level=" + proficiency_level + '}';
-    }     
 
 }

@@ -3,18 +3,20 @@ package entities;
 
 public class JobPost {
     
-    private JobPost jobPost;
+    private static int nextId = 1;  // Auto-increment ID counter
+    
+    private String jobPostId;
     private Job job;
     private Company company;
 
-    public JobPost(JobPost jobPost, Job job, Company company) {
-        this.jobPost = jobPost;
+    public JobPost(Job job, Company company) {
+        this.jobPostId = String.format("JP%03d", nextId++); // Assign current ID and increment for the next Company
         this.job = job;
         this.company = company;
     }
 
-    public JobPost getJobPost() {
-        return jobPost;
+    public String getJobPostId() {
+        return jobPostId;
     }
 
     public Job getJob() {
@@ -25,8 +27,8 @@ public class JobPost {
         return company;
     }
 
-    public void setJobPost(JobPost jobPost) {
-        this.jobPost = jobPost;
+    public void setJobPostId(String jobPostId) {
+        this.jobPostId = jobPostId;
     }
 
     public void setJob(Job job) {

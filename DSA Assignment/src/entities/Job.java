@@ -4,28 +4,31 @@
  */
 package entities;
 
+import adt.*;
+
 /**
  *
  * @author MAMBA
  */
 public class Job {
+
     private int jobId;
     private String title;
-    private String company;
+    private Company company;
     private String location;
     private int required_experience;
-    private String required_skills;
+    private DoublyLinkedListInterface<JobRequirements> jobRequirements;
     private float salary;
-    
+
     private static int nextId = 1000;
 
-    public Job(String title, String company, String location, int required_experience, String required_skills, float salary) {
+    public Job(String title, Company company, String location, int required_experience, DoublyLinkedListInterface<JobRequirements> jobRequirements, float salary) {
         this.jobId = nextId++;
         this.title = title;
         this.company = company;
         this.location = location;
         this.required_experience = required_experience;
-        this.required_skills = required_skills;
+        this.jobRequirements = jobRequirements;
         this.salary = salary;
     }
 
@@ -37,7 +40,7 @@ public class Job {
         return title;
     }
 
-    public String getCompany() {
+    public Company getCompany() {
         return company;
     }
 
@@ -49,8 +52,8 @@ public class Job {
         return required_experience;
     }
 
-    public String getRequired_skills() {
-        return required_skills;
+    public DoublyLinkedListInterface<JobRequirements> getJobRequirements() {
+        return jobRequirements;
     }
 
     public float getSalary() {
@@ -63,13 +66,13 @@ public class Job {
 
     public void setJobId(int jobId) {
         this.jobId = jobId;
-    } 
-    
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setCompany(String company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 
@@ -81,8 +84,8 @@ public class Job {
         this.required_experience = required_experience;
     }
 
-    public void setRequired_skills(String required_skills) {
-        this.required_skills = required_skills;
+    public void setJobRequirements(DoublyLinkedListInterface<JobRequirements> jobRequirements) {
+        this.jobRequirements = jobRequirements;
     }
 
     public void setSalary(float salary) {
@@ -92,8 +95,5 @@ public class Job {
     public static void setNextId(int nextId) {
         Job.nextId = nextId;
     }
-    
-    
-    
-    
+
 }

@@ -9,10 +9,15 @@ package entities;
  * @author MAMBA
  */
 public class ApplicantAppliedJob {
+
+    private static int nextId = 1;  // Auto-increment ID counter
+
+    private String applicantAppliedJobId;
     private Applicant applicant;
     private JobPost jobPost;
 
     public ApplicantAppliedJob(Applicant applicant, JobPost jobPost) {
+        this.applicantAppliedJobId = String.format("AAJ%03d", nextId++); // Assign current ID and increment for the next Company
         this.applicant = applicant;
         this.jobPost = jobPost;
     }
@@ -33,10 +38,4 @@ public class ApplicantAppliedJob {
         this.jobPost = jobPost;
     }
 
-    
-
-    
-    
-    
-    
 }

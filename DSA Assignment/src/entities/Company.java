@@ -5,9 +5,9 @@
 package entities;
     
 public class Company {
-    private static int nextId = 1000; // Static counter starting at 1000
+    private static int nextId = 1;  // Auto-increment ID counter
 
-    private int companyId;
+    private String companyId;
     private String companyName;
     private String companyLocation;
     private int companySize;
@@ -15,7 +15,7 @@ public class Company {
     private int password;
 
     public Company(String companyName, String companyLocation, int companySize, String companyDescription, int password) {
-        this.companyId = nextId++; // Assign current ID and increment for the next Company
+        this.companyId = String.format("C%03d", nextId++); // Assign current ID and increment for the next Company
         this.companyName = companyName;
         this.companyLocation = companyLocation;
         this.companySize = companySize;
@@ -24,10 +24,11 @@ public class Company {
     }
 
     // Getters and setters
-    public int getCompanyId() {
+
+    public String getCompanyId() {
         return companyId;
     }
-
+    
     public String getCompanyName() {
         return companyName;
     }
