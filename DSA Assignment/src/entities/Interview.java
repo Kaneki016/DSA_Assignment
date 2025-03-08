@@ -81,14 +81,6 @@ public class Interview {
         this.favourRate = favourRate;
     }
     
-    @Override
-    public String toString() {
-        return "Interview ID: " + interviewId + "\n" +
-               "Applicant ID: " + applicantAppliedJob.getApplicant().getApplicantId() + "\n" +
-               "Time Slot: " + timeslot.getTime() + "\n" +
-               "Mode: " + mode + "\n" +
-               "Status: " + status + "\n" +
-               "Feedback: " + feedback + "\n" +
-               "Favour Rate: " + favourRate + "\n";
-    }
+    
+    
 }

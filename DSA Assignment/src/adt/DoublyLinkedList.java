@@ -1,7 +1,7 @@
 package adt;
 import java.util.Iterator;
 
-public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
+public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T>, Iterable<T> {
 
     private Node<T> head;
     private Node<T> tail;

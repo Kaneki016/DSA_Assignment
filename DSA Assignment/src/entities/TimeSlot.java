@@ -48,10 +48,6 @@ public class TimeSlot {
         this.location = location;
     }
     
-    @Override
-    public String toString() {
-        return String.format("%-10s %-10s %-10s %-10s", timeSlotId, time, date, location);
-    }
     
 
 }

@@ -8,12 +8,16 @@ import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import entities.*;
 import boundary.*;
+import controller.*;
+import java.util.Scanner;
 
 /**
  *
  * @author MAMBA
  */
 public class CompanyManager {
+
+    private Scanner scanner = new Scanner(System.in);
     
     //Menu UI
     private static InputUI inputUI = new InputUI();

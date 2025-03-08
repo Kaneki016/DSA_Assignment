@@ -48,4 +48,18 @@ public class SkillManager {
         skills.removeAll();
         return skills;
     }
+    
+    public int getApplicantProficiencyLevel(Applicant applicant, String skillName) {
+        if (applicant == null || applicant.getSkills().isEmpty()) {
+            return 0; // No applicant or no skills found
+        }
+
+        for (Skill skill : applicant.getSkills()) {
+            if (skill.getName().equalsIgnoreCase(skillName)) {
+                return skill.getProficiency_level(); // Return proficiency if skill matches
+            }
+        }
+        return 0; // Return 0 if skill not found
+    }
+
 }

@@ -109,10 +109,21 @@ public class Applicant {
         return skills;
     }
 
+    // Get proficiency level through applicant
+    public int getProficiencyLevel(String skillName) {
+        for (Skill skill : skills) {
+            if (skill.getName().equalsIgnoreCase(skillName)) {
+                return skill.getProficiency_level(); // Return the matched skill's proficiency
+            }
+        }
+        return 0; // Return 0 if the applicant does not have the skill
+    }
+
+
     
     @Override
     public String toString() {
-        return String.format("ID: %s, Name: %s, Age: %d years old, Location: %s, Experience: %d years, Education: %s, " + "Date Added: %s"  + ", \n\nSkill: %s",
+        return String.format("ID: %s, Name: %s, Age: %d years old, Location: %s, Experience: %d years, Education: %s, " + ", Date Added: %s"  + ", Skill: %s",
                 applicantId, name, age, location, yearsOfExperience, educationLevel, dateAdded, skillManager.getSkillsAsString(skills));
     }
 }
