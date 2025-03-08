@@ -10,10 +10,10 @@ public class ApplicantManager {
 
     private static ApplicantManager instance;
 
-    //ADT
+    // ADT
     private DoublyLinkedListInterface<Applicant> applicants; // Custom DoublyLinkedList to store applicants
 
-    //Boundary
+    // Boundary
     private Scanner scanner = new Scanner(System.in);
     private InputUI inputUI = new InputUI();
 
@@ -59,20 +59,21 @@ public class ApplicantManager {
                 inputUI.displayMessage("Skill added successfully!");
             }
         }
-        //Add Skill END
+        // Add Skill END
         Applicant newApplicant = new Applicant(name, age, location, yearsOfExperience, educationLevel, skills);
         applicants.add(newApplicant);
         inputUI.displayMessage("Applicant added successfully!\n");
     }
 
-    //Add Applicant by Applicant Class object
+    // Add Applicant by Applicant Class object
     public void addApplicant(Applicant newApplicant) {
         applicants.add(newApplicant);
         inputUI.displayMessage("Applicant added successfully!\n");
     }
 
-    //Add Applicant Skill
-    public DoublyLinkedListInterface<Skill> addApplicantSkill(DoublyLinkedListInterface<Skill> skills, String skill, String category, int proficiency_level) {
+    // Add Applicant Skill
+    public DoublyLinkedListInterface<Skill> addApplicantSkill(DoublyLinkedListInterface<Skill> skills, String skill,
+            String category, int proficiency_level) {
         Skill newSkill = new Skill(skill, category, proficiency_level);
         skills.add(newSkill);
         return skills;
@@ -98,7 +99,7 @@ public class ApplicantManager {
         }
     }
 
-    // Find an applicant 
+    // Find an applicant
     public Applicant findApplicantById() {
         inputUI.displayMessage("Enter Applicant ID to search: ");
         String id = scanner.nextLine().trim();
@@ -110,9 +111,10 @@ public class ApplicantManager {
 
         for (Applicant applicant : applicants) {
             if (applicant.getApplicantId().equals(id)) {
+                inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
                 return applicant;
             }
-            inputUI.displayMessage(id != null ? "\n✅ Applicant Found:\n" + id : "Applicant not found.");
+
         }
 
         return null;
@@ -127,9 +129,10 @@ public class ApplicantManager {
 
         for (Applicant applicant : applicants) {
             if (applicant.getApplicantId().equals(id)) {
+                inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
                 return applicant;
             }
-            inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
+
         }
 
         return null;
@@ -183,21 +186,26 @@ public class ApplicantManager {
             applicant.setName(name);
         }
 
-        int age = inputUI.getIntInput("Enter New Age (or press existing age to keep: " + applicant.getAge() + "): ", 18, 100);
+        int age = inputUI.getIntInput("Enter New Age (or press existing age to keep: " + applicant.getAge() + "): ", 18,
+                100);
         applicant.setAge(age);
 
-        String location = inputUI.getInput("Enter new Location (or press Enter to keep: " + applicant.getLocation() + "): ");
+        String location = inputUI
+                .getInput("Enter new Location (or press Enter to keep: " + applicant.getLocation() + "): ");
         if (!location.isEmpty()) {
             applicant.setLocation(location);
         }
 
         int yearsOfExperience = inputUI.getIntInput(
-                "Enter New Years Of Experience (r press existing years of experience to keep: " + applicant.getYearsOfExperience() + "):  ", 0, 50);
+                "Enter New Years Of Experience (or press existing years of experience to keep: "
+                        + applicant.getYearsOfExperience() + "):  ",
+                0, 50);
         if (yearsOfExperience != -1) {
             applicant.setYearsOfExperience(yearsOfExperience);
         }
 
-        String educationLevel = inputUI.getInput("Enter new Education Level (or press Enter to keep: " + applicant.getEducationLevel() + "): ");
+        String educationLevel = inputUI.getInput(
+                "Enter new Education Level (or press Enter to keep: " + applicant.getEducationLevel() + "): ");
         if (!educationLevel.isEmpty()) {
             applicant.setEducationLevel(educationLevel);
         }
@@ -253,17 +261,21 @@ public class ApplicantManager {
                     int skillIndex = inputUI.getIntInput("Enter the skill number to edit: ", 1, skills.size());
                     Skill selectedSkill = skills.get(skillIndex - 1);
 
-                    String updatedSkill = inputUI.getInput("Enter new skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
+                    String updatedSkill = inputUI.getInput(
+                            "Enter new skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
                     if (!updatedSkill.isEmpty()) {
                         selectedSkill.setName(updatedSkill);
                     }
 
-                    String updatedCategory = inputUI.getInput("Enter new category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
+                    String updatedCategory = inputUI.getInput(
+                            "Enter new category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
                     if (!updatedCategory.isEmpty()) {
                         selectedSkill.setCategory(updatedCategory);
                     }
 
-                    int updatedProficiency = inputUI.getIntInput("Enter new proficiency (or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1, 5);
+                    int updatedProficiency = inputUI.getIntInput(
+                            "Enter new proficiency (or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1,
+                            5);
                     if (updatedProficiency != -1) {
                         selectedSkill.setProficiency_level(updatedProficiency);
                     }
