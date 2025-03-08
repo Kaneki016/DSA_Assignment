@@ -8,7 +8,7 @@ package boundary;
  */
 public class MenuUI {
 
-    public static void displayMainMenu() {
+    public void displayMainMenu() {
         System.out.println("\n================================");
         System.out.println("           MAIN MENU            ");
         System.out.println("================================");
@@ -20,7 +20,7 @@ public class MenuUI {
         System.out.println("================================");
     }
 
-    public static void displayClientMainMenu() {
+    public void displayClientMainMenu() {
         System.out.println("\n================================");
         System.out.println("         CLIENT SIDE            ");
         System.out.println("================================");
@@ -30,7 +30,7 @@ public class MenuUI {
         System.out.println("================================");
     }
 
-    public static void displayMiddleMainMenu() {
+    public void displayMiddleMainMenu() {
         System.out.println("\n================================");
         System.out.println("        MIDDLE SIDE MENU        ");
         System.out.println("================================");
@@ -39,21 +39,20 @@ public class MenuUI {
         System.out.println("================================");
     }
 
-    public static void displayCompanyMainMenu() {
+    public void displayCompanyMainMenu() {
         System.out.println("\n================================");
         System.out.println("        COMPANY SIDE MENU       ");
         System.out.println("================================");
         System.out.println("1. Add Job Post");
         System.out.println("2. Edit Job Post");
         System.out.println("3. Remove Job Post");
-        System.out.println("4. View Applied Applicants");
-        System.out.println("5. Assign and View Interview Slots");
-        System.out.println("6. Generate Mock Data");
-        System.out.println("7. Exit");
+        System.out.println("4. Interview Management");
+        System.out.println("5. Generate Mock Data");
+        System.out.println("6. Exit");
         System.out.println("================================");
     }
 
-    public static void displayApplicantMenu() {
+    public void displayApplicantMenu() {
         System.out.println("\n================================");
         System.out.println("     APPLICANT MANAGEMENT       ");
         System.out.println("================================");
@@ -65,24 +64,56 @@ public class MenuUI {
         System.out.println("================================");
     }
 
-    public static void displayAppliedApplicantInterviewMenu(String company) {
-        System.out.println("\n===============================================");
-        System.out.println("  " + company.toUpperCase() + " - LIST OF APPLIED APPLICANTS  ");
-        System.out.println("===============================================");
+    public void displayInterviewMenu() {
+        System.out.println("\n================================");
+        System.out.println("     INTERVIEW MANAGEMENT       ");
+        System.out.println("================================");
+        System.out.println("1. Assign and View Interview Slots");
+        System.out.println("2. Recruitment Table");
+        System.out.println("3. Exit");
+        System.out.println("================================");
     }
 
-    public static void displayTimeSlotInterviewMenu(String company) {
+    //INTERVIEW
+    public void displayTimeSlotInterviewMenu(String company) {
         System.out.println("\n===============================================");
         System.out.println("    " + company.toUpperCase() + " - INTERVIEW TIME SLOT MANAGEMENT   ");
         System.out.println("===============================================");
-        System.out.println("1. View Pending Interviews");
-        System.out.println("2. Interview Feedback");
-        System.out.println("3. Add Interview Slot for Applied Applicant");
-        System.out.println("4. Recruitment Options");
+        System.out.println("1. Assign Interview");
+        System.out.println("2. View Waiting Interviews");
+        System.out.println("3. View Completed Interviews");
+        System.out.println("4. View Pending Interviews Based on Skills");
+        System.out.println("5. View Pending Interviews Based on Years of Experience");
+        System.out.println("6. Suggest Time Slot To Middle Side");
+        System.out.println("7. Give Interview Feedback");
+        System.out.println("8. View Time Slot Table");
+        System.out.println("9. Recruitment Table");
+        System.out.println("10. Back to Previous Menu");
         System.out.println("===============================================");
     }
 
-    public static void exitSystem() {
+    public void displayRecruitmentMenu() {
+        System.out.println("\n===============================================");
+        System.out.println("           RECRUITMENT OPTIONS                ");
+        System.out.println("===============================================");
+        System.out.println("1. Filter Applicants by Interview Rating");
+        System.out.println("2. Interview Feedback of Completed Interviews");
+        System.out.println("3. Accept or Reject Applicants");
+        System.out.println("3. Back to Previous Menu");
+        System.out.println("===============================================");
+    }
+
+    public void acceptOrRejectApplicantsMenu() {
+        System.out.println("\n===============================================");
+        System.out.println("           ACCEPT OR REJECT APPLICANTS        ");
+        System.out.println("===============================================");
+        System.out.println("1. Accept Applicant");
+        System.out.println("2. Reject Applicant");
+        System.out.println("3. Back to Previous Menu");
+        System.out.println("===============================================");
+    }
+
+    public void exitSystem() {
         System.out.println("\n================================");
         System.out.println("       EXITING SYSTEM...        ");
         System.out.println("================================");

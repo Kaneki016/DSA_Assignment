@@ -112,7 +112,7 @@ public class Applicant {
     
     @Override
     public String toString() {
-        return String.format("ID: %s, Name: %s, Age: %d years old, Location: %s, Experience: %d years, Education: %s, " + ", Date Added: %s"  + ", Skill: %s",
+        return String.format("ID: %s, Name: %s, Age: %d years old, Location: %s, Experience: %d years, Education: %s, " + "Date Added: %s"  + ", \n\nSkill: %s",
                 applicantId, name, age, location, yearsOfExperience, educationLevel, dateAdded, skillManager.getSkillsAsString(skills));
     }
 }

@@ -61,7 +61,15 @@ public class Skill {
 
     @Override
     public String toString() {
-        return "Skill{" + "skillId=" + skillId + ", name=" + name + ", category=" + category + ", proficiency_level=" + proficiency_level + '}';
+        return String.format(
+            "Skill {%n" +
+            "    skillId: %s,%n" +
+            "    name: %s,%n" +
+            "    category: %s,%n" +
+            "    proficiencyLevel: %d%n" +
+            "}", 
+            skillId, name, category, proficiency_level
+        );
     }     
 
 }
