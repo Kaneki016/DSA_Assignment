@@ -49,7 +49,8 @@ public class MenuUI {
         System.out.println("4. View Applied Applicants");
         System.out.println("5. Assign and View Interview Slots");
         System.out.println("6. Generate Mock Data");
-        System.out.println("7. Exit");
+        System.out.println("7. Job Matcher Suggestion");
+        System.out.println("8. Exit");
         System.out.println("================================");
     }
 
@@ -79,6 +80,18 @@ public class MenuUI {
         System.out.println("2. Interview Feedback");
         System.out.println("3. Add Interview Slot for Applied Applicant");
         System.out.println("4. Recruitment Options");
+        System.out.println("===============================================");
+    }
+    
+    public static void displayJobMatchingMenu(String company) {
+        System.out.println("\n===============================================");
+        System.out.println("    " + company.toUpperCase() + " - MATCHING CATEGORIES   ");
+        System.out.println("===============================================");
+        System.out.println("1. Proficiency Levels");
+        System.out.println("2. Skill's Importance");
+        System.out.println("3. Experience Levels and Job Requirements");
+        System.out.println("4. Location Preferences");
+        System.out.println("5. Overall Score");
         System.out.println("===============================================");
     }
 

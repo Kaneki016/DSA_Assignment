@@ -310,5 +310,10 @@ public class ApplicantManager {
         inputUI.displayMessage("\nProfile updated successfully!");
 
     }
+    
+    // Retrieve the applicants ADT (DoublyLinkedList)
+    public DoublyLinkedListInterface<Applicant> getApplicants() {
+        return applicants;
+    }
 
 }

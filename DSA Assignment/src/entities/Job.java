@@ -14,7 +14,6 @@ public class Job {
 
     private int jobId;
     private String title;
-    private Company company;
     private String location;
     private int required_experience;
     private DoublyLinkedListInterface<JobRequirements> jobRequirements;
@@ -22,10 +21,9 @@ public class Job {
 
     private static int nextId = 1000;
 
-    public Job(String title, Company company, String location, int required_experience, DoublyLinkedListInterface<JobRequirements> jobRequirements, float salary) {
+    public Job(String title, String location, int required_experience, DoublyLinkedListInterface<JobRequirements> jobRequirements, float salary) {
         this.jobId = nextId++;
         this.title = title;
-        this.company = company;
         this.location = location;
         this.required_experience = required_experience;
         this.jobRequirements = jobRequirements;
@@ -40,9 +38,6 @@ public class Job {
         return title;
     }
 
-    public Company getCompany() {
-        return company;
-    }
 
     public String getLocation() {
         return location;
@@ -70,10 +65,6 @@ public class Job {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     public void setLocation(String location) {

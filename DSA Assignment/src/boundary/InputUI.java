@@ -2,6 +2,8 @@ package boundary;
 
 import controller.ApplicantManager;
 import controller.InterviewManager;
+import controller.ApplicantAppliedJobManager;
+import controller.JobPostManager;
 import dao.MockDataGenerator;
 import java.util.Scanner;
 
@@ -15,6 +17,9 @@ public class InputUI {
     //Controller
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
+    private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
+
 
     // Boundary
     private static MenuUI menuUI = new MenuUI();
@@ -182,5 +187,60 @@ public class InputUI {
                 break; // Add break here to prevent fall-through
             }
     }
+    
+    public static void handleMatchingCategory() {
+       while (true) {
+           inputUI.displayMessage("Enter the number of the matching category (or 0 to exit): ");
+           String choice = scanner.nextLine().trim();
 
+           // Retrieve the applicant and job before switch statement
+           ApplicantManager applicant = applicantManager;
+           JobPostManager job = jobPostManager;
+
+           if (applicant == null || job == null) {
+               inputUI.displayMessage("Invalid Applicant or Job. Please try again.");
+               continue;
+           }
+
+           switch (choice) {
+               case "1":
+                   inputUI.displayMessage("Matching based on Proficiency Levels...");
+                   double skillMatchScore = applicantAppliedJobManager.calculateSkillMatch(applicant, job);
+                   inputUI.displayMessage("Skill Match Score: " + skillMatchScore);
+                   break;
+
+               case "2":
+                   inputUI.displayMessage("Matching based on Skill's Importance...");
+                   double weightedMatch = applicantAppliedJobManager.weightedSkillMatch(applicant, job);
+                   inputUI.displayMessage("Weighted Skill Match Score: " + weightedMatch);
+                   break;
+
+               case "3":
+                   inputUI.displayMessage("Matching based on Experience Levels...");
+                   double experienceScore = applicantAppliedJobManager.experienceMatch(applicant, job);
+                   inputUI.displayMessage("Experience Match Score: " + experienceScore);
+                   break;
+
+               case "4":
+                   inputUI.displayMessage("Matching based on Location Preferences...");
+                   double locationScore = applicantAppliedJobManager.locationMatch(applicant, job);
+                   inputUI.displayMessage("Location Match Score: " + locationScore);
+                   break;
+
+               case "5":
+                   inputUI.displayMessage("Calculating Overall Score...");
+                   double overallScore = applicantAppliedJobManager.overallMatchScore(applicant, job);
+                   inputUI.displayMessage("Overall Match Score: " + overallScore);
+                   break;
+
+               case "0":
+                   inputUI.displayMessage("Exiting job matching menu.");
+                   return;
+
+               default:
+                   inputUI.invalidMenuSelection(0, 5);
+                   break;
+           }
+       }
+   }
 }
