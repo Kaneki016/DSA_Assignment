@@ -31,14 +31,17 @@ public class MockDataGenerator {
     //Controller instances
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-    private static CompanyManager companyManager = CompanyManager.getInstance();
+    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static JobManager jobManager = JobManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
+    private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
     private static TimeSlotManager timeSlotManager = TimeSlotManager.getInstance();
 
     public void addMockData() {
         // 1. Create and store companies first
-        Company companyABC = new Company("ABC", "KL", 100, "Good Company", 123123123);
-        Company companyDBC = new Company("DBC", "TH", 10, "Good Company", 123123123);
+        Company companyABC = new Company("ABC", "KL", 100, "Good Company", "123123123");
+        Company companyDBC = new Company("DBC", "TH", 10, "Good Company", "123123123");
         
         companyManager.addCompany(companyABC);
         companyManager.addCompany(companyDBC);
@@ -66,16 +69,23 @@ public class MockDataGenerator {
 
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
-        JobRequirements requirement1 = new JobRequirements("Leadership", "Mental", 3);
+        JobRequirements requirement1 = new JobRequirements("Leadership", "Mental", "3");
+        jobRequirementsManager.addJobRequirement(requirement1);
         jobRequirements.add(requirement1);
 
         // 4. Create jobs
-        Job softwareEngineerJob = new Job("Software Engineer", companyABC, "KL", 3, jobRequirements, 3000);
-        Job dataEngineerJob = new Job("Data Engineer", companyDBC, "KL", 3, jobRequirements, 3000);
-
+        Job softwareEngineerJob = new Job("Software Engineer","KL", 3, jobRequirements, 3000);
+        Job dataEngineerJob = new Job("Data Engineer", "KL", 3, jobRequirements, 3000);
+        jobManager.addJob(dataEngineerJob);
+        jobManager.addJob(softwareEngineerJob);
+        
+       
         // 5. Create job posts
         JobPost jobPost1 = new JobPost(softwareEngineerJob, companyABC);
         JobPost jobPost2 = new JobPost(dataEngineerJob, companyDBC);
+        jobPostManager.addJobPost(jobPost1);
+        jobPostManager.addJobPost(jobPost2);
+        
 
         // 6. Create applicant applied jobs
         ApplicantAppliedJob application1 = new ApplicantAppliedJob(applicant1, jobPost1);

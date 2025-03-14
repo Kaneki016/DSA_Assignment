@@ -16,4 +16,6 @@ public interface DoublyLinkedListInterface<T> extends Iterable<T>  {
     void clear();
     void listAll();
     void display();
+    void replace(int givenPosition, T newEntry);  // <-- Add this
+    int getSize();
 }
