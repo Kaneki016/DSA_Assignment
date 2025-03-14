@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import adt.DoublyLinkedList;
@@ -9,10 +5,7 @@ import adt.DoublyLinkedListInterface;
 import entities.*;
 import boundary.*;
 
-/**
- *
- * @author MAMBA
- */
+
 public class CompanyManager {
     
     //Menu UI

@@ -235,5 +235,24 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         }
         return current;
     }
+    
+    @Override
+    public void replace(int index, T newItem) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+        }
+
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+
+        current.data = newItem;  // Replace the data in the node
+    }
+    
+        @Override
+    public int getSize() {
+        return size;
+    }
 }
 
