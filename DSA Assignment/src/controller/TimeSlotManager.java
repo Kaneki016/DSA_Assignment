@@ -7,8 +7,9 @@ import adt.DoublyLinkedListInterface;
 public class TimeSlotManager {
     private static TimeSlotManager instance;
 
-    //ADT
+    // ADT
     private static DoublyLinkedListInterface<TimeSlot> timeSlots = new DoublyLinkedList<>();
+    private static DoublyLinkedListInterface<TimeSlot> suggestedTimeSlots = new DoublyLinkedList<>();
 
     public TimeSlotManager() {
         timeSlots = new DoublyLinkedList<>();
@@ -19,10 +20,14 @@ public class TimeSlotManager {
             instance = new TimeSlotManager();
         }
         return instance;
-    }   
+    }
 
     public void addTimeSlot(TimeSlot timeSlot) {
         timeSlots.add(timeSlot);
+    }
+
+    public void addSuggestedTimeSlot(TimeSlot timeSlot) {
+        suggestedTimeSlots.add(timeSlot);
     }
 
     public void removeTimeSlot(TimeSlot timeSlot) {
@@ -31,6 +36,10 @@ public class TimeSlotManager {
 
     public DoublyLinkedListInterface<TimeSlot> getTimeSlots() {
         return timeSlots;
+    }
+
+    public DoublyLinkedListInterface<TimeSlot> getSuggestedTimeSlots() {
+        return suggestedTimeSlots;
     }
 
 }

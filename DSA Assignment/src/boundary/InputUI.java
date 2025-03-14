@@ -20,7 +20,6 @@ public class InputUI {
     private static CompanyManager companyManager = CompanyManager.getInstance();
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
-    private static TimeSlotManager timeSlotManager = TimeSlotManager.getInstance();
 
     // Boundary
     private static MenuUI menuUI = new MenuUI();
@@ -97,6 +96,9 @@ public class InputUI {
                         handleMiddleSideMenuChoice();
                         break;
                     case 2:
+                        interviewManager.acceptTimeSlotMiddleMan();
+                        break;
+                    case 3:
                         menuUI.exitSystem();
                         break;
                     default:
@@ -140,7 +142,7 @@ public class InputUI {
     // Middle Side Menu
     public void handleMiddleSideMenuChoice() {
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
         switch (choice) {
             case 1:
                 applicantManager.addApplicant();
@@ -160,10 +162,14 @@ public class InputUI {
                 break;
 
             case 5:
+                applicantManager.filterApplicants();
+                break;
+
+            case 6:
                 menuUI.exitSystem();
                 break;
             default:
-                inputUI.invalidMenuSelection(1, 5);
+                inputUI.invalidMenuSelection(1, 6);
         }
     }
 
@@ -242,14 +248,15 @@ public class InputUI {
                     break;
                 case 4:
                     // View Pending Interviews Based on Skills
-
+                    interviewManager.filterInterviewsSkill(company);
                     break;
                 case 5:
                     // View Pending Interviews Based on Years of Experience
+                    interviewManager.filterApplicantsByExperience(company);
                     break;
                 case 6:
                     // Suggest Time Slot To Middle Side
-
+                    interviewManager.suggestTimeSlotToMiddleMan();
                     break;
                 case 7:
                     // Give Interview Feedback
@@ -257,10 +264,13 @@ public class InputUI {
                     break;
                 case 8:
                     // View Time Slot Table
+
                     break;
                 case 9:
                     // Recruitment Table
                     menuUI.displayRecruitmentMenu();
+                    handleRecruitmentTableMenu(company);
+
                     break;
                 case 10:
                     // Return to previous menu
@@ -270,6 +280,33 @@ public class InputUI {
                     inputUI.invalidMenuSelection(1, 11);
                     break;
             }
+        }
+    }
+
+    // Handle Recruitment Table
+    public void handleRecruitmentTableMenu(Company company) {
+        menuUI.displayRecruitmentMenu();
+        int choice;
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+        switch (choice) {
+            case 1:
+                // Filter Applicant By Interview Rating
+                interviewManager.filterApplicantBasedOnInterview(company);
+                break;
+            case 2:
+                // Interview Feedback of Completed Interviews
+                interviewManager.viewInterviewFeedback(company);
+                break;
+            case 3:
+                // Accept and Reject Applicant
+                interviewManager.acceptRejectInterviewApplicant(company);
+                break;
+            case 4:
+                menuUI.exitSystem();
+                break;
+            default:
+                inputUI.invalidMenuSelection(1, 4);
+                break;
         }
     }
 
