@@ -31,21 +31,20 @@ public class MockDataGenerator {
     //Controller instances
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-    private static CompanyManager companyManager = CompanyManager.getInstance();
+    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static JobManager jobManager = JobManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
+    private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
     private static TimeSlotManager timeSlotManager = TimeSlotManager.getInstance();
 
     public void addMockData() {
         // 1. Create and store companies first
-        Company companyABC = new Company("ABC", "KL", 100, "Good Company", 123123123);
-        Company companyDBC = new Company("DBC", "TH", 10, "Good Company", 123123123);
-        Company companyXYZ = new Company("XYZ", "SG", 50, "Tech Giant", 456456456);
-        Company companyLMN = new Company("LMN", "MY", 200, "Innovative Startup", 789789789);
+        Company companyABC = new Company("ABC", "KL", 100, "Good Company", "123123123");
+        Company companyDBC = new Company("DBC", "TH", 10, "Good Company", "123123123");
         
         companyManager.addCompany(companyABC);
         companyManager.addCompany(companyDBC);
-        companyManager.addCompany(companyXYZ);
-        companyManager.addCompany(companyLMN);
 
         // 2. Create skills and applicants using ApplicantManager methods
         // Applicant 1: Lim
@@ -77,25 +76,28 @@ public class MockDataGenerator {
         
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
-        jobRequirements.add(new JobRequirements("Leadership", "Mental", 3));
-        jobRequirements.add(new JobRequirements("C++", "Programming", 4));
-        jobRequirements.add(new JobRequirements("Java", "Programming", 4));
+        JobRequirements requirement1 = new JobRequirements("Leadership", "Mental", "3");
+        jobRequirementsManager.addJobRequirement(requirement1);
+        jobRequirements.add(requirement1);
 
         // 4. Create jobs
-        Job softwareEngineerJob = new Job("Software Engineer", "KL", 3, jobRequirements, 3000);
+        Job softwareEngineerJob = new Job("Software Engineer","KL", 3, jobRequirements, 3000);
         Job dataEngineerJob = new Job("Data Engineer", "KL", 3, jobRequirements, 3000);
-        Job projectManagerJob = new Job("Project Manager", "SG", 5, jobRequirements, 5000);
-
+        jobManager.addJob(dataEngineerJob);
+        jobManager.addJob(softwareEngineerJob);
+        
+       
         // 5. Create job posts
         JobPost jobPost1 = new JobPost(softwareEngineerJob, companyABC);
         JobPost jobPost2 = new JobPost(dataEngineerJob, companyDBC);
-        JobPost jobPost3 = new JobPost(projectManagerJob, companyXYZ);
+        jobPostManager.addJobPost(jobPost1);
+        jobPostManager.addJobPost(jobPost2);
+        
 
         // 6. Create applicant applied jobs
         applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant1, jobPost1));
         applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant2, jobPost2));
         applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant3, jobPost1));
-        applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant4, jobPost3));
 
         // 7. Create time slots
         timeSlotManager.addTimeSlot(new TimeSlot("5.00pm", "6/3/2025", "Bukit Bintang"));

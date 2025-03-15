@@ -2,8 +2,11 @@ package boundary;
 
 import controller.ApplicantManager;
 import controller.InterviewManager;
-import controller.CompanyManager;
+import controller.CompanyManager3;
 import controller.TimeSlotManager;
+import controller.JobManager;
+import controller.JobPostManager;
+import controller.JobRequirementsManager;
 import dao.MockDataGenerator;
 import java.util.Scanner;
 import entities.Applicant;
@@ -17,7 +20,10 @@ public class InputUI {
     private static MockDataGenerator mockDataGenerator = MockDataGenerator.getInstance();
 
     // Controller
-    private static CompanyManager companyManager = CompanyManager.getInstance();
+    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static JobManager jobManager = JobManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
+    private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
 
@@ -78,6 +84,25 @@ public class InputUI {
         }
         return value;
     }
+    
+    // Get Valid Float Input
+    public float getValidFloatInput(String prompt, float min, float max) {
+        float value;
+        while (true) {
+            System.out.print(prompt);
+            while (!scanner.hasNextFloat()) {
+                System.out.print("Invalid input! Enter a valid number: ");
+                scanner.next(); // discard invalid input
+            }
+            value = scanner.nextFloat();
+            scanner.nextLine(); // Consume newline
+            if (value >= min && value <= max) {
+                break;
+            }
+            System.out.printf("Please enter a value between %.2f and %.2f.%n", min, max);
+        }
+        return value;
+    }
 
     // Main Menu
     public void handleMainMenuChoice(int choice) {
@@ -89,7 +114,7 @@ public class InputUI {
             case 2:
                 // Middle side
                 menuUI.displayMiddleMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 2);
+                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
                 switch (choice) {
                     case 1:
                         menuUI.displayApplicantMenu();
@@ -99,6 +124,9 @@ public class InputUI {
                         interviewManager.acceptTimeSlotMiddleMan();
                         break;
                     case 3:
+                        inputUI.handleCompanyManagement();
+                        break;
+                    case 4:
                         menuUI.exitSystem();
                         break;
                     default:
@@ -110,22 +138,33 @@ public class InputUI {
             case 3:
                 // Company side
                 menuUI.displayCompanyMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
                 switch (choice) {
                     case 1:
-                        // Add Job functionality can be implemented here.
+                        jobPostManager.addJobPost();
+                        break;
+                   case 2:
+                       jobPostManager.editJobPost();
+                        break;
+                   case 3:
+                       jobPostManager.removeJobPost();
                         break;
                     case 4:
-
-                        handleInterviewMenu();
+                       jobPostManager.displayJobPosts();
                         break;
                     case 5:
-                        mockDataGenerator.addMockData();
+                        jobManager.displayJobs();
                         break;
                     case 6:
+                        handleInterviewMenu();
+                        break;
+                    case 7:
+                        mockDataGenerator.addMockData();
+                        break;
+                    case 8:
                         menuUI.exitSystem();
                     default:
-                        inputUI.invalidMenuSelection(1, 6);
+                        inputUI.invalidMenuSelection(1, 8);
                         break;
                 }
                 break;
@@ -186,6 +225,33 @@ public class InputUI {
                 applicantManager.editApplicantProfile();
                 break;
             case 3:
+                menuUI.exitSystem();
+                break; // Add break here to prevent fall-through
+            default:
+                inputUI.invalidMenuSelection(1, 3);
+                break; // Add break here to prevent fall-through
+        }
+    }
+    
+        // Handle Company Management Menu in middle side
+    public void handleCompanyManagement() {
+        menuUI.displayCompanyManagement();
+        int choice;
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
+        switch (choice) {
+            case 1:
+                companyManager.addCompany();
+                break;
+            case 2:
+                companyManager.editCompany();
+                break;
+            case 3:
+                companyManager.displayCompanies();
+                break;
+            case 4:
+                companyManager.removeCompany();
+                break;
+            case 5:
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
             default:
@@ -283,6 +349,8 @@ public class InputUI {
         }
     }
 
+    
+    
     // Handle Recruitment Table
     public void handleRecruitmentTableMenu(Company company) {
         menuUI.displayRecruitmentMenu();

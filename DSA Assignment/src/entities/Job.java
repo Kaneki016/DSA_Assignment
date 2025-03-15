@@ -1,18 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+/*shu han*/
 package entities;
 
 import adt.*;
 
-/**
- *
- * @author MAMBA
- */
 public class Job {
 
-    private int jobId;
+    private String jobId;
     private String title;
     private String location;
     private int required_experience;
@@ -22,7 +15,7 @@ public class Job {
     private static int nextId = 1000;
 
     public Job(String title, String location, int required_experience, DoublyLinkedListInterface<JobRequirements> jobRequirements, float salary) {
-        this.jobId = nextId++;
+        this.jobId = String.format("J%04d", nextId++); // e.g., J1000, J1001
         this.title = title;
         this.location = location;
         this.required_experience = required_experience;
@@ -30,14 +23,13 @@ public class Job {
         this.salary = salary;
     }
 
-    public int getJobId() {
+    public String getJobId() {
         return jobId;
     }
 
     public String getTitle() {
         return title;
     }
-
 
     public String getLocation() {
         return location;
@@ -59,7 +51,7 @@ public class Job {
         return nextId;
     }
 
-    public void setJobId(int jobId) {
+    public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
@@ -86,5 +78,29 @@ public class Job {
     public static void setNextId(int nextId) {
         Job.nextId = nextId;
     }
+    
+    @Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Job ID: ").append(jobId).append("\n");
+    sb.append("Title: ").append(title).append("\n");
+    sb.append("Location: ").append(location).append("\n");
+    sb.append("Required Experience: ").append(required_experience).append(" years\n");
+    sb.append("Salary: $").append(String.format("%.2f", salary)).append("\n");
+
+    sb.append("Requirements:\n");
+
+    if (jobRequirements == null || jobRequirements.isEmpty()) {
+        sb.append("  None\n");
+    } else {
+        int index = 1;
+        for (JobRequirements req : jobRequirements) {
+            sb.append("  ").append(index++).append(". ").append(req.toString()).append("\n");
+        }
+    }
+
+    return sb.toString();
+}
 
 }

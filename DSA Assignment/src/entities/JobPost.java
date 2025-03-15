@@ -1,4 +1,4 @@
-
+/*shu han*/
 package entities;
 
 public class JobPost {
@@ -15,6 +15,8 @@ public class JobPost {
         this.company = company;
     }
 
+    
+    // Getters
     public String getJobPostId() {
         return jobPostId;
     }
@@ -26,19 +28,23 @@ public class JobPost {
     public Company getCompany() {
         return company;
     }
-
-    public void setJobPostId(String jobPostId) {
-        this.jobPostId = jobPostId;
+    
+    //setter
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public void setJob(Job job) {
         this.job = job;
     }
-
-    public void setCompany(Company company) {
-        this.company = company;
+    
+        @Override
+    public String toString() {
+        return "JobPost {" +
+               "ID='" + jobPostId + '\'' +
+               ", Job=" + job.getTitle() +
+               ", Company=" + company.getCompanyName() +
+               '}';
     }
-    
-    
     
 }

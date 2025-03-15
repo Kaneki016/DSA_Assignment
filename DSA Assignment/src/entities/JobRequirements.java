@@ -1,58 +1,58 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+/*shu han*/
 package entities;
 
-/**
- *
- * @author MAMBA
- */
 public class JobRequirements {
 
     private static int nextId = 1;  // Auto-increment ID counter
-    private String jobRequirementsId;
+     private String jobRequirementId;
     private String name;
+    private String proficiencyLevel;
     private String category;
-    private int proficiency_level; //1-5
 
-    public JobRequirements(String name, String category, int proficiency_level) {
-        this.jobRequirementsId = String.format("JR%03d", nextId++);  
+    public JobRequirements(String name, String proficiencyLevel, String category) {
+        this.jobRequirementId = String.format("JR%03d", nextId++);
         this.name = name;
+        this.proficiencyLevel = proficiencyLevel;
         this.category = category;
-        this.proficiency_level = proficiency_level;
     }
 
-    public String getJobRequirementsId() {
-        return jobRequirementsId;
+    // Getters
+    public String getJobRequirementId() {
+        return jobRequirementId;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getProficiencyLevel() {
+        return proficiencyLevel;
+    }
+
     public String getCategory() {
         return category;
     }
 
-    public int getProficiency_level() {
-        return proficiency_level;
-    }
-
-    public void setJobRequirementsId(String jobRequirementsId) {
-        this.jobRequirementsId = jobRequirementsId;
-    }
-
+    // Setters
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setProficiencyLevel(String proficiencyLevel) {
+        this.proficiencyLevel = proficiencyLevel;
     }
 
     public void setCategory(String category) {
         this.category = category;
     }
 
-    public void setProficiency_level(int proficiency_level) {
-        this.proficiency_level = proficiency_level;
+    @Override
+    public String toString() {
+        return "JobRequirements {" +
+               "ID='" + jobRequirementId + '\'' +
+               ", Name='" + name + '\'' +
+               ", Proficiency Level='" + proficiencyLevel + '\'' +
+               ", Category='" + category + '\'' +
+               '}';
     }
-
 }

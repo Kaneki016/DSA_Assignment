@@ -34,12 +34,13 @@ public class MenuUI {
     }
 
     public void displayMiddleMainMenu() {
-        System.out.println("\n============================================");
-        System.out.println("             MIDDLE SIDE MENU               ");
-        System.out.println("============================================");
-        System.out.println("| 1. Applicant Management                  |");
-        System.out.println("| 2. Exit                                  |");
-        System.out.println("============================================");
+        System.out.println("\n================================");
+        System.out.println("        MIDDLE SIDE MENU        ");
+        System.out.println("================================");
+        System.out.println("1. Applicant Management");
+        System.out.println("2. Company Management");
+        System.out.println("3. Exit");
+        System.out.println("================================");
     }
 
     public void displayCompanyMainMenu() {
@@ -53,6 +54,30 @@ public class MenuUI {
         System.out.println("| 5. Generate Mock Data                    |");
         System.out.println("| 6. Exit                                  |");
         System.out.println("============================================");
+        System.out.println("\n================================");
+        System.out.println("        COMPANY SIDE MENU       ");
+        System.out.println("================================");
+        System.out.println("1. Add Job Post");
+        System.out.println("2. Edit Job Post");
+        System.out.println("3. Remove Job Post");
+        System.out.println("4. View Job Post");
+        System.out.println("5. View Job");
+        System.out.println("6. Interview Management");
+        System.out.println("7. Generate Mock Data");
+        System.out.println("8. Exit");
+        System.out.println("================================");
+    }
+    
+        public void displayCompanyManagement() {
+        System.out.println("\n================================");
+        System.out.println("        COMPANY MANAGEMENT       ");
+        System.out.println("================================");
+        System.out.println("1. Add Company");
+        System.out.println("2. Edit Company");
+        System.out.println("3. View Company");
+        System.out.println("4. Remove Company");
+        System.out.println("5. Exit");
+        System.out.println("================================");
     }
 
     public void displayApplicantMenu() {
