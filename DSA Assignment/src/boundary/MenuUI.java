@@ -38,8 +38,9 @@ public class MenuUI {
         System.out.println("        MIDDLE SIDE MENU        ");
         System.out.println("================================");
         System.out.println("1. Applicant Management");
-        System.out.println("2. Company Management");
-        System.out.println("3. Exit");
+        System.out.println("2. Time SLot Management");
+        System.out.println("3. Company Management");
+        System.out.println("4. Exit");
         System.out.println("================================");
     }
 
