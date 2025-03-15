@@ -330,7 +330,7 @@ public class InputUI {
                     break;
                 case 8:
                     // View Time Slot Table
-
+                    interviewManager.viewTimeSlotTable();
                     break;
                 case 9:
                     // Recruitment Table

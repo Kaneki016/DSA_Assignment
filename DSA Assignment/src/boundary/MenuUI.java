@@ -3,6 +3,8 @@ package boundary;
 import adt.DoublyLinkedListInterface;
 import entities.Applicant;
 import entities.Skill;
+import entities.TimeSlot;
+
 
 /**
  * Handles the display of various menus in the system. Provides clear and
@@ -142,9 +144,26 @@ public class MenuUI {
         System.out.println("1. Filter Applicants by Interview Rating");
         System.out.println("2. Interview Feedback of Completed Interviews");
         System.out.println("3. Accept or Reject Applicants");
+        System.out.println("4. View All Recruitment Result");
         System.out.println("4. Back to Previous Menu");
         System.out.println("===============================================");
     }
+
+    public void printTimeSlotTableHeader() {
+        System.out.println("+----------------+---------------------+---------------------+----------------+");
+        System.out.println("| Time Slot ID   | Start Time          | End Time            | Availability   |");
+        System.out.println("+----------------+---------------------+---------------------+----------------+");
+    }
+
+    public void printTimeSlotRow(DoublyLinkedListInterface<TimeSlot> timeSlots) {
+        for (TimeSlot timeSlot : timeSlots) {
+            System.out.println(timeSlot);
+        }
+        
+    }
+
+
+
 
     public void acceptOrRejectApplicantsMenu() {
         System.out.println("\n===============================================");

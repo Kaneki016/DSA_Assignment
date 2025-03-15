@@ -206,7 +206,6 @@ public class InterviewManager {
         inputUI.displayMessage("Time slot suggested successfully!");
     }
 
-
     // Middle man accept time slot
     public void acceptTimeSlotMiddleMan() {
         DoublyLinkedListInterface<TimeSlot> suggestedTimeSlots = timeSlotManager.getSuggestedTimeSlots();
@@ -348,7 +347,7 @@ public class InterviewManager {
         inputUI.displayMessage("Interview created successfully!");
     }
 
-    //Filter Applicant by Interview Rating
+    // Filter Applicant by Interview Rating
     public void filterApplicantBasedOnInterview(Company company) {
         DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager
@@ -360,7 +359,8 @@ public class InterviewManager {
         for (ApplicantAppliedJob aaj : appliedJobs) {
             if (aaj.getJobPost().getCompany().getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
                 for (Interview i : interview) {
-                    if (i.getApplicantAppliedJob().getApplicant().getApplicantId().equals(aaj.getApplicant().getApplicantId())
+                    if (i.getApplicantAppliedJob().getApplicant().getApplicantId()
+                            .equals(aaj.getApplicant().getApplicantId())
                             && i.getFavourRate() >= minRating) {
                         if (!found) {
                             inputUI.displayMessage("\nApplicants with at least " + minRating + " rating:");
@@ -378,14 +378,29 @@ public class InterviewManager {
         }
     }
 
-    //Interview Feedback of Completed Interviews
+    // View Time SLot Table
+    public void viewTimeSlotTable() {
+        DoublyLinkedListInterface<TimeSlot> timeSlots = timeSlotManager.getTimeSlots();
+        System.out.println("\n===== Time Slot Table =====");
+        if (timeSlots.isEmpty()) {
+            System.out.println("No time slots available.");
+            return;
+        }
+        menuUI.printTimeSlotTableHeader();
+        menuUI.printTimeSlotRow(timeSlots);
+        System.out.println("+----------------+---------------------+---------------------+----------------+");
+
+    }
+
+    // Interview Feedback of Completed Interviews
     public void viewInterviewFeedback(Company company) {
         System.out.println("\n===== Interview Feedback =====");
         boolean found = false;
         for (Interview i : interview) {
             if (i.getStatus().equalsIgnoreCase("Completed") && i.getApplicantAppliedJob().getJobPost().getCompany()
                     .getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
-                System.out.println(i.getApplicantAppliedJob().getApplicant().getApplicantId() + " - " + i.getFeedback());
+                System.out
+                        .println(i.getApplicantAppliedJob().getApplicant().getApplicantId() + " - " + i.getFeedback());
                 System.out.println("========================================");
                 found = true;
             }
@@ -395,7 +410,7 @@ public class InterviewManager {
         }
     }
 
-    //Accept or Reject Applicant
+    // Accept or Reject Applicant
     public void acceptRejectInterviewApplicant(Company company) {
         viewCompletedInterviews(company);
         inputUI.displayMessage("\n===== Accept/Reject Interview Applicant =====");
