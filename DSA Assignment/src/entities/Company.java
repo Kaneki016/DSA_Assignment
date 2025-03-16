@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+/*shu han*/
 package entities;
     
 public class Company {
@@ -12,10 +9,11 @@ public class Company {
     private String companyLocation;
     private int companySize;
     private String companyDescription;
-    private int password;
+    private String password; // Changed from int to String!
 
-    public Company(String companyName, String companyLocation, int companySize, String companyDescription, int password) {
-        this.companyId = String.format("C%03d", nextId++); // Assign current ID and increment for the next Company
+    // Constructor
+    public Company(String companyName, String companyLocation, int companySize, String companyDescription, String password) {
+        this.companyId = String.format("C%03d", nextId++); // e.g., C001, C002, etc.
         this.companyName = companyName;
         this.companyLocation = companyLocation;
         this.companySize = companySize;
@@ -23,61 +21,61 @@ public class Company {
         this.password = password;
     }
 
-    // Getters and setters
-
+    // Getters
     public String getCompanyId() {
         return companyId;
     }
-    
+
     public String getCompanyName() {
         return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public String getCompanyLocation() {
         return companyLocation;
     }
 
-    public int getPassword() {
-        return password;
-    }
-
-    public void setPassword(int password) {
-        this.password = password;
-    }
-
-    public void setCompanyLocation(String companyLocation) {
-        this.companyLocation = companyLocation;
-    }
-
     public int getCompanySize() {
         return companySize;
-    }
-
-    public void setCompanySize(int companySize) {
-        this.companySize = companySize;
     }
 
     public String getCompanyDescription() {
         return companyDescription;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    // Setters
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public void setCompanyLocation(String companyLocation) {
+        this.companyLocation = companyLocation;
+    }
+
+    public void setCompanySize(int companySize) {
+        this.companySize = companySize;
+    }
+
     public void setCompanyDescription(String companyDescription) {
         this.companyDescription = companyDescription;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // For easy display of company details
     @Override
     public String toString() {
-        return "Company{" +
-               "companyId=" + companyId +
-               ", companyName='" + companyName + '\'' +
-               ", companyLocation='" + companyLocation + '\'' +
-               ", companySize=" + companySize +
-               ", companyDescription='" + companyDescription + '\'' +
+        return "Company {" +
+               "ID='" + companyId + '\'' +
+               ", Name='" + companyName + '\'' +
+               ", Location='" + companyLocation + '\'' +
+               ", Size=" + companySize +
+               ", Description='" + companyDescription + '\'' +
                '}';
     }
 }
-

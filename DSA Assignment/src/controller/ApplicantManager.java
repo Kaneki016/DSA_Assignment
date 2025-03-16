@@ -5,17 +5,19 @@ import entities.Applicant;
 import java.util.Scanner;
 import boundary.*;
 import entities.Skill;
+import java.util.Comparator;
 
 public class ApplicantManager {
 
     private static ApplicantManager instance;
 
-    //ADT
+    // ADT
     private DoublyLinkedListInterface<Applicant> applicants; // Custom DoublyLinkedList to store applicants
 
-    //Boundary
+    // Boundary
     private Scanner scanner = new Scanner(System.in);
     private InputUI inputUI = new InputUI();
+    private MenuUI menuUI = new MenuUI();
 
     public ApplicantManager() {
         applicants = new DoublyLinkedList<>();
@@ -59,20 +61,21 @@ public class ApplicantManager {
                 inputUI.displayMessage("Skill added successfully!");
             }
         }
-        //Add Skill END
+        // Add Skill END
         Applicant newApplicant = new Applicant(name, age, location, yearsOfExperience, educationLevel, skills);
         applicants.add(newApplicant);
         inputUI.displayMessage("Applicant added successfully!\n");
     }
 
-    //Add Applicant by Applicant Class object
+    // add applicant ( mock data)
     public void addApplicant(Applicant newApplicant) {
         applicants.add(newApplicant);
         inputUI.displayMessage("Applicant added successfully!\n");
     }
 
-    //Add Applicant Skill
-    public DoublyLinkedListInterface<Skill> addApplicantSkill(DoublyLinkedListInterface<Skill> skills, String skill, String category, int proficiency_level) {
+    // Add Applicant Skill
+    public DoublyLinkedListInterface<Skill> addApplicantSkill(DoublyLinkedListInterface<Skill> skills, String skill,
+            String category, int proficiency_level) {
         Skill newSkill = new Skill(skill, category, proficiency_level);
         skills.add(newSkill);
         return skills;
@@ -98,7 +101,7 @@ public class ApplicantManager {
         }
     }
 
-    // Find an applicant 
+    // Find an applicant
     public Applicant findApplicantById() {
         inputUI.displayMessage("Enter Applicant ID to search: ");
         String id = scanner.nextLine().trim();
@@ -110,9 +113,10 @@ public class ApplicantManager {
 
         for (Applicant applicant : applicants) {
             if (applicant.getApplicantId().equals(id)) {
+                inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
                 return applicant;
             }
-            inputUI.displayMessage(id != null ? "\n✅ Applicant Found:\n" + id : "Applicant not found.");
+
         }
 
         return null;
@@ -127,9 +131,10 @@ public class ApplicantManager {
 
         for (Applicant applicant : applicants) {
             if (applicant.getApplicantId().equals(id)) {
+                inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
                 return applicant;
             }
-            inputUI.displayMessage(id != null ? "\nApplicant Found:\n" + id : "Applicant not found.");
+
         }
 
         return null;
@@ -138,14 +143,8 @@ public class ApplicantManager {
     // Display all applicants
     public void displayAllApplicants() {
         inputUI.displayMessage("\n=============== List of Applicants ===============");
-        if (applicants.isEmpty()) {
-            inputUI.displayMessage("No applicants found.\n");
-            return;
-        }
-        for (Applicant applicant : applicants) {
-            System.out.println(applicant); // Uses Applicant's toString() method
-        }
-        inputUI.displayMessage("===============================================\n");
+        menuUI.printApplicants(applicants);
+        inputUI.getInput("Press Enter to continue...");
     }
 
     // Check if an applicant exists
@@ -158,11 +157,17 @@ public class ApplicantManager {
         Applicant applicant = findApplicantById(applicantId);
         if (applicant != null) {
             inputUI.displayMessage("\n===== Applicant Profile =====");
-            inputUI.displayMessage(applicant);
-            inputUI.displayMessage("==============================\n");
+            menuUI.printApplicantTableHeader();
+            menuUI.printApplicantRow(applicant);
+            System.out.println("+------------+----------------+-----+------------+---------+----------------------+\n");
+
+            inputUI.displayMessage("\n===== Skills =====");
+            menuUI.printSkills(applicant.getSkills());
         } else {
             inputUI.displayMessage("❌ Applicant not found!\n");
         }
+
+        inputUI.getInput("Press Enter to continue...");
     }
 
     // Edit applicant profile
@@ -183,21 +188,26 @@ public class ApplicantManager {
             applicant.setName(name);
         }
 
-        int age = inputUI.getIntInput("Enter New Age (or press existing age to keep: " + applicant.getAge() + "): ", 18, 100);
+        int age = inputUI.getIntInput("Enter New Age (or press existing age to keep: " + applicant.getAge() + "): ", 18,
+                100);
         applicant.setAge(age);
 
-        String location = inputUI.getInput("Enter new Location (or press Enter to keep: " + applicant.getLocation() + "): ");
+        String location = inputUI
+                .getInput("Enter new Location (or press Enter to keep: " + applicant.getLocation() + "): ");
         if (!location.isEmpty()) {
             applicant.setLocation(location);
         }
 
         int yearsOfExperience = inputUI.getIntInput(
-                "Enter New Years Of Experience (r press existing years of experience to keep: " + applicant.getYearsOfExperience() + "):  ", 0, 50);
+                "Enter New Years Of Experience (or press existing years of experience to keep: "
+                        + applicant.getYearsOfExperience() + "):  ",
+                0, 50);
         if (yearsOfExperience != -1) {
             applicant.setYearsOfExperience(yearsOfExperience);
         }
 
-        String educationLevel = inputUI.getInput("Enter new Education Level (or press Enter to keep: " + applicant.getEducationLevel() + "): ");
+        String educationLevel = inputUI.getInput(
+                "Enter new Education Level (or press Enter to keep: " + applicant.getEducationLevel() + "): ");
         if (!educationLevel.isEmpty()) {
             applicant.setEducationLevel(educationLevel);
         }
@@ -253,17 +263,21 @@ public class ApplicantManager {
                     int skillIndex = inputUI.getIntInput("Enter the skill number to edit: ", 1, skills.size());
                     Skill selectedSkill = skills.get(skillIndex - 1);
 
-                    String updatedSkill = inputUI.getInput("Enter new skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
+                    String updatedSkill = inputUI.getInput(
+                            "Enter new skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
                     if (!updatedSkill.isEmpty()) {
                         selectedSkill.setName(updatedSkill);
                     }
 
-                    String updatedCategory = inputUI.getInput("Enter new category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
+                    String updatedCategory = inputUI.getInput(
+                            "Enter new category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
                     if (!updatedCategory.isEmpty()) {
                         selectedSkill.setCategory(updatedCategory);
                     }
 
-                    int updatedProficiency = inputUI.getIntInput("Enter new proficiency (or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1, 5);
+                    int updatedProficiency = inputUI.getIntInput(
+                            "Enter new proficiency (or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1,
+                            5);
                     if (updatedProficiency != -1) {
                         selectedSkill.setProficiency_level(updatedProficiency);
                     }
@@ -308,12 +322,91 @@ public class ApplicantManager {
         } while (skillChoice != 0);
         // Skill Editing Section --END
         inputUI.displayMessage("\nProfile updated successfully!");
+        inputUI.getInput("Press Enter to continue...");
 
     }
-    
-    // Retrieve the applicants ADT (DoublyLinkedList)
-    public DoublyLinkedListInterface<Applicant> getApplicants() {
-        return applicants;
+
+    public void filterApplicants() {
+        menuUI.filterApplicantMenu();
+        int choice = inputUI.getIntInput("Enter your choice: ", 1, 7);
+        DoublyLinkedListInterface<Applicant> filteredApplicants = new DoublyLinkedList<>();
+
+        switch (choice) {
+            case 1: { // Filter by Age Range
+                int minAge = inputUI.getValidIntInput("Enter minimum age: ", 18, 100);
+                int maxAge = inputUI.getValidIntInput("Enter maximum age: ", minAge, 100);
+                for (Applicant a : applicants) {
+                    if (a.getAge() >= minAge && a.getAge() <= maxAge) {
+                        filteredApplicants.add(a);
+                    }
+                }
+                break;
+            }
+            case 2: { // Filter by Location
+                String location = inputUI.getInput("Enter location: ");
+                for (Applicant a : applicants) {
+                    if (a.getLocation().equalsIgnoreCase(location)) {
+                        filteredApplicants.add(a);
+                    }
+                }
+                break;
+            }
+            case 3: { // Filter by Experience Range
+                int minExp = inputUI.getValidIntInput("Enter minimum years of experience: ", 0, 50);
+                int maxExp = inputUI.getValidIntInput("Enter maximum years of experience: ", minExp, 50);
+                for (Applicant a : applicants) {
+                    if (a.getYearsOfExperience() >= minExp && a.getYearsOfExperience() <= maxExp) {
+                        filteredApplicants.add(a);
+                    }
+                }
+                break;
+            }
+            case 4: { // Filter by Education Level
+                String education = inputUI.getInput("Enter education level: ");
+                for (Applicant a : applicants) {
+                    if (a.getEducationLevel().equalsIgnoreCase(education)) {
+                        filteredApplicants.add(a);
+                    }
+                }
+                break;
+            }
+            case 5: { // Filter by Skills
+                String skillName = inputUI.getInput("Enter skill name: ");
+                boolean found = false;
+
+                for (Applicant a : applicants) {
+                    for (Skill skill : a.getSkills()) {
+                        if (skill.getName().equalsIgnoreCase(skillName)) {
+                            if (!found) {
+                                inputUI.displayMessage("\n🔹 Applicants with the skill '" + skillName + "':");
+                            }
+                            filteredApplicants.add(a);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    inputUI.displayMessage("No applicants found with the skill: " + skillName);
+                }
+                break;
+            }
+            case 6: {
+                menuUI.exitSystem();
+                break;
+            }
+            default:
+                inputUI.displayMessage("Invalid choice! Try again.");
+        }
+
+        // Display filtered results
+        if (!filteredApplicants.isEmpty()) {
+            menuUI.printApplicants(filteredApplicants); // Display results in table format
+        }
+
+        // Pause before returning to the menu
+        inputUI.getInput("Press Enter to continue...");
     }
 
 }

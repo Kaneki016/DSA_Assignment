@@ -1,37 +1,38 @@
 package boundary;
 
-import controller.ApplicantManager;
-import controller.InterviewManager;
-import controller.ApplicantAppliedJobManager;
-import controller.JobPostManager;
+import controller.*;
 import dao.MockDataGenerator;
 import java.util.Scanner;
+import entities.*;
+
 
 public class InputUI {
 
-    private static Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
     // DAO
     private static MockDataGenerator mockDataGenerator = MockDataGenerator.getInstance();
 
-    //Controller
+    // Controller
+    private static CompanyManager companyManager = CompanyManager.getInstance();
+    private static JobManager jobManager = JobManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
+    private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-    private static JobPostManager jobPostManager = JobPostManager.getInstance();
-
 
     // Boundary
     private static MenuUI menuUI = new MenuUI();
     private static InputUI inputUI = new InputUI();
 
-    //Get Input From User
+    // Get Input From User
     public String getInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine().trim();
     }
 
-    //Get Interget Input From User
+    // Get Interget Input From User
     public int getIntInput(String prompt, int min, int max) {
         int value;
         while (true) {
@@ -50,17 +51,17 @@ public class InputUI {
         return value;
     }
 
-    //Display Message
+    // Display Message
     public <T> void displayMessage(T element) {
         System.out.println(element);
     }
 
-    //Error Message Invalid Input
+    // Error Message Invalid Input
     public void invalidMenuSelection(int min, int max) {
         System.out.printf("Invalid input! Enter a number (%d-%d): ", min, max);
     }
 
-    //Get Valid Input
+    // Get Valid Input
     public int getValidIntInput(String prompt, int min, int max) {
         int value;
         while (true) {
@@ -78,9 +79,28 @@ public class InputUI {
         }
         return value;
     }
+    
+    // Get Valid Float Input
+    public float getValidFloatInput(String prompt, float min, float max) {
+        float value;
+        while (true) {
+            System.out.print(prompt);
+            while (!scanner.hasNextFloat()) {
+                System.out.print("Invalid input! Enter a valid number: ");
+                scanner.next(); // discard invalid input
+            }
+            value = scanner.nextFloat();
+            scanner.nextLine(); // Consume newline
+            if (value >= min && value <= max) {
+                break;
+            }
+            System.out.printf("Please enter a value between %.2f and %.2f.%n", min, max);
+        }
+        return value;
+    }
 
-    //Main Menu 
-    public static void handleMainMenuChoice(int choice) {
+    // Main Menu
+    public void handleMainMenuChoice(int choice) {
         switch (choice) {
             case 1:
                 // Applicant Side
@@ -89,13 +109,19 @@ public class InputUI {
             case 2:
                 // Middle side
                 menuUI.displayMiddleMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 2);
+                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
                 switch (choice) {
                     case 1:
                         menuUI.displayApplicantMenu();
                         handleMiddleSideMenuChoice();
                         break;
                     case 2:
+                        interviewManager.acceptTimeSlotMiddleMan();
+                        break;
+                    case 3:
+                        inputUI.handleCompanyManagement();
+                        break;
+                    case 4:
                         menuUI.exitSystem();
                         break;
                     default:
@@ -107,24 +133,33 @@ public class InputUI {
             case 3:
                 // Company side
                 menuUI.displayCompanyMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
                 switch (choice) {
                     case 1:
-                        // Add Job functionality can be implemented here.
+                        jobPostManager.addJobPost();
+                        break;
+                   case 2:
+                       jobPostManager.editJobPost();
+                        break;
+                   case 3:
+                       jobPostManager.removeJobPost();
                         break;
                     case 4:
-                        interviewManager.displayAppliedApplicantInterviewMenu();
+                       jobPostManager.displayJobPosts();
                         break;
                     case 5:
-                        interviewManager.displayAssignInterviewTimeSlot();
+                        jobManager.displayJobs();
                         break;
                     case 6:
-                        mockDataGenerator.addMockData();
+                        handleInterviewMenu();
                         break;
                     case 7:
+                        mockDataGenerator.addMockData();
+                        break;
+                    case 8:
                         menuUI.exitSystem();
                     default:
-                        System.out.println("Invalid option. Please try again.");
+                        inputUI.invalidMenuSelection(1, 8);
                         break;
                 }
                 break;
@@ -138,10 +173,10 @@ public class InputUI {
         }
     }
 
-    //Middle Side Menu
-    public static void handleMiddleSideMenuChoice() {
+    // Middle Side Menu
+    public void handleMiddleSideMenuChoice() {
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
         switch (choice) {
             case 1:
                 applicantManager.addApplicant();
@@ -156,19 +191,24 @@ public class InputUI {
                 break;
 
             case 4:
-                applicantManager.findApplicantById();
+                Applicant applicant = applicantManager.findApplicantById();
+                System.out.println(applicant);
                 break;
 
             case 5:
+                applicantManager.filterApplicants();
+                break;
+
+            case 6:
                 menuUI.exitSystem();
                 break;
             default:
-                inputUI.invalidMenuSelection(1, 5);
+                inputUI.invalidMenuSelection(1, 6);
         }
     }
 
-    //Handle Client Menu
-    public static void handleClinetMenu() {
+    // Handle Client Menu
+    public void handleClinetMenu() {
         menuUI.displayClientMainMenu();
         int choice;
         choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
@@ -185,62 +225,199 @@ public class InputUI {
             default:
                 inputUI.invalidMenuSelection(1, 3);
                 break; // Add break here to prevent fall-through
-            }
+        }
     }
     
-    public static void handleMatchingCategory() {
-       while (true) {
-           inputUI.displayMessage("Enter the number of the matching category (or 0 to exit): ");
-           String choice = scanner.nextLine().trim();
+        // Handle Company Management Menu in middle side
+    public void handleCompanyManagement() {
+        menuUI.displayCompanyManagement();
+        int choice;
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
+        switch (choice) {
+            case 1:
+                companyManager.addCompany();
+                break;
+            case 2:
+                companyManager.editCompany();
+                break;
+            case 3:
+                companyManager.displayCompanies();
+                break;
+            case 4:
+                companyManager.removeCompany();
+                break;
+            case 5:
+                menuUI.exitSystem();
+                break; // Add break here to prevent fall-through
+            default:
+                inputUI.invalidMenuSelection(1, 3);
+                break; // Add break here to prevent fall-through
+        }
+    }
 
-           // Retrieve the applicant and job before switch statement
-           ApplicantManager applicant = applicantManager;
-           JobPostManager job = jobPostManager;
+    // Handle Interview Main Menu
+    public void handleInterviewMenu() {
+        inputUI.displayMessage("Which company you belongs to?: ");
+        String companyId = scanner.nextLine().trim();
+        Company company = companyManager.findCompanyById(companyId);
 
-           if (applicant == null || job == null) {
-               inputUI.displayMessage("Invalid Applicant or Job. Please try again.");
-               continue;
-           }
+        if (company == null) {
+            inputUI.displayMessage("Company not found!");
+            return;
+        }
 
-           switch (choice) {
-               case "1":
-                   inputUI.displayMessage("Matching based on Proficiency Levels...");
-                   double skillMatchScore = applicantAppliedJobManager.calculateSkillMatch(applicant, job);
-                   inputUI.displayMessage("Skill Match Score: " + skillMatchScore);
-                   break;
+        menuUI.displayInterviewMenu();
 
-               case "2":
-                   inputUI.displayMessage("Matching based on Skill's Importance...");
-                   double weightedMatch = applicantAppliedJobManager.weightedSkillMatch(applicant, job);
-                   inputUI.displayMessage("Weighted Skill Match Score: " + weightedMatch);
-                   break;
+        int choice;
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
+        switch (choice) {
+            case 1:
+                interviewManager.displayAssignInterviewTimeSlot(company);
+                break;
+            case 2:
+                // Recruitment Table
 
-               case "3":
-                   inputUI.displayMessage("Matching based on Experience Levels...");
-                   double experienceScore = applicantAppliedJobManager.experienceMatch(applicant, job);
-                   inputUI.displayMessage("Experience Match Score: " + experienceScore);
-                   break;
+                break;
+            case 3:
+                menuUI.exitSystem();
+                break; // Add break here to prevent fall-through
+            default:
+                inputUI.invalidMenuSelection(1, 3);
+                break; // Add break here to prevent fall-through
+        }
+    }
 
-               case "4":
-                   inputUI.displayMessage("Matching based on Location Preferences...");
-                   double locationScore = applicantAppliedJobManager.locationMatch(applicant, job);
-                   inputUI.displayMessage("Location Match Score: " + locationScore);
-                   break;
+    // Handle Interview Time Slot Menu
+    public void handleInterviewTimeSlotMenu(Company company) {
+        boolean running = true;
+        while (running) {
+            menuUI.displayTimeSlotInterviewMenu(company.getCompanyName());
+            int choice;
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 11);
+            switch (choice) {
+                case 1:
+                    // Assign Interview
+                    interviewManager.addInterviewSlot(company);
+                    break;
+                case 2:
+                    // View Waiting Interviews
+                    interviewManager.viewWaitingInterviews(company);
+                    break;
+                case 3:
+                    // View Completed Interviews
+                    interviewManager.viewCompletedInterviews(company);
+                    break;
+                case 4:
+                    // View Pending Interviews Based on Skills
+                    interviewManager.filterInterviewsSkill(company);
+                    break;
+                case 5:
+                    // View Pending Interviews Based on Years of Experience
+                    interviewManager.filterApplicantsByExperience(company);
+                    break;
+                case 6:
+                    // Suggest Time Slot To Middle Side
+                    interviewManager.suggestTimeSlotToMiddleMan();
+                    break;
+                case 7:
+                    // Give Interview Feedback
+                    interviewManager.handleInterviewFeedback(company);
+                    break;
+                case 8:
+                    // View Time Slot Table
 
-               case "5":
-                   inputUI.displayMessage("Calculating Overall Score...");
-                   double overallScore = applicantAppliedJobManager.overallMatchScore(applicant, job);
-                   inputUI.displayMessage("Overall Match Score: " + overallScore);
-                   break;
+                    break;
+                case 9:
+                    // Recruitment Table
+                    menuUI.displayRecruitmentMenu();
+                    handleRecruitmentTableMenu(company);
 
-               case "0":
-                   inputUI.displayMessage("Exiting job matching menu.");
-                   return;
+                    break;
+                case 10:
+                    // Return to previous menu
+                    running = false;
+                    break;
+                default:
+                    inputUI.invalidMenuSelection(1, 11);
+                    break;
+            }
+        }
+    }
 
-               default:
-                   inputUI.invalidMenuSelection(0, 5);
-                   break;
-           }
-       }
-   }
+    
+    
+    // Handle Recruitment Table
+    public void handleRecruitmentTableMenu(Company company) {
+        menuUI.displayRecruitmentMenu();
+        int choice;
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+        switch (choice) {
+            case 1:
+                // Filter Applicant By Interview Rating
+                interviewManager.filterApplicantBasedOnInterview(company);
+                break;
+            case 2:
+                // Interview Feedback of Completed Interviews
+                interviewManager.viewInterviewFeedback(company);
+                break;
+            case 3:
+                // Accept and Reject Applicant
+                interviewManager.acceptRejectInterviewApplicant(company);
+                break;
+            case 4:
+                menuUI.exitSystem();
+                break;
+            default:
+                inputUI.invalidMenuSelection(1, 4);
+                break;
+        }
+    }
+    
+    public static void handleMatchingCategory(Applicant applicant, Job job, String company) {
+        if (applicant == null || job == null) {
+            inputUI.displayMessage("❌ Invalid Applicant or Job. Please try again.");
+            return;
+        }
+
+        while (true) {
+            // Display job matching menu
+            menuUI.displayJobMatchingMenu(company);
+
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 0, 4);
+
+            switch (choice) {
+                case 1:
+                    inputUI.displayMessage("🔹 Matching based on Proficiency Levels...");
+                    double skillMatchScore = applicantAppliedJobManager.skillMatch(applicant, job);
+                    inputUI.displayMessage("📊 Proficiency Match Score: " + skillMatchScore);
+                    break;
+
+                case 2:
+                    inputUI.displayMessage("🔹 Matching based on Experience Levels and Job Requirements...");
+                    double experienceMatchScore = applicantAppliedJobManager.experienceMatch(applicant, job);
+                    inputUI.displayMessage("📊 Experience Match Score: " + experienceMatchScore);
+                    break;
+
+                case 3:
+                    inputUI.displayMessage("🔹 Matching based on Location Preferences...");
+                    double locationMatchScore = applicantAppliedJobManager.locationMatch(applicant, job);
+                    inputUI.displayMessage("📊 Location Match Score: " + locationMatchScore);
+                    break;
+
+                case 4:
+                    inputUI.displayMessage("🔹 Calculating Overall Score...");
+                    double overallMatchScore = applicantAppliedJobManager.overallMatchScore(applicant, job);
+                    inputUI.displayMessage("📊 Overall Match Score: " + overallMatchScore);
+                    break;
+
+                case 0:
+                    inputUI.displayMessage("✅ Exiting job matching menu.");
+                    return;
+
+                default:
+                    inputUI.invalidMenuSelection(0, 4);
+                    break;
+            }
+        }
+    }
 }
