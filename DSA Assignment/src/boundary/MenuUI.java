@@ -115,7 +115,8 @@ public class MenuUI {
         System.out.println("================================");
         System.out.println("1. Assign and View Interview Slots");
         System.out.println("2. Recruitment Table");
-        System.out.println("3. Exit");
+        System.out.println("3. Interview Overall Report");
+        System.out.println("4. Exit");
         System.out.println("================================");
     }
 
@@ -132,8 +133,7 @@ public class MenuUI {
         System.out.println("6. Suggest Time Slot To Middle Side");
         System.out.println("7. Give Interview Feedback");
         System.out.println("8. View Time Slot Table");
-        System.out.println("9. Recruitment Table");
-        System.out.println("10. Back to Previous Menu");
+        System.out.println("9. Back to Previous Menu");
         System.out.println("===============================================");
     }
 
@@ -144,10 +144,10 @@ public class MenuUI {
         System.out.println("1. Filter Applicants by Interview Rating");
         System.out.println("2. Interview Feedback of Completed Interviews");
         System.out.println("3. Accept or Reject Applicants");
-        System.out.println("4. View All Recruitment Result");
         System.out.println("4. Back to Previous Menu");
         System.out.println("===============================================");
     }
+    
 
     public void printTimeSlotTableHeader() {
         System.out.println("+----------------+---------------------+---------------------+----------------+");
@@ -160,6 +160,16 @@ public class MenuUI {
             System.out.println(timeSlot);
         }
         
+    }
+
+    public void displayInterviewReport() {
+        System.out.println("\n===============================================");
+        System.out.println("           INTERVIEW OVERALL REPORT            ");
+        System.out.println("===============================================");
+        System.out.println("1. View Accepted Interview");
+        System.out.println("2. View Rejected Interview");
+        System.out.println("3. Back to Previous Menu");
+        System.out.println("===============================================");
     }
 
 

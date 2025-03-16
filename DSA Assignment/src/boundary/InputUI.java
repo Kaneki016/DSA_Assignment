@@ -84,7 +84,7 @@ public class InputUI {
         }
         return value;
     }
-    
+
     // Get Valid Float Input
     public float getValidFloatInput(String prompt, float min, float max) {
         float value;
@@ -143,14 +143,14 @@ public class InputUI {
                     case 1:
                         jobPostManager.addJobPost();
                         break;
-                   case 2:
-                       jobPostManager.editJobPost();
+                    case 2:
+                        jobPostManager.editJobPost();
                         break;
-                   case 3:
-                       jobPostManager.removeJobPost();
+                    case 3:
+                        jobPostManager.removeJobPost();
                         break;
                     case 4:
-                       jobPostManager.displayJobPosts();
+                        jobPostManager.displayJobPosts();
                         break;
                     case 5:
                         jobManager.displayJobs();
@@ -232,8 +232,8 @@ public class InputUI {
                 break; // Add break here to prevent fall-through
         }
     }
-    
-        // Handle Company Management Menu in middle side
+
+    // Handle Company Management Menu in middle side
     public void handleCompanyManagement() {
         menuUI.displayCompanyManagement();
         int choice;
@@ -281,9 +281,15 @@ public class InputUI {
                 break;
             case 2:
                 // Recruitment Table
-
+                menuUI.displayRecruitmentMenu();
+                handleRecruitmentTableMenu(company);
                 break;
             case 3:
+                // Report
+                menuUI.displayInterviewReport();
+                handleInterviewReport(company);
+                break;
+            case 4:
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
             default:
@@ -330,52 +336,88 @@ public class InputUI {
                     break;
                 case 8:
                     // View Time Slot Table
-                    interviewManager.viewTimeSlotTable();
+                    interviewManager.viewTimeSlotTable(company);
                     break;
                 case 9:
-                    // Recruitment Table
-                    menuUI.displayRecruitmentMenu();
-                    handleRecruitmentTableMenu(company);
-
-                    break;
-                case 10:
                     // Return to previous menu
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 11);
+                    inputUI.invalidMenuSelection(1, 9);
                     break;
             }
         }
     }
 
-    
-    
     // Handle Recruitment Table
     public void handleRecruitmentTableMenu(Company company) {
-        menuUI.displayRecruitmentMenu();
-        int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
-        switch (choice) {
-            case 1:
-                // Filter Applicant By Interview Rating
-                interviewManager.filterApplicantBasedOnInterview(company);
-                break;
-            case 2:
-                // Interview Feedback of Completed Interviews
-                interviewManager.viewInterviewFeedback(company);
-                break;
-            case 3:
-                // Accept and Reject Applicant
-                interviewManager.acceptRejectInterviewApplicant(company);
-                break;
-            case 4:
-                menuUI.exitSystem();
-                break;
-            default:
-                inputUI.invalidMenuSelection(1, 4);
-                break;
+        boolean running = true;
+        while (running) {
+            menuUI.displayRecruitmentMenu();
+            int choice;
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            switch (choice) {
+                case 1:
+                    // Filter Applicant By Interview Rating
+                    interviewManager.filterApplicantBasedOnInterview(company);
+                    break;
+                case 2:
+                    // Interview Feedback of Completed Interviews
+                    interviewManager.viewInterviewFeedback(company);
+                    break;
+                case 3:
+                    // Accept and Reject Applicant
+                    interviewManager.acceptRejectInterviewApplicant(company);
+                    break;
+                case 4:
+                    running = false;
+                    break;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
         }
+    }
+
+    public void handleInterviewReport(Company company) {
+        boolean running = true;
+        while (running) {
+            menuUI.displayInterviewReport();
+            int choice;
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            switch (choice) {
+                case 1:
+                    // View Accepted Interview Report
+                    interviewManager.viewAcceptedInterview(company);
+                    break;
+                case 2:
+                    // View Rejected Interview Report
+                    interviewManager.viewRejectedInterviews(company);
+                    break;
+                case 3:
+                    running = false;
+                    break;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
+        }
+    }
+
+    public String centerString(String s, int width) {
+        if (s == null) {
+            s = "";
+        }
+        int padding = (width - s.length()) / 2;
+        if (padding <= 0) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < padding; i++) {
+            sb.append(" ");
+        }
+        sb.append(s);
+        return sb.toString();
     }
 
 }
