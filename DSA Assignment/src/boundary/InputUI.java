@@ -286,7 +286,6 @@ public class InputUI {
                 break;
             case 3:
                 // Report
-                menuUI.displayInterviewReport();
                 handleInterviewReport(company);
                 break;
             case 4:

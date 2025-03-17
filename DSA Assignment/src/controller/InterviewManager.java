@@ -392,7 +392,7 @@ public class InterviewManager {
             System.out.println("No time slots available.");
             return;
         }
-        
+
         DoublyLinkedListInterface<TimeSlot> availableTimeSlots = new DoublyLinkedList<>();
         int slotNumber = 1;
         for (TimeSlot timeSlot : timeSlots) {
@@ -486,77 +486,12 @@ public class InterviewManager {
     }
 
     public void viewAcceptedInterview(Company company) {
-        final int width = 80; // Adjust this value if your terminal width differs
-
-        // Print the report header
-        System.out.println("=".repeat(width));
-        System.out.println(inputUI.centerString("ACCEPTED INTERVIEW REPORT", width));
-        System.out.println("=".repeat(width));
-        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
-        System.out.println("=".repeat(width));
-        System.out.println();
-
-        boolean found = false;
-        for (Interview interview : acceptedInterview) {
-            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                    .equalsIgnoreCase(company.getCompanyName())) {
-
-                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
-                System.out.println(inputUI.centerString(
-                        "Applicant ID : " + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
-                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
-                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
-                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
-                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
-                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
-                System.out.println("-".repeat(width));
-                System.out.println();
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.println(inputUI.centerString("No accepted interviews found for this company.", width));
-        }
-        // Print the report footer
-        System.out.println("=".repeat(width));
+        menuUI.printAcceptedInterviewReport(company, acceptedInterview);
     }
 
+    // ...existing code...
     public void viewRejectedInterviews(Company company) {
-        final int width = 80; // Adjust this value if your terminal width differs
-
-        // Print the report header
-        System.out.println("=".repeat(width));
-        System.out.println(inputUI.centerString("REJECTED INTERVIEW REPORT", width));
-        System.out.println("=".repeat(width));
-        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
-        System.out.println("=".repeat(width));
-        System.out.println();
-
-        boolean found = false;
-        for (Interview interview : rejectedInterview) {
-            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                    .equalsIgnoreCase(company.getCompanyName())) {
-
-                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
-                System.out.println(inputUI.centerString(
-                        "Applicant ID : " + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
-                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
-                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
-                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
-                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
-                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
-                System.out.println("-".repeat(width));
-                System.out.println();
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.println(inputUI.centerString("No rejected interviews found for this company.", width));
-        }
-        // Print the report footer
-        System.out.println("=".repeat(width));
+        menuUI.printRejectedInterviewReport(company, rejectedInterview);
     }
 
 }
