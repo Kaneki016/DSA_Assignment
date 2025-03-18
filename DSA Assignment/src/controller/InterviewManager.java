@@ -19,6 +19,7 @@ public class InterviewManager {
     // Controllers
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
     private static TimeSlotManager timeSlotManager = TimeSlotManager.getInstance();
+    private static ApplicantManager applicantManager = ApplicantManager.getInstance();
 
     // Boundary
     private static InputUI inputUI = new InputUI();
@@ -469,7 +470,6 @@ public class InterviewManager {
             acceptedInterview.add(targetInterview);
             allCompletedInterview.add(targetInterview);
             interview.removeSpecific(targetInterview);
-            applicantAppliedJobManager.removeApplicantAppliedJob(targetInterview.getApplicantAppliedJob());
 
         } else if (decision.equalsIgnoreCase("Reject")) {
             targetInterview.setStatus("Rejected");
@@ -478,8 +478,6 @@ public class InterviewManager {
             rejectedInterview.add(targetInterview);
             allCompletedInterview.add(targetInterview);
             interview.removeSpecific(targetInterview);
-            applicantAppliedJobManager.removeApplicantAppliedJob(targetInterview.getApplicantAppliedJob());
-
         } else {
             inputUI.displayMessage("Invalid decision. Please enter 'Accept' or 'Reject'.");
         }
@@ -493,5 +491,43 @@ public class InterviewManager {
     public void viewRejectedInterviews(Company company) {
         menuUI.printRejectedInterviewReport(company, rejectedInterview);
     }
+
+    public void searchInterview(Company company) {
+        System.out.println("\n===== Search Interview =====");
+        ApplicantAppliedJob applicantAppliedJob = null;
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        boolean found = false;
+        for (Interview i : interview) {
+            if (i.getApplicantAppliedJob().getApplicant().getApplicantId().equals(applicantId)
+                    && i.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
+                            .equalsIgnoreCase(company.getCompanyName())) {
+                System.out.println(i);
+                applicantAppliedJob = i.getApplicantAppliedJob();
+                System.out.println("========================================");
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No interview found for this applicant.");
+        }
+
+        inputUI.displayMessage("Do you wish to further dig their information?");
+        inputUI.handleSearchInterview(applicantAppliedJob);
+
+    }
+
+    public void searchInterviewApplicantDetails(ApplicantAppliedJob applicantAppliedJob) {
+        menuUI.displaySearchInterviewApplicantDetails();
+        menuUI.printApplicantTableHeader();
+        menuUI.printApplicantRow(applicantAppliedJob.getApplicant());
+    }
+
+    public void searchInterviewJobDetails(ApplicantAppliedJob applicantAppliedJob) {
+        menuUI.displaySearchInterviewJobDetails();
+        System.out.println(applicantAppliedJob.getJobPost().getJob());
+    }
+
+
+
 
 }

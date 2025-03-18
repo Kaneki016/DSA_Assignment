@@ -51,16 +51,6 @@ public class MenuUI {
     }
 
     public void displayCompanyMainMenu() {
-        System.out.println("\n============================================");
-        System.out.println("            COMPANY SIDE MENU               ");
-        System.out.println("============================================");
-        System.out.println("| 1. Add Job Post                          |");
-        System.out.println("| 2. Edit Job Post                         |");
-        System.out.println("| 3. Remove Job Post                       |");
-        System.out.println("| 4. Interview Management                  |");
-        System.out.println("| 5. Generate Mock Data                    |");
-        System.out.println("| 6. Exit                                  |");
-        System.out.println("============================================");
         System.out.println("\n================================");
         System.out.println("        COMPANY SIDE MENU       ");
         System.out.println("================================");
@@ -137,7 +127,8 @@ public class MenuUI {
         System.out.println("6. Suggest Time Slot To Middle Side");
         System.out.println("7. Give Interview Feedback");
         System.out.println("8. View Time Slot Table");
-        System.out.println("9. Back to Previous Menu");
+        System.out.println("9. Search");
+        System.out.println("10. Back to Previous Menu");
         System.out.println("===============================================");
     }
 
@@ -185,7 +176,30 @@ public class MenuUI {
         System.out.println("===============================================");
     }
 
-    public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
+    public void displaySearchInterview() {
+        System.out.println("\n===============================================");
+        System.out.println("           CONTINUE TO DIG?          ");
+        System.out.println("===============================================");
+        System.out.println("1. Their Applied Job Details");
+        System.out.println("2. Job Post Details");
+        System.out.println("3. Exit");
+        System.out.println("===============================================");
+    }
+
+    public void displaySearchInterviewApplicantDetails() {
+        System.out.println("\n===============================================");
+        System.out.println("           SEARCH APPLICANT DETAILS            ");
+        System.out.println("===============================================");
+    }
+
+    public void displaySearchInterviewJobDetails() {
+        System.out.println("\n===============================================");
+        System.out.println("           SEARCH JOB DETAILS            ");
+        System.out.println("===============================================");
+    }
+
+
+     public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
         final int width = 80;
         System.out.println("=".repeat(width));
         System.out.println(inputUI.centerString("ACCEPTED INTERVIEW REPORT", width));
