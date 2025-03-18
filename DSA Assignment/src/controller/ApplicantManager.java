@@ -408,5 +408,9 @@ public class ApplicantManager {
         // Pause before returning to the menu
         inputUI.getInput("Press Enter to continue...");
     }
+    
+    public DoublyLinkedListInterface<Applicant> getApplicants() {
+        return applicants;
+    }
 
 }

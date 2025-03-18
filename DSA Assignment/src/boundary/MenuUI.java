@@ -39,23 +39,13 @@ public class MenuUI {
         System.out.println("        MIDDLE SIDE MENU        ");
         System.out.println("================================");
         System.out.println("1. Applicant Management");
-        System.out.println("2. Time SLot Management");
+        System.out.println("2. Time Slot Management");
         System.out.println("3. Company Management");
         System.out.println("4. Exit");
         System.out.println("================================");
     }
 
     public void displayCompanyMainMenu() {
-        System.out.println("\n============================================");
-        System.out.println("            COMPANY SIDE MENU               ");
-        System.out.println("============================================");
-        System.out.println("| 1. Add Job Post                          |");
-        System.out.println("| 2. Edit Job Post                         |");
-        System.out.println("| 3. Remove Job Post                       |");
-        System.out.println("| 4. Interview Management                  |");
-        System.out.println("| 5. Generate Mock Data                    |");
-        System.out.println("| 6. Exit                                  |");
-        System.out.println("============================================");
         System.out.println("\n================================");
         System.out.println("        COMPANY SIDE MENU       ");
         System.out.println("================================");
@@ -171,14 +161,14 @@ public class MenuUI {
         System.out.println("===============================================");
     }
     
-    public void displayJobMatchingMenu(String company) {
+    public void displayJobMatchingMenu() {
         System.out.println("\n===============================================");
-        System.out.println("    " + company.toUpperCase() + " - MATCHING CATEGORIES   ");
+        System.out.println("                        MATCHING CATEGORIES     ");
         System.out.println("===============================================");
         System.out.println("1. Proficiency Levels");
         System.out.println("2. Experience Levels and Job Requirements");
         System.out.println("3. Location Preferences");
-        System.out.println("4. Overall Score");
+        System.out.println("4. Exit");
         System.out.println("===============================================");
     }
 

@@ -157,9 +157,11 @@ public class InputUI {
                         mockDataGenerator.addMockData();
                         break;
                     case 8:
+                        handleCompanyMatchingCategory();
+                    case 9:
                         menuUI.exitSystem();
                     default:
-                        inputUI.invalidMenuSelection(1, 8);
+                        inputUI.invalidMenuSelection(1, 9);
                         break;
                 }
                 break;
@@ -373,49 +375,32 @@ public class InputUI {
         }
     }
     
-    public static void handleMatchingCategory(Applicant applicant, Job job, String company) {
-        if (applicant == null || job == null) {
-            inputUI.displayMessage("❌ Invalid Applicant or Job. Please try again.");
-            return;
-        }
+    public static void handleCompanyMatchingCategory() {
 
         while (true) {
             // Display job matching menu
-            menuUI.displayJobMatchingMenu(company);
+            menuUI.displayJobMatchingMenu();
 
-            int choice = inputUI.getValidIntInput("Enter your choice: ", 0, 4);
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
 
             switch (choice) {
                 case 1:
-                    inputUI.displayMessage("🔹 Matching based on Proficiency Levels...");
-                    double skillMatchScore = applicantAppliedJobManager.skillMatch(applicant, job);
-                    inputUI.displayMessage("📊 Proficiency Match Score: " + skillMatchScore);
+                    applicantAppliedJobManager.CompanySkillMatch();
                     break;
 
                 case 2:
-                    inputUI.displayMessage("🔹 Matching based on Experience Levels and Job Requirements...");
-                    double experienceMatchScore = applicantAppliedJobManager.experienceMatch(applicant, job);
-                    inputUI.displayMessage("📊 Experience Match Score: " + experienceMatchScore);
+                    applicantAppliedJobManager.CompanyExperienceMatch();
                     break;
 
                 case 3:
-                    inputUI.displayMessage("🔹 Matching based on Location Preferences...");
-                    double locationMatchScore = applicantAppliedJobManager.locationMatch(applicant, job);
-                    inputUI.displayMessage("📊 Location Match Score: " + locationMatchScore);
+                    applicantAppliedJobManager.CompanyLocationMatch();
                     break;
 
                 case 4:
-                    inputUI.displayMessage("🔹 Calculating Overall Score...");
-                    double overallMatchScore = applicantAppliedJobManager.overallMatchScore(applicant, job);
-                    inputUI.displayMessage("📊 Overall Match Score: " + overallMatchScore);
-                    break;
-
-                case 0:
-                    inputUI.displayMessage("✅ Exiting job matching menu.");
+                    menuUI.exitSystem();
                     return;
-
                 default:
-                    inputUI.invalidMenuSelection(0, 4);
+                    inputUI.invalidMenuSelection(1, 4);
                     break;
             }
         }

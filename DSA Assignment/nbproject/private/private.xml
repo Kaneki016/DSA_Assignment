@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/boundary/MenuUI.java</file>
-            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/boundary/InputUI.java</file>
             <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/controller/ApplicantAppliedJobManager.java</file>
-            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/modules/MainSystem.java</file>
-            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/entities/Company.java</file>
+            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/entities/ApplicantAppliedJob.java</file>
+            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/controller/JobPostManager.java</file>
+            <file>file:/C:/Users/laiyo/Downloads/DSA%20Assignment/src/controller/ApplicantManager.java</file>
         </group>
     </open-files>
 </project-private>

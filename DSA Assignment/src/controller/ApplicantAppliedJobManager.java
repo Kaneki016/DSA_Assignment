@@ -2,21 +2,15 @@ package controller;
 
 import adt.*;
 import entities.*;
-import java.util.List;
-import java.util.Scanner;
-import boundary.InputUI;
-import boundary.MenuUI;
+import boundary.*;
 
 public class ApplicantAppliedJobManager {
 
     private static ApplicantAppliedJobManager instance;
-    private static Scanner scanner = new Scanner(System.in);
-    private DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
-    private static Company company;
+    private static DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
 
     // Boundary
-    private static MenuUI menuUI = new MenuUI();
-    private static InputUI inputUI = new InputUI();
+    private  static InputUI inputUI = new InputUI();
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -30,9 +24,8 @@ public class ApplicantAppliedJobManager {
     }
 
     // Controllers
-    private static ApplicantAppliedJobManager applicantAppliedJobManager = getInstance();
-    private static SkillManager skillManager = SkillManager.getInstance();
-    private static CompanyManager companyManager = CompanyManager.getInstance();
+    private static ApplicantManager applicantManager = ApplicantManager.getInstance();
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
 
     public void addApplicantAppliedJob(ApplicantAppliedJob newAppliedJob) {
         applicantAppliedJob.add(newAppliedJob);
@@ -48,126 +41,172 @@ public class ApplicantAppliedJobManager {
         return applicantAppliedJob;
     }
 
+    //====================== For Company =============================================================
+    
     // Skill Matching with Proficiency Levels - Returns Match Score
-    public double skillMatch(Applicant applicant, Job job) {
-        double totalWeight = 0;
-        double matchScore = 0;
+    public DoublyLinkedListInterface<Applicant> skillMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
 
-        for (JobRequirements requirement : job.getJobRequirements()) {
-            String requiredSkillName = requirement.getName();
-            int requiredProficiencyInt = Integer.parseInt(requirement.getProficiencyLevel());
+        // Get job requirements
+        Job job = jobPost.getJob();
+        DoublyLinkedListInterface<JobRequirements> requiredSkills = job.getJobRequirements();
 
-            // Get applicant's proficiency level for this skill
-            int applicantProficiency = skillManager.getApplicantProficiencyLevel(applicant, requiredSkillName);
+        for (Applicant applicant : applicants) {
+            double totalWeight = 0;
+            double matchScore = 0;
 
-            if (applicantProficiency > 0) {
-                double match = (double) applicantProficiency / requiredProficiencyInt; // Normalize
-                matchScore += Math.min(match, 1.0); // Cap at 1.0
+            for (JobRequirements requiredSkill : requiredSkills) {
+                String requiredSkillName = requiredSkill.getName();
+                String proficiencyLevelStr = requiredSkill.getProficiencyLevel();
+
+                int requiredProficiency = Integer.parseInt(proficiencyLevelStr);
+
+                if (requiredProficiency == 0) continue; // Avoid division by zero
+
+
+                // Find applicant's proficiency level for this skill
+                int applicantProficiency = 0;
+                for (Skill skill : applicant.getSkills()) {
+                    if (skill.getName().equalsIgnoreCase(requiredSkillName)) {
+                        applicantProficiency = skill.getProficiency_level();
+                        break;
+                    }
+                }
+
+                if (applicantProficiency >= requiredProficiency) {
+                    double match = (double) applicantProficiency / requiredProficiency;
+                    matchScore += Math.min(match, 1.0); // Cap at 1.0
+                }
+
+                totalWeight++; // Count total skills considered
             }
 
-            totalWeight++; // Count total skills considered
+            double finalScore = (totalWeight > 0) ? matchScore / totalWeight : 0;
+
+            // Define match threshold (e.g., 50% match required)
+            if (finalScore >= 0.5) {
+                suitableApplicants.add(applicant);
+            }
         }
 
-        double finalScore = (totalWeight > 0) ? matchScore / totalWeight : 0;
-
-        // Print matching result
-        if (finalScore == 1.0) {
-            System.out.println("✅ " + applicant.getName() + " FULLY matches skill requirements for " + job.getTitle());
-        } else if (finalScore >= 0.5) {
-            System.out.println("⚠️ " + applicant.getName() + " PARTIALLY matches skill requirements for " + job.getTitle());
-        } else {
-            System.out.println("❌ " + applicant.getName() + " does NOT match skill requirements for " + job.getTitle());
-        }
-
-        return finalScore;
+        return suitableApplicants;
     }
 
 
     // Experience Level Matching
-    public double experienceMatch(Applicant applicant, Job job) {
-        int jobExperienceRequired = job.getRequired_experience(); // Required years
-        int applicantExperience = applicant.getYearsOfExperience(); // Applicant's years
+    public DoublyLinkedListInterface<Applicant> experienceMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
 
-        double matchScore = Math.min((double) applicantExperience / jobExperienceRequired, 1.0);
+        int jobExperienceRequired = jobPost.getJob().getRequired_experience(); // Required years
 
-        // Print matching result
-        if (matchScore == 1.0) {
-            System.out.println("✅ " + applicant.getName() + " is a FULL match for " + job.getTitle() + 
-                               " (Required: " + jobExperienceRequired + " years, Applicant: " + applicantExperience + " years)");
-        } else if (matchScore >= 0.5) {
-            System.out.println("⚠️ " + applicant.getName() + " is a PARTIAL match for " + job.getTitle() + 
-                               " (Required: " + jobExperienceRequired + " years, Applicant: " + applicantExperience + " years)");
-        } else {
-            System.out.println("❌ " + applicant.getName() + " does NOT match " + job.getTitle() + 
-                               " (Required: " + jobExperienceRequired + " years, Applicant: " + applicantExperience + " years)");
-        }
+        for (Applicant applicant : applicants) {
+            int applicantExperience = applicant.getYearsOfExperience(); // Applicant's years
 
-        return matchScore;
-    }
-
-    // Location Preference Matching
-    public double locationMatch(Applicant applicant, Job job) {
-        String applicantLocation = applicant.getLocation();
-        String jobLocation = job.getLocation();
-
-        double matchScore;
-
-        if (applicantLocation.equalsIgnoreCase(jobLocation)) {
-            matchScore = 1.0; // Perfect match
-            System.out.println("✅ " + applicant.getName() + " is a FULL location match for " + job.getTitle() + 
-                               " (Job Location: " + jobLocation + ", Applicant Location: " + applicantLocation + ")");
-        } else {
-            matchScore = 0.0; // No match
-            System.out.println("❌ " + applicant.getName() + " is NOT a location match for " + job.getTitle() + 
-                               " (Job Location: " + jobLocation + ", Applicant Location: " + applicantLocation + ")");
-        }
-
-        return matchScore;
-    }
-
-
-    // Overall Match Score
-    public double overallMatchScore(Applicant applicant, Job job) {
-        double skillScore = skillMatch(applicant, job);
-        double experienceScore = experienceMatch(applicant, job);
-        double locationScore = locationMatch(applicant, job);
-
-        // Assigning weights to different factors
-        double skillWeight = 0.5;
-        double experienceWeight = 0.3;
-        double locationWeight = 0.2;
-
-        double overallScore = (skillScore * skillWeight) + (experienceScore * experienceWeight) + (locationScore * locationWeight);
-
-        // Printing the matching details
-        System.out.println("\n🔎 Matching Results for Applicant: " + applicant.getName() + " & Job: " + job.getTitle());
-        System.out.println("----------------------------------------------------");
-        System.out.printf("🛠  Skill Match Score: %.2f (Weight: %.1f)\n", skillScore, skillWeight);
-        System.out.printf("📅  Experience Match Score: %.2f (Weight: %.1f)\n", experienceScore, experienceWeight);
-        System.out.printf("📍  Location Match Score: %.2f (Weight: %.1f)\n", locationScore, locationWeight);
-        System.out.println("----------------------------------------------------");
-        System.out.printf("🏆 Overall Match Score: %.2f\n\n", overallScore);
-
-        return overallScore;
-    }
-
-
-    // Finding the Best Matching Job for an Applicant
-    public Job findBestMatchingJob(Applicant applicant, List<Job> jobList) {
-        Job bestJob = null;
-        double bestScore = 0;
-
-        for (Job job : jobList) {
-            double matchScore = overallMatchScore(applicant, job);
-            if (matchScore > bestScore) {
-                bestScore = matchScore;
-                bestJob = job;
+            if (applicantExperience >= jobExperienceRequired) {
+                suitableApplicants.add(applicant);           
             }
         }
 
-        if (bestJob == null) {
-            inputUI.displayMessage("No suitable job found for this applicant.");
+        return suitableApplicants;
+    }
+
+
+    // Location Preference Matching
+    public DoublyLinkedListInterface<Applicant> locationMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
+
+        String jobLocation = jobPost.getJob().getLocation();
+
+        for (Applicant applicant : applicants) {
+            String applicantLocation = applicant.getLocation();
+
+            double matchScore = applicantLocation.equalsIgnoreCase(jobLocation) ? 1.0 : 0.0;
+
+            // Add applicant to suitable list if they match the job location
+            if (matchScore == 1.0) {
+                suitableApplicants.add(applicant);
+            }
         }
-        return bestJob;
+
+        return suitableApplicants;
+    }
+    
+    // ======================== For InputUI ===========================================
+    
+    // Call method for skill matching
+    public void CompanySkillMatch() {
+        String companyId = inputUI.getInput("Enter Company ID: ");
+        DoublyLinkedListInterface<JobPost> jobPosts = jobPostManager.getJobPostsByCompanyId(companyId);
+
+        if (jobPosts.isEmpty()) {
+            System.out.println("No job posts found for the given company ID.");
+            return;
+        }
+
+        JobPost selectedJobPost = jobPostManager.selectJobPost(jobPosts);
+        if (selectedJobPost == null) {
+            System.out.println("No job post selected.");
+            return;
+        }
+
+        DoublyLinkedListInterface<Applicant> suitableApplicants = skillMatch(selectedJobPost, getAllApplicants());
+        listOfSuitableApplicant(suitableApplicants);
+    }
+
+    // Call method for experience matching
+    public void CompanyExperienceMatch() {
+        String companyId = inputUI.getInput("Enter Company ID: ");
+        DoublyLinkedListInterface<JobPost> jobPosts = jobPostManager.getJobPostsByCompanyId(companyId);
+
+        if (jobPosts.isEmpty()) {
+            System.out.println("No job posts found for the given company ID.");
+            return;
+        }
+
+        JobPost selectedJobPost = jobPostManager.selectJobPost(jobPosts);
+        if (selectedJobPost == null) {
+            System.out.println("No job post selected.");
+            return;
+        }
+
+        DoublyLinkedListInterface<Applicant> suitableApplicants = experienceMatch(selectedJobPost, getAllApplicants());
+        listOfSuitableApplicant(suitableApplicants);
+    }
+    
+    // Call method for location match
+    public void CompanyLocationMatch() {
+        String companyId = inputUI.getInput("Enter Company ID: ");
+        DoublyLinkedListInterface<JobPost> jobPosts = jobPostManager.getJobPostsByCompanyId(companyId);
+
+        if (jobPosts.isEmpty()) {
+            System.out.println("No job posts found for the given company ID.");
+            return;
+        }
+
+        JobPost selectedJobPost = jobPostManager.selectJobPost(jobPosts);
+        if (selectedJobPost == null) {
+            System.out.println("No job post selected.");
+            return;
+        }
+
+        DoublyLinkedListInterface<Applicant> suitableApplicants = locationMatch(selectedJobPost, getAllApplicants());
+        listOfSuitableApplicant(suitableApplicants);
+    }
+    
+    
+    //====================== For Applicant ==========================================
+    
+    
+    //==================== Helper Method ===========================================
+    public DoublyLinkedListInterface<Applicant> getAllApplicants() {
+        return applicantManager.getApplicants();
+    }
+    
+    //Print out the suitable applicant
+    public void listOfSuitableApplicant(DoublyLinkedListInterface<Applicant> suitableApplicants){
+        System.out.println("Qualified Applicants:");
+        for (Applicant result : suitableApplicants) {
+            System.out.println(result);
+        }
     }
 }

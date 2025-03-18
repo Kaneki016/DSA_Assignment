@@ -209,6 +209,48 @@ public class JobPostManager {
         return jobPostList;
     }
     
+    public DoublyLinkedListInterface<JobPost> getJobPostsByCompanyId(String companyId) {
+        DoublyLinkedListInterface<JobPost> filteredJobPosts = new DoublyLinkedList<>();
+
+        for (JobPost jobPost : jobPostList) {
+            if (jobPost.getCompany().getCompanyId().equalsIgnoreCase(companyId)) {
+                filteredJobPosts.add(jobPost);
+            }
+        }
+
+        return filteredJobPosts;
+    }
     
-    
+    public JobPost selectJobPost(DoublyLinkedListInterface<JobPost> jobPosts) {
+        if (jobPosts.isEmpty()) {
+            System.out.println("No job posts available.");
+            return null;
+        }
+
+        System.out.println("Available Job Posts:");
+        int index = 1;
+        for (JobPost jobPost : jobPosts) {
+            System.out.println(index + ". " + jobPost.getJob().getTitle()); // Show job title instead of full object
+            index++;
+        }
+
+        while (true) {
+            String input = inputUI.getInput("Select a job post by number: ").trim();
+            System.out.println("User input: " + input); // Debugging output
+
+            // Check if input is a number
+            if (!input.matches("\\d+")) { 
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+            
+
+            int choice = Integer.parseInt(input);
+            if (choice >= 1 && choice <= jobPosts.size()) {
+                return jobPosts.get(choice - 1); // Adjust for zero-based indexing
+            } else {
+                System.out.println("Invalid choice. Please enter a valid number between 1 and " + jobPosts.size());
+            }
+        }
+    }
 }
