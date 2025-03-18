@@ -10,6 +10,7 @@ import controller.JobRequirementsManager;
 import dao.MockDataGenerator;
 import java.util.Scanner;
 import entities.Applicant;
+import entities.ApplicantAppliedJob;
 import entities.Company;
 
 public class InputUI {
@@ -113,62 +114,70 @@ public class InputUI {
                 break;
             case 2:
                 // Middle side
-                menuUI.displayMiddleMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
-                switch (choice) {
-                    case 1:
-                        menuUI.displayApplicantMenu();
-                        handleMiddleSideMenuChoice();
-                        break;
-                    case 2:
-                        interviewManager.acceptTimeSlotMiddleMan();
-                        break;
-                    case 3:
-                        inputUI.handleCompanyManagement();
-                        break;
-                    case 4:
-                        menuUI.exitSystem();
-                        break;
-                    default:
-                        inputUI.invalidMenuSelection(1, 2);
-                        break;
+                boolean running1 = true;
+                while (running1) {
+                    menuUI.displayMiddleMainMenu();
+                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+                    switch (choice) {
+                        case 1:
+                            menuUI.displayApplicantMenu();
+                            handleMiddleSideMenuChoice();
+                            break;
+                        case 2:
+                            interviewManager.acceptTimeSlotMiddleMan();
+                            break;
+                        case 3:
+                            inputUI.handleCompanyManagement();
+                            break;
+                        case 4:
+                            running1 = false;
+                            menuUI.exitSystem();
+                            break;
+                        default:
+                            inputUI.invalidMenuSelection(1, 2);
+                            break;
+                    }
                 }
                 break;
 
             case 3:
                 // Company side
-                menuUI.displayCompanyMainMenu();
-                choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
-                switch (choice) {
-                    case 1:
-                        jobPostManager.addJobPost();
-                        break;
-                    case 2:
-                        jobPostManager.editJobPost();
-                        break;
-                    case 3:
-                        jobPostManager.removeJobPost();
-                        break;
-                    case 4:
-                        jobPostManager.displayJobPosts();
-                        break;
-                    case 5:
-                        jobManager.displayJobs();
-                        break;
-                    case 6:
-                        handleInterviewMenu();
-                        break;
-                    case 7:
-                        mockDataGenerator.addMockData();
-                        break;
-                    case 8:
-                        menuUI.exitSystem();
-                    default:
-                        inputUI.invalidMenuSelection(1, 8);
-                        break;
+                boolean running2 = true;
+                while (running2) {
+                    menuUI.displayCompanyMainMenu();
+                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
+                    switch (choice) {
+                        case 1:
+                            jobPostManager.addJobPost();
+                            break;
+                        case 2:
+                            jobPostManager.editJobPost();
+                            break;
+                        case 3:
+                            jobPostManager.removeJobPost();
+                            break;
+                        case 4:
+                            jobPostManager.displayJobPosts();
+                            break;
+                        case 5:
+                            jobManager.displayJobs();
+                            break;
+                        case 6:
+                            handleInterviewMenu();
+                            break;
+                        case 7:
+                            mockDataGenerator.addMockData();
+                            break;
+                        case 8:
+                            running2 = false;
+                            menuUI.exitSystem();
+                            break;
+                        default:
+                            inputUI.invalidMenuSelection(1, 8);
+                            break;
+                    }
                 }
                 break;
-
             case 4:
                 menuUI.exitSystem();
                 break;
@@ -255,7 +264,7 @@ public class InputUI {
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
             default:
-                inputUI.invalidMenuSelection(1, 3);
+                inputUI.invalidMenuSelection(1, 5);
                 break; // Add break here to prevent fall-through
         }
     }
@@ -271,29 +280,28 @@ public class InputUI {
             return;
         }
 
-        menuUI.displayInterviewMenu();
-
-        int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
-        switch (choice) {
-            case 1:
-                interviewManager.displayAssignInterviewTimeSlot(company);
-                break;
-            case 2:
-                // Recruitment Table
-                menuUI.displayRecruitmentMenu();
-                handleRecruitmentTableMenu(company);
-                break;
-            case 3:
-                // Report
-                handleInterviewReport(company);
-                break;
-            case 4:
-                menuUI.exitSystem();
-                break; // Add break here to prevent fall-through
-            default:
-                inputUI.invalidMenuSelection(1, 3);
-                break; // Add break here to prevent fall-through
+        boolean running = true;
+        while (running) {
+            menuUI.displayInterviewMenu();
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            switch (choice) {
+                case 1:
+                    interviewManager.displayAssignInterviewTimeSlot(company);
+                    break;
+                case 2:
+                    menuUI.displayRecruitmentMenu();
+                    handleRecruitmentTableMenu(company);
+                    break;
+                case 3:
+                    handleInterviewReport(company);
+                    break;
+                case 4:
+                    running = false; // Only exit this menu when exit option is selected
+                    break;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
         }
     }
 
@@ -303,7 +311,7 @@ public class InputUI {
         while (running) {
             menuUI.displayTimeSlotInterviewMenu(company.getCompanyName());
             int choice;
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 11);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 10);
             switch (choice) {
                 case 1:
                     // Assign Interview
@@ -338,11 +346,15 @@ public class InputUI {
                     interviewManager.viewTimeSlotTable(company);
                     break;
                 case 9:
+                    // Search
+                    interviewManager.searchInterview(company);
+                    break;
+                case 10:
                     // Return to previous menu
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 9);
+                    inputUI.invalidMenuSelection(1, 10);
                     break;
             }
         }
@@ -383,7 +395,7 @@ public class InputUI {
         while (running) {
             menuUI.displayInterviewReport();
             int choice;
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
             switch (choice) {
                 case 1:
                     // View Accepted Interview Report
@@ -397,7 +409,31 @@ public class InputUI {
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 4);
+                    inputUI.invalidMenuSelection(1, 3);
+                    break;
+            }
+        }
+    }
+
+    public void handleSearchInterview(ApplicantAppliedJob applicantAppliedJob) {
+        boolean running = true;
+        while (running) {
+            menuUI.displaySearchInterview();
+            int choice;
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 3);
+            switch (choice) {
+                case 1:
+                    // Dig Applicant Details
+                    interviewManager.searchInterviewApplicantDetails(applicantAppliedJob);
+                    break;
+                case 2:
+                    interviewManager.searchInterviewJobDetails(applicantAppliedJob);
+                    break;
+                case 3:
+                    running = false;
+                    break;
+                default:
+                    inputUI.invalidMenuSelection(1, 3);
                     break;
             }
         }
