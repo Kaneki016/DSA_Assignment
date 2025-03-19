@@ -12,10 +12,14 @@ public class InterviewManager {
 
     // ADT
     private DoublyLinkedListInterface<Interview> interview; // Existing interview list (if needed)
+    private DoublyLinkedListInterface<Interview> acceptedInterview; // Accepted interview list
+    private DoublyLinkedListInterface<Interview> rejectedInterview; // Rejected interview list
+    private DoublyLinkedListInterface<Interview> allCompletedInterview; // Waiting interview list
 
     // Controllers
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
     private static TimeSlotManager timeSlotManager = TimeSlotManager.getInstance();
+    private static ApplicantManager applicantManager = ApplicantManager.getInstance();
 
     // Boundary
     private static InputUI inputUI = new InputUI();
@@ -24,6 +28,9 @@ public class InterviewManager {
     // Instance --START
     private InterviewManager() {
         interview = new DoublyLinkedList<>();
+        acceptedInterview = new DoublyLinkedList<>();
+        rejectedInterview = new DoublyLinkedList<>();
+        allCompletedInterview = new DoublyLinkedList<>();
     }
 
     public static InterviewManager getInstance() {
@@ -379,15 +386,38 @@ public class InterviewManager {
     }
 
     // View Time SLot Table
-    public void viewTimeSlotTable() {
+    public void viewTimeSlotTable(Company company) {
         DoublyLinkedListInterface<TimeSlot> timeSlots = timeSlotManager.getTimeSlots();
         System.out.println("\n===== Time Slot Table =====");
         if (timeSlots.isEmpty()) {
             System.out.println("No time slots available.");
             return;
         }
+
+        DoublyLinkedListInterface<TimeSlot> availableTimeSlots = new DoublyLinkedList<>();
+        int slotNumber = 1;
+        for (TimeSlot timeSlot : timeSlots) {
+            boolean isOccupied = false;
+            // Check if this time slot is already used by another interview for the same
+            // company
+            for (Interview i : interview) {
+                if (i.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
+                        .equalsIgnoreCase(company.getCompanyName()) &&
+                        i.getTimeslot().getTime().equals(timeSlot.getTime()) &&
+                        i.getTimeslot().getDate().equals(timeSlot.getDate())) {
+                    isOccupied = true;
+                    break;
+                }
+            }
+
+            if (!isOccupied) {
+                availableTimeSlots.add(timeSlot);
+                slotNumber++;
+            }
+        }
+
         menuUI.printTimeSlotTableHeader();
-        menuUI.printTimeSlotRow(timeSlots);
+        menuUI.printTimeSlotRow(availableTimeSlots);
         System.out.println("+----------------+---------------------+---------------------+----------------+");
 
     }
@@ -436,13 +466,68 @@ public class InterviewManager {
         if (decision.equalsIgnoreCase("Accept")) {
             targetInterview.setStatus("Accepted");
             inputUI.displayMessage("Applicant accepted successfully!");
-            applicantAppliedJobManager.removeApplicantAppliedJob(targetInterview.getApplicantAppliedJob());
+
+            acceptedInterview.add(targetInterview);
+            allCompletedInterview.add(targetInterview);
+            interview.removeSpecific(targetInterview);
+
         } else if (decision.equalsIgnoreCase("Reject")) {
             targetInterview.setStatus("Rejected");
             inputUI.displayMessage("Applicant rejected successfully!");
-            applicantAppliedJobManager.removeApplicantAppliedJob(targetInterview.getApplicantAppliedJob());
+
+            rejectedInterview.add(targetInterview);
+            allCompletedInterview.add(targetInterview);
+            interview.removeSpecific(targetInterview);
         } else {
             inputUI.displayMessage("Invalid decision. Please enter 'Accept' or 'Reject'.");
         }
     }
+
+    public void viewAcceptedInterview(Company company) {
+        menuUI.printAcceptedInterviewReport(company, acceptedInterview);
+    }
+
+    // ...existing code...
+    public void viewRejectedInterviews(Company company) {
+        menuUI.printRejectedInterviewReport(company, rejectedInterview);
+    }
+
+    public void searchInterview(Company company) {
+        System.out.println("\n===== Search Interview =====");
+        ApplicantAppliedJob applicantAppliedJob = null;
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        boolean found = false;
+        for (Interview i : interview) {
+            if (i.getApplicantAppliedJob().getApplicant().getApplicantId().equals(applicantId)
+                    && i.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
+                            .equalsIgnoreCase(company.getCompanyName())) {
+                System.out.println(i);
+                applicantAppliedJob = i.getApplicantAppliedJob();
+                System.out.println("========================================");
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No interview found for this applicant.");
+        }
+
+        inputUI.displayMessage("Do you wish to further dig their information?");
+        inputUI.handleSearchInterview(applicantAppliedJob);
+
+    }
+
+    public void searchInterviewApplicantDetails(ApplicantAppliedJob applicantAppliedJob) {
+        menuUI.displaySearchInterviewApplicantDetails();
+        menuUI.printApplicantTableHeader();
+        menuUI.printApplicantRow(applicantAppliedJob.getApplicant());
+    }
+
+    public void searchInterviewJobDetails(ApplicantAppliedJob applicantAppliedJob) {
+        menuUI.displaySearchInterviewJobDetails();
+        System.out.println(applicantAppliedJob.getJobPost().getJob());
+    }
+
+
+
+
 }

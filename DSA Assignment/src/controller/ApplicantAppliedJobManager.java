@@ -36,7 +36,8 @@ public class ApplicantAppliedJobManager {
         applicantAppliedJob.removeSpecific(appliedJob);
         inputUI.displayMessage("Applicant applied job removed!\n");
     }
-
+    
+    // New getter method to expose the list
     public DoublyLinkedListInterface<ApplicantAppliedJob> getApplicantAppliedJobs() {
         return applicantAppliedJob;
     }

@@ -2,16 +2,21 @@ package boundary;
 
 import adt.DoublyLinkedListInterface;
 import entities.Applicant;
+import entities.Company;
+import entities.Interview;
 import entities.Skill;
 import entities.TimeSlot;
+import boundary.InputUI;
 
 /**
- * Handles the display of various menus in the system. Provides clear and
- * structured user interfaces for navigation.
- *
+ * Handles the display of various menus in the system.
+ * Provides clear and structured user interfaces for navigation.
+ * 
  * @author MAMBA
  */
 public class MenuUI {
+
+    private InputUI inputUI = new InputUI();
 
     public void displayMainMenu() {
         System.out.println("\n============================================");
@@ -39,7 +44,7 @@ public class MenuUI {
         System.out.println("        MIDDLE SIDE MENU        ");
         System.out.println("================================");
         System.out.println("1. Applicant Management");
-        System.out.println("2. Time Slot Management");
+        System.out.println("2. Time SLot Management");
         System.out.println("3. Company Management");
         System.out.println("4. Exit");
         System.out.println("================================");
@@ -60,8 +65,8 @@ public class MenuUI {
         System.out.println("9. Exit");
         System.out.println("================================");
     }
-    
-        public void displayCompanyManagement() {
+
+    public void displayCompanyManagement() {
         System.out.println("\n================================");
         System.out.println("        COMPANY MANAGEMENT       ");
         System.out.println("================================");
@@ -105,11 +110,12 @@ public class MenuUI {
         System.out.println("================================");
         System.out.println("1. Assign and View Interview Slots");
         System.out.println("2. Recruitment Table");
-        System.out.println("3. Exit");
+        System.out.println("3. Interview Overall Report");
+        System.out.println("4. Exit");
         System.out.println("================================");
     }
 
-    //INTERVIEW
+    // INTERVIEW
     public void displayTimeSlotInterviewMenu(String company) {
         System.out.println("\n===============================================");
         System.out.println("    " + company.toUpperCase() + " - INTERVIEW TIME SLOT MANAGEMENT   ");
@@ -122,7 +128,7 @@ public class MenuUI {
         System.out.println("6. Suggest Time Slot To Middle Side");
         System.out.println("7. Give Interview Feedback");
         System.out.println("8. View Time Slot Table");
-        System.out.println("9. Recruitment Table");
+        System.out.println("9. Search");
         System.out.println("10. Back to Previous Menu");
         System.out.println("===============================================");
     }
@@ -137,8 +143,8 @@ public class MenuUI {
         System.out.println("4. Back to Previous Menu");
         System.out.println("===============================================");
     }
-    
-        public void printTimeSlotTableHeader() {
+
+    public void printTimeSlotTableHeader() {
         System.out.println("+----------------+---------------------+---------------------+----------------+");
         System.out.println("| Time Slot ID   | Start Time          | End Time            | Availability   |");
         System.out.println("+----------------+---------------------+---------------------+----------------+");
@@ -148,7 +154,17 @@ public class MenuUI {
         for (TimeSlot timeSlot : timeSlots) {
             System.out.println(timeSlot);
         }
-        
+
+    }
+
+    public void displayInterviewReport() {
+        System.out.println("\n===============================================");
+        System.out.println("           INTERVIEW OVERALL REPORT            ");
+        System.out.println("===============================================");
+        System.out.println("1. View Accepted Interview");
+        System.out.println("2. View Rejected Interview");
+        System.out.println("3. Back to Previous Menu");
+        System.out.println("===============================================");
     }
 
     public void acceptOrRejectApplicantsMenu() {
@@ -159,6 +175,97 @@ public class MenuUI {
         System.out.println("2. Reject Applicant");
         System.out.println("3. Back to Previous Menu");
         System.out.println("===============================================");
+    }
+
+    public void displaySearchInterview() {
+        System.out.println("\n===============================================");
+        System.out.println("           CONTINUE TO DIG?          ");
+        System.out.println("===============================================");
+        System.out.println("1. Their Applied Job Details");
+        System.out.println("2. Job Post Details");
+        System.out.println("3. Exit");
+        System.out.println("===============================================");
+    }
+
+    public void displaySearchInterviewApplicantDetails() {
+        System.out.println("\n===============================================");
+        System.out.println("           SEARCH APPLICANT DETAILS            ");
+        System.out.println("===============================================");
+    }
+
+    public void displaySearchInterviewJobDetails() {
+        System.out.println("\n===============================================");
+        System.out.println("           SEARCH JOB DETAILS            ");
+        System.out.println("===============================================");
+    }
+
+
+     public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
+        final int width = 80;
+        System.out.println("=".repeat(width));
+        System.out.println(inputUI.centerString("ACCEPTED INTERVIEW REPORT", width));
+        System.out.println("=".repeat(width));
+        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
+        System.out.println("=".repeat(width));
+        System.out.println();
+
+        boolean found = false;
+        for (Interview interview : acceptedInterview) {
+            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
+                    .equalsIgnoreCase(company.getCompanyName())) {
+                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
+                System.out.println(inputUI.centerString("Applicant ID : "
+                        + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
+                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
+                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
+                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
+                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
+                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
+                System.out.println("-".repeat(width));
+                System.out.println();
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println(inputUI.centerString("No accepted interviews found for this company.", width));
+        }
+
+        System.out.println("=".repeat(width));
+    }
+
+    public void printRejectedInterviewReport(Company company, DoublyLinkedListInterface<Interview> rejectedInterview) {
+        final int width = 80;
+        System.out.println("=".repeat(width));
+        System.out.println(inputUI.centerString("REJECTED INTERVIEW REPORT", width));
+        System.out.println("=".repeat(width));
+        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
+        System.out.println("=".repeat(width));
+        System.out.println();
+
+        boolean found = false;
+        for (Interview interview : rejectedInterview) {
+            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
+                    .equalsIgnoreCase(company.getCompanyName())) {
+                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
+                System.out.println(inputUI.centerString("Applicant ID : "
+                        + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
+                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
+                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
+                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
+                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
+                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
+                System.out.println("-".repeat(width));
+                System.out.println();
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println(inputUI.centerString("No rejected interviews found for this company.", width));
+        }
+
+        System.out.println("=".repeat(width));
     }
     
     public void displayJobMatchingMenu() {
@@ -180,9 +287,12 @@ public class MenuUI {
 
     // Print the applicant table header
     public void printApplicantTableHeader() {
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
-        System.out.println("| Applicant ID | Name                 | Age   | Location        | Exp (Yr)   | Education                 | Skills                         |");
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
+        System.out.println(
+                "| Applicant ID | Name                 | Age   | Location        | Exp (Yr)   | Education                 | Skills                         |");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
     }
 
     // Print a single row for an applicant
@@ -193,7 +303,8 @@ public class MenuUI {
                 applicant.getApplicantId(), applicant.getName(), applicant.getAge(),
                 applicant.getLocation(), applicant.getYearsOfExperience(), applicant.getEducationLevel(), skills);
 
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+");
     }
 
     // Print a table of applicants

@@ -31,6 +31,7 @@ public class JobPostManager {
 
         // ---------- Company Selection ----------
         CompanyManager companyManager = CompanyManager.getInstance();
+
         if (companyManager.isEmpty()) {
             inputUI.displayMessage("No companies available. Please add a company first!\n");
             return;
@@ -132,6 +133,7 @@ public class JobPostManager {
         // Option to update the Company
         if (inputUI.getInput("Change Company? (y/n): ").equalsIgnoreCase("y")) {
             CompanyManager companyManager = CompanyManager.getInstance();
+
             companyManager.displayCompanies();
             String newCompanyId = inputUI.getInput("Enter New Company ID: ");
             Company newCompany = companyManager.findCompanyById(newCompanyId);
@@ -208,7 +210,7 @@ public class JobPostManager {
     public DoublyLinkedListInterface<JobPost> getJobPostList() {
         return jobPostList;
     }
-    
+
     public DoublyLinkedListInterface<JobPost> getJobPostsByCompanyId(String companyId) {
         DoublyLinkedListInterface<JobPost> filteredJobPosts = new DoublyLinkedList<>();
 
