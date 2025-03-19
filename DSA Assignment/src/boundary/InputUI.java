@@ -163,6 +163,8 @@ public class InputUI {
                             mockDataGenerator.addMockData();
                             break;
                         case 8:
+                            handleCompanyMatchingCategory();
+                        case 9:
                             running2 = false;
                             menuUI.exitSystem();
                             break;
@@ -449,4 +451,34 @@ public class InputUI {
         return sb.toString();
     }
 
+        public static void handleCompanyMatchingCategory() {
+
+        while (true) {
+            // Display job matching menu
+            menuUI.displayJobMatchingMenu();
+
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+
+            switch (choice) {
+                case 1:
+                    applicantAppliedJobManager.CompanySkillMatch();
+                    break;
+
+                case 2:
+                    applicantAppliedJobManager.CompanyExperienceMatch();
+                    break;
+
+                case 3:
+                    applicantAppliedJobManager.CompanyLocationMatch();
+                    break;
+
+                case 4:
+                    menuUI.exitSystem();
+                    return;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
+        }
+    }
 }
