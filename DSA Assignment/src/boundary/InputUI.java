@@ -139,7 +139,7 @@ public class InputUI {
                 boolean running2 = true;
                 while (running2) {
                     menuUI.displayCompanyMainMenu();
-                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
+                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 9);
                     switch (choice) {
                         case 1:
                             jobPostManager.addJobPost();
@@ -169,7 +169,7 @@ public class InputUI {
                             menuUI.exitSystem();
                             break;
                         default:
-                            inputUI.invalidMenuSelection(1, 8);
+                            inputUI.invalidMenuSelection(1, 9);
                             break;
                     }
                 }
@@ -230,10 +230,13 @@ public class InputUI {
                 applicantManager.editApplicantProfile();
                 break;
             case 3:
+                handleApplicantMatchingCategory();
+                break;
+            case 4:
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
             default:
-                inputUI.invalidMenuSelection(1, 3);
+                inputUI.invalidMenuSelection(1, 4);
                 break; // Add break here to prevent fall-through
         }
     }
@@ -451,7 +454,7 @@ public class InputUI {
         return sb.toString();
     }
 
-        public static void handleCompanyMatchingCategory() {
+    public static void handleCompanyMatchingCategory() {
 
         while (true) {
             // Display job matching menu
@@ -470,6 +473,37 @@ public class InputUI {
 
                 case 3:
                     applicantAppliedJobManager.CompanyLocationMatch();
+                    break;
+
+                case 4:
+                    menuUI.exitSystem();
+                    return;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
+        }
+    }
+        
+    public static void handleApplicantMatchingCategory() {
+
+        while (true) {
+            // Display job matching menu
+            menuUI.displayJobMatchingMenu();
+
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+
+            switch (choice) {
+                case 1:
+                    applicantAppliedJobManager.ApplicantSkillMatch();
+                    break;
+
+                case 2:
+                    applicantAppliedJobManager.ApplicantExperienceMatch();
+                    break;
+
+                case 3:
+                    applicantAppliedJobManager.ApplicantLocationMatch();
                     break;
 
                 case 4:

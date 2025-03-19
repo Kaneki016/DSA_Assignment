@@ -35,7 +35,8 @@ public class MenuUI {
         System.out.println("============================================");
         System.out.println("| 1. Register as a New Applicant          |");
         System.out.println("| 2. Edit Applicant                       |");
-        System.out.println("| 3. Exit                                 |");
+        System.out.println("| 3. Matching Management                       |");
+        System.out.println("| 4. Exit                                 |");
         System.out.println("============================================");
     }
 
