@@ -42,7 +42,7 @@ public class ApplicantAppliedJobManager {
         return applicantAppliedJob;
     }
 
-    //====================== For Company =============================================================
+    //====================== Matching Method =============================================================
     
     // Skill Matching with Proficiency Levels - Returns Match Score
     public DoublyLinkedListInterface<Applicant> skillMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
@@ -132,7 +132,108 @@ public class ApplicantAppliedJobManager {
         return suitableApplicants;
     }
     
-    // ======================== For InputUI ===========================================
+    //====================== For Applicant ==========================================
+    // Call method for finding suitable jobs for an applicant based on skills
+    public void ApplicantSkillMatch() {
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+
+        if (applicant == null) {
+            System.out.println("Applicant not found.");
+            return;
+        }
+
+        DoublyLinkedListInterface<JobPost> allJobPosts = jobPostManager.getJobPostList();
+
+        if (allJobPosts.isEmpty()) {
+            System.out.println("No job posts available.");
+            return;
+        }
+
+        DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+
+        // Check each job post to see if the applicant qualifies
+        for (JobPost jobPost : allJobPosts) {
+            DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
+            applicants.add(applicant); // Only checking this applicant
+
+            if (!skillMatch(jobPost, applicants).isEmpty()) { // If the applicant matches this job
+                suitableJobs.add(jobPost);
+            }
+        }
+
+        // Display suitable jobs
+        listOfSuitableJobPost(suitableJobs);
+    }
+    
+    // Call method for finding suitable jobs for an applicant based on experience
+    public void ApplicantExperienceMatch() {
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+
+        if (applicant == null) {
+            System.out.println("Applicant not found.");
+            return;
+        }
+
+        DoublyLinkedListInterface<JobPost> allJobPosts = jobPostManager.getJobPostList();
+
+        if (allJobPosts.isEmpty()) {
+            System.out.println("No job posts available.");
+            return;
+        }
+        
+        DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+
+        // Find suitable job posts for the applicant
+        for (JobPost jobPost : allJobPosts) {
+            DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
+            applicants.add(applicant); // Only checking this applicant
+
+            if (!experienceMatch(jobPost, applicants).isEmpty()) { // If the applicant matches this job
+                suitableJobs.add(jobPost);
+            }
+        }
+
+        // Display suitable jobs
+        listOfSuitableJobPost(suitableJobs);
+    }
+    
+    ///Call method for finding suitable jobs for an applicant based on applicant location
+    public void ApplicantLocationMatch() {
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+
+        if (applicant == null) {
+            System.out.println("Applicant not found.");
+            return;
+        }
+
+        DoublyLinkedListInterface<JobPost> allJobPosts = jobPostManager.getJobPostList();
+
+        if (allJobPosts.isEmpty()) {
+            System.out.println("No job posts available.");
+            return;
+        }
+        
+        DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+
+        // Find suitable job posts for the applicant
+        for (JobPost jobPost : allJobPosts) {
+            DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
+            applicants.add(applicant); // Only checking this applicant
+
+            if (!locationMatch(jobPost, applicants).isEmpty()) { // If the applicant matches this job
+                suitableJobs.add(jobPost);
+            }
+        }
+
+        listOfSuitableJobPost(suitableJobs);
+    }
+
+
+    
+    // ======================== For Company  ===========================================
     
     // Call method for skill matching
     public void CompanySkillMatch() {
@@ -195,9 +296,7 @@ public class ApplicantAppliedJobManager {
     }
     
     
-    //====================== For Applicant ==========================================
-    
-    
+
     //==================== Helper Method ===========================================
     public DoublyLinkedListInterface<Applicant> getAllApplicants() {
         return applicantManager.getApplicants();
@@ -208,6 +307,19 @@ public class ApplicantAppliedJobManager {
         System.out.println("Qualified Applicants:");
         for (Applicant result : suitableApplicants) {
             System.out.println(result);
+        }
+    }
+    
+    //Print out the suitable job post
+        public void listOfSuitableJobPost(DoublyLinkedListInterface<JobPost> suitableJobPost){
+        // Display suitable jobs
+        if (suitableJobPost.isEmpty()) {
+            System.out.println("❌ No suitable jobs found for you.");
+        } else {
+            System.out.println("✅ Suitable Jobs for You:");
+            for (JobPost jobPost : suitableJobPost) {
+                System.out.println("- " + jobPost);
+            }
         }
     }
 }
