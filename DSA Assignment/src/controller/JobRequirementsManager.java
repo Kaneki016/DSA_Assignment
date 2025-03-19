@@ -177,5 +177,5 @@ public class JobRequirementsManager {
     public void replaceRequirement(int index, JobRequirements newRequirement) {
         jobRequirementsList.replace(index, newRequirement);
     }
-    
 }
+

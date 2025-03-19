@@ -31,7 +31,7 @@ public class MockDataGenerator {
     //Controller instances
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static CompanyManager companyManager = CompanyManager.getInstance();
     private static JobManager jobManager = JobManager.getInstance();
     private static JobPostManager jobPostManager = JobPostManager.getInstance();
     private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
@@ -49,7 +49,7 @@ public class MockDataGenerator {
         // 2. Create skills and applicants using ApplicantManager methods
         // Applicant 1: Lim
         DoublyLinkedListInterface<Skill> skillSet1 = new DoublyLinkedList<>();
-        skillSet1 = applicantManager.addApplicantSkill(skillSet1, "Leadership", "Mental", 3);
+        skillSet1 = applicantManager.addApplicantSkill(skillSet1, "Leadership", "Mental", 2);
         skillSet1 = applicantManager.addApplicantSkill(skillSet1, "C++", "Programming", 5);
         Applicant applicant1 = new Applicant("Lim", 18, "KL", 3, "Degree", skillSet1);
         applicantManager.addApplicant(applicant1);
@@ -76,7 +76,7 @@ public class MockDataGenerator {
         
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
-        JobRequirements requirement1 = new JobRequirements("Leadership", "Mental", "3");
+        JobRequirements requirement1 = new JobRequirements("Leadership", "3","Mental");
         jobRequirementsManager.addJobRequirement(requirement1);
         jobRequirements.add(requirement1);
 

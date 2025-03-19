@@ -48,4 +48,8 @@ public class SkillManager {
         skills.removeAll();
         return skills;
     }
+    
+        public DoublyLinkedListInterface<Skill> getSkillList() {
+        return skills;
+    }
 }

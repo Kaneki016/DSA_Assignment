@@ -1,17 +1,10 @@
 package boundary;
 
-import controller.ApplicantManager;
-import controller.InterviewManager;
-import controller.CompanyManager3;
-import controller.TimeSlotManager;
-import controller.JobManager;
-import controller.JobPostManager;
-import controller.JobRequirementsManager;
+import controller.*;
 import dao.MockDataGenerator;
 import java.util.Scanner;
-import entities.Applicant;
-import entities.ApplicantAppliedJob;
-import entities.Company;
+import entities.*;
+
 
 public class InputUI {
 
@@ -21,12 +14,13 @@ public class InputUI {
     private static MockDataGenerator mockDataGenerator = MockDataGenerator.getInstance();
 
     // Controller
-    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static CompanyManager companyManager = CompanyManager.getInstance();
     private static JobManager jobManager = JobManager.getInstance();
     private static JobPostManager jobPostManager = JobPostManager.getInstance();
     private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
+    private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
 
     // Boundary
     private static MenuUI menuUI = new MenuUI();
@@ -169,6 +163,8 @@ public class InputUI {
                             mockDataGenerator.addMockData();
                             break;
                         case 8:
+                            handleCompanyMatchingCategory();
+                        case 9:
                             running2 = false;
                             menuUI.exitSystem();
                             break;
@@ -455,4 +451,34 @@ public class InputUI {
         return sb.toString();
     }
 
+        public static void handleCompanyMatchingCategory() {
+
+        while (true) {
+            // Display job matching menu
+            menuUI.displayJobMatchingMenu();
+
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+
+            switch (choice) {
+                case 1:
+                    applicantAppliedJobManager.CompanySkillMatch();
+                    break;
+
+                case 2:
+                    applicantAppliedJobManager.CompanyExperienceMatch();
+                    break;
+
+                case 3:
+                    applicantAppliedJobManager.CompanyLocationMatch();
+                    break;
+
+                case 4:
+                    menuUI.exitSystem();
+                    return;
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break;
+            }
+        }
+    }
 }

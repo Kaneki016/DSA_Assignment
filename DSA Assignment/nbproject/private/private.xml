@@ -2,18 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/controller/CompanyManager.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/adt/DoublyLinkedList.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/controller/InterviewManager.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/entities/TimeSlot.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/modules/MainSystem.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/boundary/MenuUI.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/controller/ApplicantManager.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/boundary/InputUI.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/controller/ApplicantAppliedJobManager.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/adt/DoublyLinkedListInterface.java</file>
-            <file>file:/C:/Users/User/Downloads/DSA_Assignment-waiming/DSA_Assignment-waiming/DSA%20Assignment/src/dao/MockDataGenerator.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

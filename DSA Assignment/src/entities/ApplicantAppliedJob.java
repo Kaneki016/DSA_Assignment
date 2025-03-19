@@ -10,18 +10,21 @@ package entities;
  */
 public class ApplicantAppliedJob {
 
-    private static int nextId = 1;  // Auto-increment ID counter
-
-    private String applicantAppliedJobId;
     private Applicant applicant;
     private JobPost jobPost;
+    private double matchScore;
 
+    public ApplicantAppliedJob(Applicant applicant, JobPost jobPost, double matchScore) {
+        this.applicant = applicant;
+        this.jobPost = jobPost;
+        this.matchScore = matchScore;
+    }
+    
     public ApplicantAppliedJob(Applicant applicant, JobPost jobPost) {
-        this.applicantAppliedJobId = String.format("AAJ%03d", nextId++); // Assign current ID and increment for the next Company
         this.applicant = applicant;
         this.jobPost = jobPost;
     }
-
+    
     public Applicant getApplicant() {
         return applicant;
     }
@@ -30,12 +33,14 @@ public class ApplicantAppliedJob {
         return jobPost;
     }
 
-    public void setApplicant(Applicant applicant) {
-        this.applicant = applicant;
+    public double getMatchScore() {
+        return matchScore;
     }
 
-    public void setJobPost(JobPost jobPost) {
-        this.jobPost = jobPost;
+    @Override
+    public String toString() {
+        return "Applicant: " + applicant.getName() + 
+               " | Job: " + jobPost.getJob().getTitle() + 
+               " | Match Score: " + matchScore;
     }
-
 }

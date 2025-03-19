@@ -9,9 +9,9 @@ import entities.TimeSlot;
 import boundary.InputUI;
 
 /**
- * Handles the display of various menus in the system. Provides clear and
- * structured user interfaces for navigation.
- *
+ * Handles the display of various menus in the system.
+ * Provides clear and structured user interfaces for navigation.
+ * 
  * @author MAMBA
  */
 public class MenuUI {
@@ -61,7 +61,8 @@ public class MenuUI {
         System.out.println("5. View Job");
         System.out.println("6. Interview Management");
         System.out.println("7. Generate Mock Data");
-        System.out.println("8. Exit");
+        System.out.println("8. Matching Management");
+        System.out.println("9. Exit");
         System.out.println("================================");
     }
 
@@ -265,6 +266,17 @@ public class MenuUI {
         }
 
         System.out.println("=".repeat(width));
+    }
+    
+    public void displayJobMatchingMenu() {
+        System.out.println("\n===============================================");
+        System.out.println("                        MATCHING CATEGORIES     ");
+        System.out.println("===============================================");
+        System.out.println("1. Proficiency Levels");
+        System.out.println("2. Experience Levels and Job Requirements");
+        System.out.println("3. Location Preferences");
+        System.out.println("4. Exit");
+        System.out.println("===============================================");
     }
 
     public void exitSystem() {
