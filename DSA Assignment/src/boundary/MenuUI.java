@@ -180,9 +180,9 @@ public class MenuUI {
 
     public void displaySearchInterview() {
         System.out.println("\n===============================================");
-        System.out.println("           CONTINUE TO DIG?          ");
+        System.out.println("             CONTINUE TO DIG?          ");
         System.out.println("===============================================");
-        System.out.println("1. Their Applied Job Details");
+        System.out.println("1. Applicant's Details");
         System.out.println("2. Job Post Details");
         System.out.println("3. Exit");
         System.out.println("===============================================");
@@ -271,7 +271,7 @@ public class MenuUI {
     
     public void displayJobMatchingMenu() {
         System.out.println("\n===============================================");
-        System.out.println("                        MATCHING CATEGORIES     ");
+        System.out.println("            MATCHING CATEGORIES     ");
         System.out.println("===============================================");
         System.out.println("1. Proficiency Levels");
         System.out.println("2. Experience Levels and Job Requirements");
