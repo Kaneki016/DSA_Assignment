@@ -8,9 +8,10 @@ public class ApplicantAppliedJobManager {
 
     private static ApplicantAppliedJobManager instance;
     private static DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
+    private static DoublyLinkedListInterface<Interview> interviews;
 
     // Boundary
-    private  static InputUI inputUI = new InputUI();
+    private static InputUI inputUI = new InputUI();
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -26,26 +27,197 @@ public class ApplicantAppliedJobManager {
     // Controllers
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static JobPostManager jobPostManager = JobPostManager.getInstance();
+    private static InterviewManager interviewManager = InterviewManager.getInstance();
 
-    public void addApplicantAppliedJob(ApplicantAppliedJob newAppliedJob) {
-        applicantAppliedJob.add(newAppliedJob);
-        inputUI.displayMessage("A new applicant applied job added!\n");
+    public void viewAvailableJobs() {
+
+        jobPostManager.displayJobPosts();
+        inputUI.getInput("Press Enter to continue...");
+
     }
 
+    public void addApplicantAppliedJob(ApplicantAppliedJob newApplication) {
+        applicantAppliedJob.add(newApplication);
+    }
+
+    public void applyJob() {
+        System.out.println("\n======= Apply for a Job =======");
+
+        // Step 1: Get Applicant ID
+        String applicantId = inputUI.getInput("Enter your Applicant ID: ");
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+
+        // Step 2: Validate Applicant
+        if (applicant == null) {
+            inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
+            return;
+        }
+
+        // Step 3: Retrieve available jobs
+        DoublyLinkedListInterface<JobPost> jobPosts = jobPostManager.getJobPostList();
+        if (jobPosts.isEmpty()) {
+            inputUI.displayMessage("❌ No available jobs at the moment.");
+            return;
+        }
+
+        // Step 4: Display available jobs
+        jobPostManager.displayJobPosts();
+
+        // Step 5: Get user choice
+        int choice = inputUI.getValidIntInput("\nEnter the job number to apply for: ", 1, jobPosts.getSize());
+
+        // Step 6: Validate choice and get the selected job
+        JobPost selectedJobPost = jobPosts.get(choice - 1);
+
+        boolean applicationExists = false;
+        for (ApplicantAppliedJob aaj : applicantAppliedJob) {
+            if (aaj.getApplicant().equals(applicant) && aaj.getJobPost().equals(selectedJobPost)) {
+                applicationExists = true;
+                break;
+            }
+        }
+
+        if (applicationExists) {
+            inputUI.displayMessage("❌ Error: Application already exists!");
+            return;
+        } else {
+            ApplicantAppliedJob newApplication = new ApplicantAppliedJob(applicant, selectedJobPost);
+            addApplicantAppliedJob(newApplication);
+        }
+
+        inputUI.displayMessage("\n✅ Application submitted successfully!");
+        inputUI.displayMessage("You applied for: " + selectedJobPost.getJob().getTitle()
+                + " at " + selectedJobPost.getCompany().getCompanyName());
+    }
+
+    // remove
     public void removeApplicantAppliedJob(ApplicantAppliedJob appliedJob) {
-        applicantAppliedJob.removeSpecific(appliedJob);
-        inputUI.displayMessage("Applicant applied job removed!\n");
+        if (applicantAppliedJob.contains(appliedJob)) {
+            applicantAppliedJob.removeSpecific(appliedJob);
+            inputUI.displayMessage("Applicant applied job removed!\n");
+        } else {
+            inputUI.displayMessage("Error: Job application not found!\n");
+        }
     }
-    
+
+    public void handleCheckMyApplications() {
+        // Step 1: Get Applicant ID using InputUI
+        String applicantId = inputUI.getInput("\nEnter your Applicant ID (or type 'back' to return): ");
+
+        if (applicantId.equalsIgnoreCase("back")) {
+            inputUI.displayMessage("Returning to main menu...");
+            return;
+        }
+
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+
+        if (applicant == null) {
+            inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
+            return;
+        }
+
+        // Step 2: Retrieve interview data
+        DoublyLinkedListInterface<Interview> interviews = interviewManager.getInterviews();
+
+        // Step 3: Display the user's job applications
+        int index = 1;
+        int totalApplications = 0;
+        DoublyLinkedListInterface<ApplicantAppliedJob> userApplications = new DoublyLinkedList<>();
+
+        inputUI.displayMessage("\n📌 Your Submitted Job Applications:");
+        for (ApplicantAppliedJob application : applicantAppliedJob) {
+            if (application.getApplicant().equals(applicant)) {
+                // Default values if no interview is scheduled
+                String interviewStatus = "Pending";
+                String interviewTimeSlot = "Not Scheduled";
+
+                // Step 4: Check if an interview exists for this application
+                for (Interview interview : interviews) {
+                    if (interview.getApplicantAppliedJob().equals(application)) {
+                        interviewStatus = interview.getStatus();
+                        TimeSlot timeslot = interview.getTimeslot();
+                        interviewTimeSlot = timeslot.getTime() + ", " + timeslot.getDate() + " at "
+                                + timeslot.getLocation();
+                        break;
+                    }
+                }
+
+                // Step 5: Display application details with interview info
+                inputUI.displayMessage(index + ". " + application.getJobPost().getJob().getTitle()
+                        + " at " + application.getJobPost().getCompany().getCompanyName()
+                        + " | Status: " + interviewStatus
+                        + " | Interview TimeSlot: " + interviewTimeSlot);
+
+                userApplications.add(application); // Store indexed applications
+                index++;
+                totalApplications++;
+            }
+        }
+
+        if (totalApplications == 0) {
+            inputUI.displayMessage("❌ You have not applied for any jobs yet.");
+            return;
+        }
+
+        // Step 6: Ask user to select an application to take action
+        int choice = inputUI.getValidIntInput(
+                "\nEnter the number of the application to take action (or type 0 to go back): ", 0, totalApplications);
+
+        if (choice == 0) {
+            inputUI.displayMessage("Returning to previous menu...");
+            return;
+        }
+
+        ApplicantAppliedJob selectedApplication = userApplications.get(choice - 1);
+
+        // Step 7: Ask user to Accept or Reject
+        inputUI.displayMessage("\nYou selected: " + selectedApplication.getJobPost().getJob().getTitle()
+                + " at " + selectedApplication.getJobPost().getCompany().getCompanyName());
+
+        String action;
+        do {
+            action = inputUI.getInput("Do you want to ACCEPT or REJECT this application? (accept/reject/back): ")
+                    .toLowerCase();
+
+            if (action.equals("back")) {
+                inputUI.displayMessage("Returning to application selection...");
+                return;
+            } else if (action.equals("accept")) {
+                // Step 8: Accept the application (Confirm the interview if scheduled)
+                boolean interviewFound = false;
+                for (Interview interview : interviews) {
+                    if (interview.getApplicantAppliedJob().equals(selectedApplication)) {
+                        interview.setStatus("Accepted");
+                        inputUI.displayMessage("\n✅ You have accepted the interview for: "
+                                + selectedApplication.getJobPost().getJob().getTitle());
+                        interviewFound = true;
+                        break;
+                    }
+                }
+                if (!interviewFound) {
+                    inputUI.displayMessage("\n⚠ No interview scheduled yet. Your application remains in process.");
+                }
+            } else if (action.equals("reject")) {
+                // Step 9: Reject the application
+                removeApplicantAppliedJob(selectedApplication);
+                inputUI.displayMessage("\n❌ You have rejected the job application for: "
+                        + selectedApplication.getJobPost().getJob().getTitle());
+            } else {
+                inputUI.displayMessage("Invalid choice. Please enter 'accept', 'reject', or 'back'.");
+            }
+        } while (!action.equals("accept") && !action.equals("reject"));
+    }
+
     // New getter method to expose the list
     public DoublyLinkedListInterface<ApplicantAppliedJob> getApplicantAppliedJobs() {
         return applicantAppliedJob;
     }
 
-    //====================== Matching Method =============================================================
-    
+    // ====================== Matching Method
+    // =============================================================
     // Skill Matching with Proficiency Levels - Returns Match Score
-    public DoublyLinkedListInterface<Applicant> skillMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+    public DoublyLinkedListInterface<Applicant> skillMatch(JobPost jobPost,
+            DoublyLinkedListInterface<Applicant> applicants) {
         DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
 
         // Get job requirements
@@ -62,8 +234,9 @@ public class ApplicantAppliedJobManager {
 
                 int requiredProficiency = Integer.parseInt(proficiencyLevelStr);
 
-                if (requiredProficiency == 0) continue; // Avoid division by zero
-
+                if (requiredProficiency == 0) {
+                    continue; // Avoid division by zero
+                }
 
                 // Find applicant's proficiency level for this skill
                 int applicantProficiency = 0;
@@ -93,9 +266,9 @@ public class ApplicantAppliedJobManager {
         return suitableApplicants;
     }
 
-
     // Experience Level Matching
-    public DoublyLinkedListInterface<Applicant> experienceMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+    public DoublyLinkedListInterface<Applicant> experienceMatch(JobPost jobPost,
+            DoublyLinkedListInterface<Applicant> applicants) {
         DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
 
         int jobExperienceRequired = jobPost.getJob().getRequired_experience(); // Required years
@@ -104,16 +277,16 @@ public class ApplicantAppliedJobManager {
             int applicantExperience = applicant.getYearsOfExperience(); // Applicant's years
 
             if (applicantExperience >= jobExperienceRequired) {
-                suitableApplicants.add(applicant);           
+                suitableApplicants.add(applicant);
             }
         }
 
         return suitableApplicants;
     }
 
-
     // Location Preference Matching
-    public DoublyLinkedListInterface<Applicant> locationMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
+    public DoublyLinkedListInterface<Applicant> locationMatch(JobPost jobPost,
+            DoublyLinkedListInterface<Applicant> applicants) {
         DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
 
         String jobLocation = jobPost.getJob().getLocation();
@@ -131,8 +304,9 @@ public class ApplicantAppliedJobManager {
 
         return suitableApplicants;
     }
-    
-    //====================== For Applicant ==========================================
+
+    // ====================== For Applicant
+    // ==========================================
     // Call method for finding suitable jobs for an applicant based on skills
     public void ApplicantSkillMatch() {
         String applicantId = inputUI.getInput("Enter Applicant ID: ");
@@ -165,7 +339,7 @@ public class ApplicantAppliedJobManager {
         // Display suitable jobs
         listOfSuitableJobPost(suitableJobs);
     }
-    
+
     // Call method for finding suitable jobs for an applicant based on experience
     public void ApplicantExperienceMatch() {
         String applicantId = inputUI.getInput("Enter Applicant ID: ");
@@ -182,7 +356,7 @@ public class ApplicantAppliedJobManager {
             System.out.println("No job posts available.");
             return;
         }
-        
+
         DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
 
         // Find suitable job posts for the applicant
@@ -198,7 +372,7 @@ public class ApplicantAppliedJobManager {
         // Display suitable jobs
         listOfSuitableJobPost(suitableJobs);
     }
-    
+
     ///Call method for finding suitable jobs for an applicant based on applicant location
     public void ApplicantLocationMatch() {
         String applicantId = inputUI.getInput("Enter Applicant ID: ");
@@ -215,7 +389,7 @@ public class ApplicantAppliedJobManager {
             System.out.println("No job posts available.");
             return;
         }
-        
+
         DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
 
         // Find suitable job posts for the applicant
@@ -231,10 +405,8 @@ public class ApplicantAppliedJobManager {
         listOfSuitableJobPost(suitableJobs);
     }
 
-
-    
-    // ======================== For Company  ===========================================
-    
+    // ======================== For Company
+    // ===========================================
     // Call method for skill matching
     public void CompanySkillMatch() {
         String companyId = inputUI.getInput("Enter Company ID: ");
@@ -274,7 +446,7 @@ public class ApplicantAppliedJobManager {
         DoublyLinkedListInterface<Applicant> suitableApplicants = experienceMatch(selectedJobPost, getAllApplicants());
         listOfSuitableApplicant(suitableApplicants);
     }
-    
+
     // Call method for location match
     public void CompanyLocationMatch() {
         String companyId = inputUI.getInput("Enter Company ID: ");
@@ -294,24 +466,23 @@ public class ApplicantAppliedJobManager {
         DoublyLinkedListInterface<Applicant> suitableApplicants = locationMatch(selectedJobPost, getAllApplicants());
         listOfSuitableApplicant(suitableApplicants);
     }
-    
-    
 
-    //==================== Helper Method ===========================================
+    // ==================== Helper Method
+    // ===========================================
     public DoublyLinkedListInterface<Applicant> getAllApplicants() {
         return applicantManager.getApplicants();
     }
-    
-    //Print out the suitable applicant
-    public void listOfSuitableApplicant(DoublyLinkedListInterface<Applicant> suitableApplicants){
+
+    // Print out the suitable applicant
+    public void listOfSuitableApplicant(DoublyLinkedListInterface<Applicant> suitableApplicants) {
         System.out.println("Qualified Applicants:");
         for (Applicant result : suitableApplicants) {
             System.out.println(result);
         }
     }
-    
-    //Print out the suitable job post
-        public void listOfSuitableJobPost(DoublyLinkedListInterface<JobPost> suitableJobPost){
+
+    // Print out the suitable job post
+    public void listOfSuitableJobPost(DoublyLinkedListInterface<JobPost> suitableJobPost) {
         // Display suitable jobs
         if (suitableJobPost.isEmpty()) {
             System.out.println("❌ No suitable jobs found for you.");

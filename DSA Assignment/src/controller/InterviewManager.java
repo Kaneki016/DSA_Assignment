@@ -56,14 +56,11 @@ public class InterviewManager {
     // inputUI.displayMessage("Company not found!");
     // return;
     // }
-
     // // Display Interview Menu
     // menuUI.displayAppliedApplicantInterviewMenu(company.getCompanyName());
-
     // // View all applicant applied to this company.
     // viewCompanyAppliedApplicant(company);
     // }
-
     // Assign and Manipulate Time Slot
     public void displayAssignInterviewTimeSlot(Company company) {
         // Company not found
@@ -286,8 +283,8 @@ public class InterviewManager {
         // Find the matching ApplicantAppliedJob
         ApplicantAppliedJob matchingApplication = null;
         for (ApplicantAppliedJob aaj : applicantAppliedJobManager.getApplicantAppliedJobs()) {
-            if (aaj.getApplicant().getApplicantId().equals(applicantId) &&
-                    aaj.getJobPost().getCompany().getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
+            if (aaj.getApplicant().getApplicantId().equals(applicantId)
+                    && aaj.getJobPost().getCompany().getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
                 matchingApplication = aaj;
                 break;
             }
@@ -324,9 +321,9 @@ public class InterviewManager {
             // company
             for (Interview i : interview) {
                 if (i.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                        .equalsIgnoreCase(company.getCompanyName()) &&
-                        i.getTimeslot().getTime().equals(timeSlot.getTime()) &&
-                        i.getTimeslot().getDate().equals(timeSlot.getDate())) {
+                        .equalsIgnoreCase(company.getCompanyName())
+                        && i.getTimeslot().getTime().equals(timeSlot.getTime())
+                        && i.getTimeslot().getDate().equals(timeSlot.getDate())) {
                     isOccupied = true;
                     break;
                 }
@@ -405,9 +402,9 @@ public class InterviewManager {
             // company
             for (Interview i : interview) {
                 if (i.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                        .equalsIgnoreCase(company.getCompanyName()) &&
-                        i.getTimeslot().getTime().equals(timeSlot.getTime()) &&
-                        i.getTimeslot().getDate().equals(timeSlot.getDate())) {
+                        .equalsIgnoreCase(company.getCompanyName())
+                        && i.getTimeslot().getTime().equals(timeSlot.getTime())
+                        && i.getTimeslot().getDate().equals(timeSlot.getDate())) {
                     isOccupied = true;
                     break;
                 }
@@ -511,11 +508,11 @@ public class InterviewManager {
         List<Interview> matchedInterviews = new ArrayList<>();
         for (Interview interviewObj : interview) {
             // Ensure that the chain of objects is not null to prevent NullPointerException
-            if (interviewObj != null &&
-                    interviewObj.getApplicantAppliedJob() != null &&
-                    interviewObj.getApplicantAppliedJob().getApplicant() != null &&
-                    interviewObj.getApplicantAppliedJob().getJobPost() != null &&
-                    interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
+            if (interviewObj != null
+                    && interviewObj.getApplicantAppliedJob() != null
+                    && interviewObj.getApplicantAppliedJob().getApplicant() != null
+                    && interviewObj.getApplicantAppliedJob().getJobPost() != null
+                    && interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
 
                 boolean applicantMatches = applicantId.equals(
                         interviewObj.getApplicantAppliedJob().getApplicant().getApplicantId());
@@ -573,6 +570,10 @@ public class InterviewManager {
         } else {
             System.out.println("No Available Job.");
         }
+    }
+
+    public DoublyLinkedListInterface<Interview> getInterviews() {
+        return interview;
     }
 
 }
