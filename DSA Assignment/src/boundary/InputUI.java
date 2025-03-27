@@ -498,7 +498,7 @@ public class InputUI {
             // Display job matching menu
             menuUI.displayJobMatchingMenu();
 
-            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
 
             switch (choice) {
                 case 1:
@@ -514,10 +514,13 @@ public class InputUI {
                     break;
 
                 case 4:
+                   applicantAppliedJobManager.generateMatchReport();
+                   break;
+                case 5:
                     menuUI.exitSystem();
                     return;
                 default:
-                    inputUI.invalidMenuSelection(1, 4);
+                    inputUI.invalidMenuSelection(1, 5);
                     break;
             }
         }
@@ -529,7 +532,7 @@ public class InputUI {
             // Display job matching menu
             menuUI.displayJobMatchingMenu();
 
-            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
 
             switch (choice) {
                 case 1:
@@ -545,10 +548,13 @@ public class InputUI {
                     break;
 
                 case 4:
+                    applicantAppliedJobManager.generateMatchReport();
+                    break;
+                case 5:
                     menuUI.exitSystem();
                     return;
                 default:
-                    inputUI.invalidMenuSelection(1, 4);
+                    inputUI.invalidMenuSelection(1, 5);
                     break;
             }
         }

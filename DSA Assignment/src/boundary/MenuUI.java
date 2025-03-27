@@ -298,7 +298,8 @@ public class MenuUI {
         System.out.println("1. Proficiency Levels");
         System.out.println("2. Experience Levels and Job Requirements");
         System.out.println("3. Location Preferences");
-        System.out.println("4. Exit");
+        System.out.println("4. Summary Reports");
+        System.out.println("5. Exit");
         System.out.println("===============================================");
     }
 

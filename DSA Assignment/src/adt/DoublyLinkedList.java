@@ -250,8 +250,9 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         current.data = newItem;  // Replace the data in the node
     }
     
-        @Override
+    @Override
     public int getSize() {
         return size;
     }
+
 }
