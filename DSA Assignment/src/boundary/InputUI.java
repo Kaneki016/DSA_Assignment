@@ -5,7 +5,6 @@ import dao.MockDataGenerator;
 import java.util.Scanner;
 import entities.*;
 
-
 public class InputUI {
 
     private Scanner scanner = new Scanner(System.in);
@@ -106,8 +105,9 @@ public class InputUI {
                 // Applicant Side
                 handleClinetMenu();
                 break;
+
             case 2:
-                // Middle side
+                // Middle Side
                 boolean running1 = true;
                 while (running1) {
                     menuUI.displayMiddleMainMenu();
@@ -128,14 +128,14 @@ public class InputUI {
                             menuUI.exitSystem();
                             break;
                         default:
-                            inputUI.invalidMenuSelection(1, 2);
+                            inputUI.invalidMenuSelection(1, 4); // ✅ Fixed incorrect range
                             break;
                     }
                 }
                 break;
 
             case 3:
-                // Company side
+                // Company Side
                 boolean running2 = true;
                 while (running2) {
                     menuUI.displayCompanyMainMenu();
@@ -164,6 +164,7 @@ public class InputUI {
                             break;
                         case 8:
                             handleCompanyMatchingCategory();
+                            break; // ✅ Added missing break to prevent fall-through
                         case 9:
                             running2 = false;
                             menuUI.exitSystem();
@@ -174,9 +175,11 @@ public class InputUI {
                     }
                 }
                 break;
+
             case 4:
                 menuUI.exitSystem();
                 break;
+
             default:
                 inputUI.invalidMenuSelection(1, 4);
                 break;
@@ -229,16 +232,52 @@ public class InputUI {
             case 2:
                 applicantManager.editApplicantProfile();
                 break;
+                
             case 3:
+                displayApplicantAppliedMenu();
+                break;
+                
+            case 4:
                 handleApplicantMatchingCategory();
                 break;
-            case 4:
+                
+            case 5:
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
             default:
-                inputUI.invalidMenuSelection(1, 4);
+                inputUI.invalidMenuSelection(1, 5);
                 break; // Add break here to prevent fall-through
         }
+    }
+
+    //Applicant apply job
+    public void displayApplicantAppliedMenu() {
+
+        menuUI.displayApplicantAppliedMenu();
+        int choice = getIntInput("Enter your choice: ", 1, 5);
+
+        switch (choice) {
+            case 1:
+                applicantAppliedJobManager.viewAvailableJobs();
+                break;
+            case 2:
+                applicantAppliedJobManager.applyJob();
+                break;
+            case 3:
+                applicantAppliedJobManager.handleCheckMyApplications();
+                break;
+                
+            case 4:
+                
+                break;
+                
+            case 5:
+                inputUI.displayMessage("Exiting menu. Thank you!");
+                return; // Exit the menu loop
+            default:
+                System.out.println("❌ Invalid selection. Try again.");
+        }
+
     }
 
     // Handle Company Management Menu in middle side
@@ -460,7 +499,7 @@ public class InputUI {
             // Display job matching menu
             menuUI.displayJobMatchingMenu();
 
-            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
 
             switch (choice) {
                 case 1:
@@ -476,22 +515,25 @@ public class InputUI {
                     break;
 
                 case 4:
+                   applicantAppliedJobManager.generateMatchReport();
+                   break;
+                case 5:
                     menuUI.exitSystem();
                     return;
                 default:
-                    inputUI.invalidMenuSelection(1, 4);
+                    inputUI.invalidMenuSelection(1, 5);
                     break;
             }
         }
     }
-        
+
     public static void handleApplicantMatchingCategory() {
 
         while (true) {
             // Display job matching menu
             menuUI.displayJobMatchingMenu();
 
-            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            int choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
 
             switch (choice) {
                 case 1:
@@ -507,10 +549,13 @@ public class InputUI {
                     break;
 
                 case 4:
+                    applicantAppliedJobManager.generateMatchReport();
+                    break;
+                case 5:
                     menuUI.exitSystem();
                     return;
                 default:
-                    inputUI.invalidMenuSelection(1, 4);
+                    inputUI.invalidMenuSelection(1, 5);
                     break;
             }
         }

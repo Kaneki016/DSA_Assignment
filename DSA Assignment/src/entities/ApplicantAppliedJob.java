@@ -14,17 +14,28 @@ public class ApplicantAppliedJob {
     private JobPost jobPost;
     private double matchScore;
 
+    private static int nextApplicationId = 1;
+    private String applicationId;
+
     public ApplicantAppliedJob(Applicant applicant, JobPost jobPost, double matchScore) {
+        this.applicationId = String.format("APP%03d", nextApplicationId++);
         this.applicant = applicant;
         this.jobPost = jobPost;
-        this.matchScore = matchScore;
+        this.matchScore = matchScore; // Default match score
     }
     
     public ApplicantAppliedJob(Applicant applicant, JobPost jobPost) {
+        this.applicationId = String.format("APP%03d", nextApplicationId++);
         this.applicant = applicant;
         this.jobPost = jobPost;
     }
+
     
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+
     public Applicant getApplicant() {
         return applicant;
     }
@@ -39,8 +50,8 @@ public class ApplicantAppliedJob {
 
     @Override
     public String toString() {
-        return "Applicant: " + applicant.getName() + 
-               " | Job: " + jobPost.getJob().getTitle() + 
-               " | Match Score: " + matchScore;
+        return "Applicant: " + applicant.getName()
+                + " | Job: " + jobPost.getJob().getTitle()
+                + " | Match Score: " + matchScore;
     }
 }
