@@ -28,6 +28,7 @@ public class ApplicantAppliedJob {
         this.applicationId = String.format("APP%03d", nextApplicationId++);
         this.applicant = applicant;
         this.jobPost = jobPost;
+        this.matchScore = 0.0; // Default match score
     }
 
     
@@ -35,7 +36,7 @@ public class ApplicantAppliedJob {
     public String getApplicationId() {
         return applicationId;
     }
-
+    
     public Applicant getApplicant() {
         return applicant;
     }

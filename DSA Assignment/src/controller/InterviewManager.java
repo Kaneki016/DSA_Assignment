@@ -7,6 +7,9 @@ import entities.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class InterviewManager {
@@ -489,12 +492,73 @@ public class InterviewManager {
         menuUI.printAcceptedInterviewReport(company, acceptedInterview);
     }
 
-    // ...existing code...
     public void viewRejectedInterviews(Company company) {
         menuUI.printRejectedInterviewReport(company, rejectedInterview);
     }
 
     public void searchInterview(Company company) {
+        System.out.println("\n===== Search Interview =====");
+
+        String inputApplicantId = inputUI.getInput("Enter Applicant ID: ");
+        if (inputApplicantId == null || inputApplicantId.trim().isEmpty()) {
+            inputUI.displayMessage("Applicant ID cannot be empty.");
+            return;
+        }
+
+        int maxAllowedDistance = 1; 
+
+        List<Interview> matchedInterviews = new ArrayList<>();
+        for (Interview interviewObj : interview) {
+            if (interviewObj != null
+                    && interviewObj.getApplicantAppliedJob() != null
+                    && interviewObj.getApplicantAppliedJob().getApplicant() != null
+                    && interviewObj.getApplicantAppliedJob().getJobPost() != null
+                    && interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
+
+                String storedApplicantId = interviewObj.getApplicantAppliedJob().getApplicant().getApplicantId();
+                String storedCompanyName = interviewObj.getApplicantAppliedJob().getJobPost().getCompany()
+                        .getCompanyName();
+
+                int distance = calculateLevenshteinDistance(inputApplicantId, storedApplicantId);
+                boolean applicantMatches = distance <= maxAllowedDistance;
+                boolean companyMatches = company.getCompanyName().equalsIgnoreCase(storedCompanyName);
+
+                if (applicantMatches && companyMatches) {
+                    matchedInterviews.add(interviewObj);
+                }
+            }
+        }
+
+        if (matchedInterviews.isEmpty()) {
+            System.out.println("No interview found for this applicant.");
+            return;
+        }
+
+        // Let the user confirm the best match
+        for (Interview foundInterview : matchedInterviews) {
+            System.out.println("\nPossible Match Found:");
+            System.out.println(
+                    "Applicant ID: " + foundInterview.getApplicantAppliedJob().getApplicant().getApplicantId());
+            System.out.println(
+                    "Company: " + foundInterview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName());
+            System.out.println("========================================");
+
+            // Ask user if this is the correct match
+            String confirmation = inputUI.getInput("Is this the correct applicant? (yes/no): ").trim().toLowerCase();
+            if (confirmation.equals("yes")) {
+                inputUI.displayMessage("Proceeding with selected applicant.");
+                inputUI.handleSearchInterview(foundInterview.getApplicantAppliedJob());
+                return; // Stop after finding a confirmed match
+            }
+        }
+
+        System.out.println("No confirmed matches found.");
+    }
+
+
+    /*
+        OLD SEARCH INTERVIEW METHOD
+        public void searchInterview(Company company) {
         System.out.println("\n===== Search Interview =====");
 
         // Validate input for applicant ID
@@ -508,11 +572,11 @@ public class InterviewManager {
         List<Interview> matchedInterviews = new ArrayList<>();
         for (Interview interviewObj : interview) {
             // Ensure that the chain of objects is not null to prevent NullPointerException
-            if (interviewObj != null
-                    && interviewObj.getApplicantAppliedJob() != null
-                    && interviewObj.getApplicantAppliedJob().getApplicant() != null
-                    && interviewObj.getApplicantAppliedJob().getJobPost() != null
-                    && interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
+            if (interviewObj != null &&
+                    interviewObj.getApplicantAppliedJob() != null &&
+                    interviewObj.getApplicantAppliedJob().getApplicant() != null &&
+                    interviewObj.getApplicantAppliedJob().getJobPost() != null &&
+                    interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
 
                 boolean applicantMatches = applicantId.equals(
                         interviewObj.getApplicantAppliedJob().getApplicant().getApplicantId());
@@ -542,8 +606,10 @@ public class InterviewManager {
         } else {
             System.out.println("No interview found for this applicant.");
         }
+     */
 
-    }
+
+
 
     public void searchInterviewApplicantDetails(ApplicantAppliedJob applicantAppliedJob) {
         if (applicantAppliedJob == null) {
@@ -574,6 +640,33 @@ public class InterviewManager {
 
     public DoublyLinkedListInterface<Interview> getInterviews() {
         return interview;
+    }
+
+    /**
+     * Calculates the Levenshtein distance between two strings.
+     */
+    private int calculateLevenshteinDistance(String s1, String s2) {
+        int len1 = s1.length();
+        int len2 = s2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+
+        for (int i = 0; i <= len1; i++) {
+            for (int j = 0; j <= len2; j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                } else if (j == 0) {
+                    dp[i][j] = i;
+                } else {
+                    int cost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
+                    dp[i][j] = Math.min(Math.min(
+                            dp[i - 1][j] + 1,
+                            dp[i][j - 1] + 1),
+                            dp[i - 1][j - 1] + cost 
+                    );
+                }
+            }
+        }
+        return dp[len1][len2];
     }
 
 }

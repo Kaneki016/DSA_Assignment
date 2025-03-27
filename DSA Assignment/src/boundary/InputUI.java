@@ -327,7 +327,6 @@ public class InputUI {
                     interviewManager.displayAssignInterviewTimeSlot(company);
                     break;
                 case 2:
-                    menuUI.displayRecruitmentMenu();
                     handleRecruitmentTableMenu(company);
                     break;
                 case 3:

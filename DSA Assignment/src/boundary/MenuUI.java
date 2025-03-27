@@ -19,197 +19,197 @@ public class MenuUI {
     private InputUI inputUI = new InputUI();
 
     public void displayMainMenu() {
-        System.out.println("\n============================================");
-        System.out.println("                MAIN MENU                   ");
-        System.out.println("============================================");
-        System.out.println("| 1. Client                                |");
-        System.out.println("| 2. Middle                                |");
-        System.out.println("| 3. Company                               |");
-        System.out.println("| 4. Exit                                  |");
-        System.out.println("============================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║           MAIN MENU              ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Client                        ║");
+        System.out.println("║ 2. Agency                        ║");
+        System.out.println("║ 3. Company                       ║");
+        System.out.println("║ 4. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayClientMainMenu() {
-        System.out.println("\n============================================");
-        System.out.println("               CLIENT SIDE                  ");
-        System.out.println("============================================");
-        System.out.println("| 1. Register as a New Applicant          |");
-        System.out.println("| 2. Edit Applicant                       |");
-        System.out.println("| 3. Job Application                      |");
-        System.out.println("| 4. Matching Management                  |");
-        System.out.println("| 5. Exit                                 |");
-        System.out.println("============================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║          CLIENT MENU             ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Register as a New Applicant   ║");
+        System.out.println("║ 2. Edit Applicant                ║");
+        System.out.println("║ 3. Job Application               ║");
+        System.out.println("║ 4. Matching Management           ║");
+        System.out.println("║ 5. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayApplicantAppliedMenu() {
-        System.out.println("\n==============================");
-        System.out.println("   Applicant Job Application ");
-        System.out.println("==============================");
-        System.out.println("1. View Available Jobs");
-        System.out.println("2. Apply for a Job");
-        System.out.println("3. View My Applications");
-        System.out.println("4. Recommend jobs");
-        System.out.println("5. Exit");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║   APPLICANT JOB APPLICATION      ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. View Available Jobs           ║");
+        System.out.println("║ 2. Apply for a Job               ║");
+        System.out.println("║ 3. View My Applications          ║");
+        System.out.println("║ 4. Recommend Jobs                ║");
+        System.out.println("║ 5. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayMiddleMainMenu() {
-        System.out.println("\n================================");
-        System.out.println("        MIDDLE SIDE MENU        ");
-        System.out.println("================================");
-        System.out.println("1. Applicant Management");
-        System.out.println("2. Time SLot Management");
-        System.out.println("3. Company Management");
-        System.out.println("4. Exit");
-        System.out.println("================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║       MIDDLE SIDE MENU           ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Applicant Management          ║");
+        System.out.println("║ 2. Time Slot Management          ║");
+        System.out.println("║ 3. Company Management            ║");
+        System.out.println("║ 4. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayCompanyMainMenu() {
-        System.out.println("\n================================");
-        System.out.println("        COMPANY SIDE MENU       ");
-        System.out.println("================================");
-        System.out.println("1. Add Job Post");
-        System.out.println("2. Edit Job Post");
-        System.out.println("3. Remove Job Post");
-        System.out.println("4. View Job Post");
-        System.out.println("5. View Job");
-        System.out.println("6. Interview Management");
-        System.out.println("7. Generate Mock Data");
-        System.out.println("8. Matching Management");
-        System.out.println("9. Exit");
-        System.out.println("================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║      COMPANY SIDE MENU           ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Add Job Post                  ║");
+        System.out.println("║ 2. Edit Job Post                 ║");
+        System.out.println("║ 3. Remove Job Post               ║");
+        System.out.println("║ 4. View Job Post                 ║");
+        System.out.println("║ 5. View Job                      ║");
+        System.out.println("║ 6. Interview Management          ║");
+        System.out.println("║ 7. Generate Mock Data            ║");
+        System.out.println("║ 8. Matching Management           ║");
+        System.out.println("║ 9. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayCompanyManagement() {
-        System.out.println("\n================================");
-        System.out.println("        COMPANY MANAGEMENT       ");
-        System.out.println("================================");
-        System.out.println("1. Add Company");
-        System.out.println("2. Edit Company");
-        System.out.println("3. View Company");
-        System.out.println("4. Remove Company");
-        System.out.println("5. Exit");
-        System.out.println("================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║      COMPANY MANAGEMENT          ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Add Company                   ║");
+        System.out.println("║ 2. Edit Company                  ║");
+        System.out.println("║ 3. View Company                  ║");
+        System.out.println("║ 4. Remove Company                ║");
+        System.out.println("║ 5. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayApplicantMenu() {
-        System.out.println("\n============================================");
-        System.out.println("          APPLICANT MANAGEMENT              ");
-        System.out.println("============================================");
-        System.out.println("| 1. Add Applicant                         |");
-        System.out.println("| 2. Remove Applicant                      |");
-        System.out.println("| 3. View All Applicants                   |");
-        System.out.println("| 4. Search Applicant by ID                |");
-        System.out.println("| 5. Filter Applicants                     |");
-        System.out.println("| 6. Exit                                  |");
-        System.out.println("============================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║     APPLICANT MANAGEMENT         ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Add Applicant                 ║");
+        System.out.println("║ 2. Remove Applicant              ║");
+        System.out.println("║ 3. View All Applicants           ║");
+        System.out.println("║ 4. Search Applicant by ID        ║");
+        System.out.println("║ 5. Filter Applicants             ║");
+        System.out.println("║ 6. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void filterApplicantMenu() {
-        System.out.println("\n============================================");
-        System.out.println("        FILTER APPLICANTS MENU              ");
-        System.out.println("============================================");
-        System.out.println("| 1. Filter by Age                         |");
-        System.out.println("| 2. Filter by Location                    |");
-        System.out.println("| 3. Filter by Years of Experience         |");
-        System.out.println("| 4. Filter by Education Level             |");
-        System.out.println("| 5. Filter by Skill                       |");
-        System.out.println("| 6. Exit                                  |");
-        System.out.println("============================================");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║    FILTER APPLICANTS MENU        ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("║ 1. Filter by Age                 ║");
+        System.out.println("║ 2. Filter by Location            ║");
+        System.out.println("║ 3. Filter by Years of Experience ║");
+        System.out.println("║ 4. Filter by Education Level     ║");
+        System.out.println("║ 5. Filter by Skill               ║");
+        System.out.println("║ 6. Exit                          ║");
+        System.out.println("╚══════════════════════════════════╝");
     }
 
     public void displayInterviewMenu() {
-        System.out.println("\n================================");
-        System.out.println("     INTERVIEW MANAGEMENT       ");
-        System.out.println("================================");
-        System.out.println("1. Assign and View Interview Slots");
-        System.out.println("2. Recruitment Table");
-        System.out.println("3. Interview Overall Report");
-        System.out.println("4. Exit");
-        System.out.println("================================");
+        System.out.println("\n╔════════════════════════════════════╗");
+        System.out.println("║       INTERVIEW MANAGEMENT         ║");
+        System.out.println("╠════════════════════════════════════╣");
+        System.out.println("║ 1. Assign and View Interview Slots ║");
+        System.out.println("║ 2. Recruitment Table               ║");
+        System.out.println("║ 3. Interview Overall Report        ║");
+        System.out.println("║ 4. Exit                            ║");
+        System.out.println("╚════════════════════════════════════╝");
     }
 
-    // INTERVIEW
     public void displayTimeSlotInterviewMenu(String company) {
-        System.out.println("\n===============================================");
-        System.out.println("    " + company.toUpperCase() + " - INTERVIEW TIME SLOT MANAGEMENT   ");
-        System.out.println("===============================================");
-        System.out.println("1. Assign Interview");
-        System.out.println("2. View Waiting Interviews");
-        System.out.println("3. View Completed Interviews");
-        System.out.println("4. View Interviews Based on Skills");
-        System.out.println("5. View Interviews Based on Years of Experience");
-        System.out.println("6. Suggest Time Slot To Middle Side");
-        System.out.println("7. Give Interview Feedback");
-        System.out.println("8. View Time Slot Table");
-        System.out.println("9. Search");
-        System.out.println("10. Back to Previous Menu");
-        System.out.println("===============================================");
+        System.out.println("\n╔═══════════════════════════════════════════════╗");
+        System.out.println("║   " + company.toUpperCase() + " - INTERVIEW TIME SLOT MANAGEMENT        ║");
+        System.out.println("╠═══════════════════════════════════════════════╣");
+        System.out.println("║ 1. Assign Interview                           ║");
+        System.out.println("║ 2. View Waiting Interviews                    ║");
+        System.out.println("║ 3. View Completed Interviews                  ║");
+        System.out.println("║ 4. View Interviews Based on Skills            ║");
+        System.out.println("║ 5. View Interviews Based on Experience        ║");
+        System.out.println("║ 6. Suggest Time Slot to Middle Side           ║");
+        System.out.println("║ 7. Give Interview Feedback                    ║");
+        System.out.println("║ 8. View Time Slot Table                       ║");
+        System.out.println("║ 9. Search                                     ║");
+        System.out.println("║ 10. Back to Previous Menu                     ║");
+        System.out.println("╚═══════════════════════════════════════════════╝");
     }
 
     public void displayRecruitmentMenu() {
-        System.out.println("\n===============================================");
-        System.out.println("           RECRUITMENT OPTIONS                ");
-        System.out.println("===============================================");
-        System.out.println("1. Filter Applicants by Interview Rating");
-        System.out.println("2. Interview Feedback of Completed Interviews");
-        System.out.println("3. Accept or Reject Applicants");
-        System.out.println("4. Back to Previous Menu");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║         RECRUITMENT OPTIONS         ║");
+        System.out.println("╠═════════════════════════════════════╣");
+        System.out.println("║ 1. Filter Applicants by Rating      ║");
+        System.out.println("║ 2. Interview Feedback               ║");
+        System.out.println("║ 3. Accept or Reject Applicants      ║");
+        System.out.println("║ 4. Back to Previous Menu            ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void printTimeSlotTableHeader() {
-        System.out.println("+----------------+---------------------+---------------------+----------------+");
-        System.out.println("| Time Slot ID   | Start Time          | End Time            | Availability   |");
-        System.out.println("+----------------+---------------------+---------------------+----------------+");
+        System.out.println("\n╔══════════════╦═══════════════════════╦═══════════════════════╦═══════════════╗");
+        System.out.println("║ Time Slot ID ║     Start Time        ║      End Time         ║ Availability  ║");
+        System.out.println("╠══════════════╬═══════════════════════╬═══════════════════════╬═══════════════╣");
     }
 
     public void printTimeSlotRow(DoublyLinkedListInterface<TimeSlot> timeSlots) {
         for (TimeSlot timeSlot : timeSlots) {
             System.out.println(timeSlot);
         }
-
+        System.out.println("╚══════════════╩═══════════════════════╩═══════════════════════╩═══════════════╝");
     }
 
     public void displayInterviewReport() {
-        System.out.println("\n===============================================");
-        System.out.println("           INTERVIEW OVERALL REPORT            ");
-        System.out.println("===============================================");
-        System.out.println("1. View Accepted Interview");
-        System.out.println("2. View Rejected Interview");
-        System.out.println("3. Back to Previous Menu");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║     INTERVIEW OVERALL REPORT        ║");
+        System.out.println("╠═════════════════════════════════════╣");
+        System.out.println("║ 1. View Accepted Interviews         ║");
+        System.out.println("║ 2. View Rejected Interviews         ║");
+        System.out.println("║ 3. Back to Previous Menu            ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void acceptOrRejectApplicantsMenu() {
-        System.out.println("\n===============================================");
-        System.out.println("           ACCEPT OR REJECT APPLICANTS        ");
-        System.out.println("===============================================");
-        System.out.println("1. Accept Applicant");
-        System.out.println("2. Reject Applicant");
-        System.out.println("3. Back to Previous Menu");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║   ACCEPT OR REJECT APPLICANTS       ║");
+        System.out.println("╠═════════════════════════════════════╣");
+        System.out.println("║ 1. Accept Applicant                 ║");
+        System.out.println("║ 2. Reject Applicant                 ║");
+        System.out.println("║ 3. Back to Previous Menu            ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void displaySearchInterview() {
-        System.out.println("\n===============================================");
-        System.out.println("             CONTINUE TO DIG?          ");
-        System.out.println("===============================================");
-        System.out.println("1. Applicant's Details");
-        System.out.println("2. Job Post Details");
-        System.out.println("3. Exit");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║       CONTINUE TO DIG?              ║");
+        System.out.println("╠═════════════════════════════════════╣");
+        System.out.println("║ 1. Applicant's Details              ║");
+        System.out.println("║ 2. Job Post Details                 ║");
+        System.out.println("║ 3. Exit                             ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void displaySearchInterviewApplicantDetails() {
-        System.out.println("\n===============================================");
-        System.out.println("           SEARCH APPLICANT DETAILS            ");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║      SEARCH APPLICANT DETAILS       ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void displaySearchInterviewJobDetails() {
-        System.out.println("\n===============================================");
-        System.out.println("           SEARCH JOB DETAILS            ");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║         SEARCH JOB DETAILS          ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
@@ -311,9 +311,12 @@ public class MenuUI {
 
     // Print the applicant table header
     public void printApplicantTableHeader() {
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
-        System.out.println("| Applicant ID | Name                 | Age   | Location        | Exp (Yr)   | Education                 | Skills                         | Registration Date    |");
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
+        System.out.println(
+                "| Applicant ID | Name                 | Age   | Location        | Exp (Yr)   | Education                 | Skills                         | Registration Date    |");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
     }
 
     // Print a single row for an applicant
@@ -323,9 +326,11 @@ public class MenuUI {
 
         System.out.printf("| %-12s | %-20s | %-5d | %-15s | %-10d | %-25s | %-30s | %-20s |\n",
                 applicant.getApplicantId(), applicant.getName(), applicant.getAge(),
-                applicant.getLocation(), applicant.getYearsOfExperience(), applicant.getEducationLevel(), skills, registrationTime);
+                applicant.getLocation(), applicant.getYearsOfExperience(), applicant.getEducationLevel(), skills,
+                registrationTime);
 
-        System.out.println("+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
+        System.out.println(
+                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
     }
 
     // Print a table of applicants
