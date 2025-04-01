@@ -292,46 +292,44 @@ public class MenuUI {
     }
 
     public void displayJobMatchingMenu() {
-        System.out.println("\n===============================================");
-        System.out.println("            MATCHING CATEGORIES     ");
-        System.out.println("===============================================");
-        System.out.println("1. Proficiency Levels");
-        System.out.println("2. Experience Levels and Job Requirements");
-        System.out.println("3. Location Preferences");
-        System.out.println("4. Summary Reports");
-        System.out.println("5. Exit");
-        System.out.println("===============================================");
+        System.out.println("\n╔═════════════════════════════════════════════╗");
+        System.out.println("║            MATCHING CATEGORIES              ║");
+        System.out.println("╠═════════════════════════════════════════════╣");
+        System.out.println("║ 1. Proficiency Levels                       ║");
+        System.out.println("║ 2. Experience Levels and Job Requirements   ║");
+        System.out.println("║ 3. Location Preferences                     ║");
+        System.out.println("║ 4. Summary Report                            ║");
+        System.out.println("║ 5. Exit                                     ║");
+        System.out.println("╚═════════════════════════════════════════════╝");
     }
 
+
     public void exitSystem() {
-        System.out.println("\n============================================");
-        System.out.println("              EXITING SYSTEM...             ");
-        System.out.println("============================================");
+        System.out.println("\n╔═════════════════════════════════════╗");
+        System.out.println("║          EXITING SYSTEM...          ║");
+        System.out.println("╚═════════════════════════════════════╝");
     }
 
     // Print the applicant table header
     public void printApplicantTableHeader() {
-        System.out.println(
-                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
-        System.out.println(
-                "| Applicant ID | Name                 | Age   | Location        | Exp (Yr)   | Education                 | Skills                         | Registration Date    |");
-        System.out.println(
-                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
+        System.out.println("╔══════════════╦════════════════════╦═══════╦═════════════════╦════════════╦═══════════════════════════╦════════════════════════════════╦══════════════════════╗");
+        System.out.println("║ Applicant ID ║ Name               ║ Age   ║ Location        ║ Exp (Yr)   ║ Education                 ║ Skills                         ║ Registration Date    ║");
+        System.out.println("╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
     }
 
     // Print a single row for an applicant
     public void printApplicantRow(Applicant applicant) {
         String skills = formatSkills(applicant.getSkills());
         String registrationTime = applicant.getDateAdded(); // Get stored date/time
-
-        System.out.printf("| %-12s | %-20s | %-5d | %-15s | %-10d | %-25s | %-30s | %-20s |\n",
+    
+        System.out.printf("║ %-12s ║ %-20s ║ %-5d ║ %-15s ║ %-10d ║ %-25s ║ %-30s ║ %-20s ║\n",
                 applicant.getApplicantId(), applicant.getName(), applicant.getAge(),
                 applicant.getLocation(), applicant.getYearsOfExperience(), applicant.getEducationLevel(), skills,
                 registrationTime);
-
-        System.out.println(
-                "+--------------+----------------------+-------+-----------------+------------+---------------------------+--------------------------------+----------------------+");
+    
+        System.out.println("╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
     }
+    
 
     // Print a table of applicants
     public void printApplicants(DoublyLinkedListInterface<Applicant> applicants) {
@@ -367,9 +365,9 @@ public class MenuUI {
 
     // Print skill table header
     public void printSkillTableHeader() {
-        System.out.println("+----------------+-------------+-------------+");
-        System.out.println("| Skill Name     | Category    | Proficiency |");
-        System.out.println("+----------------+-------------+-------------+");
+        System.out.println("╔════════════════╦═════════════╦═════════════╗");
+        System.out.println("║ Skill Name     ║ Category    ║ Proficiency ║");
+        System.out.println("╠════════════════╬═════════════╬═════════════╣");
     }
 
     // Print a single skill row

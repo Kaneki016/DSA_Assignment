@@ -3,14 +3,13 @@ package controller;
 import adt.*;
 import entities.*;
 import boundary.*;
+import java.util.Comparator;
 
 public class ApplicantAppliedJobManager {
 
     private static ApplicantAppliedJobManager instance;
     private static DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
-    private DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords = new DoublyLinkedList<>();
-    private DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
-    
+    private DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords;
     private static DoublyLinkedListInterface<Interview> interviews;
 
     // Boundary
@@ -219,78 +218,78 @@ public class ApplicantAppliedJobManager {
     // ====================== Matching Method
     // =============================================================
     // Skill Matching with Proficiency Levels - Returns Match Score
-    public void skillMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
-        suitableApplicants.clear();
-        
-        for (Applicant applicant : applicants) {
-            double totalWeight = 0, matchScore = 0;
+    public double skillMatch(JobPost jobPost, Applicant applicant) {
+        double totalWeight = 0, matchScore = 0;
 
-            for (JobRequirements requiredSkill : jobPost.getJob().getJobRequirements()) {
-                int requiredProficiency = Integer.parseInt(requiredSkill.getProficiencyLevel());
-                if (requiredProficiency == 0) continue;
+        for (JobRequirements requiredSkill : jobPost.getJob().getJobRequirements()) {
+            int requiredProficiency = Integer.parseInt(requiredSkill.getProficiencyLevel());
+            if (requiredProficiency == 0) continue;
 
-                int applicantProficiency = 0;
-                for (Skill skill : applicant.getSkills()) {
-                    if (skill.getName().equalsIgnoreCase(requiredSkill.getName())) {
-                        applicantProficiency = skill.getProficiency_level();
-                        break;
-                    }
-                }
-
-                if (applicantProficiency >= requiredProficiency) {
-                    matchScore += Math.min((double) applicantProficiency / requiredProficiency, 1.0);
-                }
-                totalWeight++;
-            }
-
-            double finalScore = (totalWeight > 0) ? matchScore / totalWeight : 0;
-
-                if (finalScore >= 0.5 && !suitableApplicants.contains(applicant)) { // ✅ Prevent duplicates
-                    suitableApplicants.add(applicant);
+            int applicantProficiency = 0;
+            for (Skill skill : applicant.getSkills()) {
+                if (skill.getName().equalsIgnoreCase(requiredSkill.getName())) {
+                    applicantProficiency = skill.getProficiency_level();
+                    break;
                 }
             }
+
+            if (applicantProficiency >= requiredProficiency) {
+                matchScore += Math.min((double) applicantProficiency / requiredProficiency, 1.0);
+            }
+            totalWeight++;
         }
+
+        return (totalWeight > 0) ? matchScore / totalWeight : 0; // ✅ Return match score instead of storing applicants
+    }
+
 
 
     // Experience Level Matching
-    public void experienceMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
-        suitableApplicants.clear();
-        
-        int jobExperienceRequired = jobPost.getJob().getRequired_experience(); // Required years
+    public double experienceMatch(JobPost jobPost, Applicant applicant) {
+        int jobExperienceRequired = jobPost.getJob().getRequired_experience();
+        int applicantExperience = applicant.getYearsOfExperience();
 
-        for (Applicant applicant : applicants) {
-            int applicantExperience = applicant.getYearsOfExperience(); // Applicant's years
-
-            double matchScore;
-            if (applicantExperience >= jobExperienceRequired) {
-                matchScore = 1.0;
-            } else {
-                matchScore = (double) applicantExperience /jobExperienceRequired;
-            }
-            
-            if (matchScore >= 0.5 && !suitableApplicants.contains(applicant)) {
-                suitableApplicants.add(applicant);
-            }
-        }
+        return (jobExperienceRequired == 0) ? 1.0 : Math.min((double) applicantExperience / jobExperienceRequired, 1.0);
     }
+
 
     // Location Preference Matching
-    public void locationMatch(JobPost jobPost, DoublyLinkedListInterface<Applicant> applicants) {
-        suitableApplicants.clear();
-        
-        String jobLocation = jobPost.getJob().getLocation();
+    public double locationMatch(JobPost jobPost, Applicant applicant) {
+        return applicant.getLocation().equalsIgnoreCase(jobPost.getJob().getLocation()) ? 1.0 : 0.0;
+    }
 
-        for (Applicant applicant : applicants) {
-            String applicantLocation = applicant.getLocation();
+    // Total Match Score Matching
+    public void totalMatchScore(DoublyLinkedListInterface<JobPost> jobPosts, DoublyLinkedListInterface<Applicant> applicants) {
+        if (matchRecords == null) {
+            matchRecords = new DoublyLinkedList<>(); // Initialize if null
+        } else {
+            matchRecords.clear(); // ✅ Clear previous matches if not null
+        }
 
-            double matchScore = applicantLocation.equalsIgnoreCase(jobLocation) ? 1.0 : 0.0;
+        for (JobPost jobPost : jobPosts) {  // ✅ Loop through all job posts
+            for (Applicant applicant : applicants) {  // ✅ Loop through all applicants
+                double skillScore = skillMatch(jobPost, applicant);
+                double experienceScore = experienceMatch(jobPost, applicant);
+                double locationScore = locationMatch(jobPost, applicant);
 
-            // Add applicant to suitable list if they match the job location
-            if (matchScore == 1.0) {
-                suitableApplicants.add(applicant);
+                // ✅ Define weightage (adjustable)
+                double skillWeight = 0.5;
+                double experienceWeight = 0.3;
+                double locationWeight = 0.2;
+
+                // ✅ Weighted total match score
+                double totalScore = (skillScore * skillWeight) + 
+                                    (experienceScore * experienceWeight) + 
+                                    (locationScore * locationWeight);
+
+                if (!containsMatch(applicant, jobPost)) {
+                    matchRecords.add(new ApplicantAppliedJob(applicant, jobPost, totalScore));
+                }
             }
         }
     }
+
+
 
     // ====================== For Applicant
     // ==========================================
@@ -314,18 +313,22 @@ public class ApplicantAppliedJobManager {
         }
 
         DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<JobPost> notSuitableJobs = new DoublyLinkedList<>();
 
         // Check each job post to see if the applicant qualifies
         for (JobPost jobPost : allJobPosts) {
-            DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
-            applicants.add(applicant); // Only checking this applicant
+            
+            double skillScore = skillMatch(jobPost, applicant); // ✅ Returns match score
 
-            if (!getSuitableApplicants().isEmpty()) { // If the applicant matches this job
+            if (skillScore >= 0.5) { // ✅ Only store if above threshold
                 suitableJobs.add(jobPost);
+            } else {
+                notSuitableJobs.add(jobPost);
             }
         }
-        // Display suitable jobs
-        listOfSuitableJobPost(applicant, suitableJobs);
+        // Display jobs
+        listJobPosts(applicant, suitableJobs, "Suitable");
+        listJobPosts(applicant, notSuitableJobs, "Not Suitable");
     }
 
 
@@ -347,21 +350,28 @@ public class ApplicantAppliedJobManager {
         }
 
         DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<JobPost> notSuitableJobs = new DoublyLinkedList<>();
 
         // Find suitable job posts for the applicant
         for (JobPost jobPost : allJobPosts) {
             DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
             applicants.add(applicant); // Only checking this applicant
 
-            if (!getSuitableApplicants().isEmpty()) { // If the applicant matches this job
+            double skillScore = experienceMatch(jobPost, applicant); // ✅ Returns match score
+
+            if (skillScore == 1) { // ✅ Only store if above threshold
                 suitableJobs.add(jobPost);
+            } else {
+                notSuitableJobs.add(jobPost);
             }
         }
 
-        // Display suitable jobs
-        listOfSuitableJobPost(applicant, suitableJobs);
+        // Display jobs
+        listJobPosts(applicant, suitableJobs, "Suitable");
+        listJobPosts(applicant, notSuitableJobs, "Not Suitable");
     }
 
+    
     ///Call method for finding suitable jobs for an applicant based on applicant location
     public void ApplicantLocationMatch() {
         String applicantId = inputUI.getInput("Enter Applicant ID: ");
@@ -380,20 +390,29 @@ public class ApplicantAppliedJobManager {
         }
 
         DoublyLinkedListInterface<JobPost> suitableJobs = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<JobPost> notSuitableJobs = new DoublyLinkedList<>();
+
 
         // Find suitable job posts for the applicant
         for (JobPost jobPost : allJobPosts) {
             DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
             applicants.add(applicant); // Only checking this applicant
 
-            if (!getSuitableApplicants().isEmpty()) { // If the applicant matches this job
+            double skillScore = locationMatch(jobPost, applicant); // ✅ Returns match score
+
+            if (skillScore == 1) { // ✅ Only store if above threshold
                 suitableJobs.add(jobPost);
+            } else {
+                notSuitableJobs.add(jobPost);
             }
         }
-        // Display suitable jobs
-        listOfSuitableJobPost(applicant, suitableJobs);
+        
+        // Display jobs
+        listJobPosts(applicant, suitableJobs, "Suitable");
+        listJobPosts(applicant, notSuitableJobs, "Not Suitable");
     }
 
+    
     // ======================== For Company
     // ===========================================
     // Call method for skill matching
@@ -412,10 +431,26 @@ public class ApplicantAppliedJobManager {
             return;
         }
 
-        skillMatch(selectedJobPost, getAllApplicants());
-        listOfSuitableApplicant(getSuitableApplicants(), selectedJobPost);
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Applicant> nonQualifiedApplicants = new DoublyLinkedList<>();
+
+        // ✅ Loop through all applicants and calculate skill match score
+        for (Applicant applicant : applicantManager.getApplicants()) {
+            double skillScore = skillMatch(selectedJobPost, applicant); // ✅ Returns match score
+
+            if (skillScore >= 0.5) { // ✅ Only store if above threshold
+                suitableApplicants.add(applicant);
+            } else {
+                nonQualifiedApplicants.add(applicant);
+            }
+        }
+
+        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        listApplicants(nonQualifiedApplicants, selectedJobPost, "Non-Qualified");
+
     }
 
+    
     // Call method for experience matching
     public void CompanyExperienceMatch() {
         String companyId = inputUI.getInput("Enter Company ID: ");
@@ -431,8 +466,25 @@ public class ApplicantAppliedJobManager {
             System.out.println("No job post selected.");
             return;
         }
-        listOfSuitableApplicant(getSuitableApplicants(), selectedJobPost);
+
+        DoublyLinkedListInterface<Applicant> nonQualifiedApplicants = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
+
+        // ✅ Loop through all applicants and calculate experience match score
+        for (Applicant applicant : applicantManager.getApplicants()) {
+            double experienceScore = experienceMatch(selectedJobPost, applicant); // ✅ Returns match score
+
+            if (experienceScore == 1) { // ✅ Only store if above threshold
+                suitableApplicants.add(applicant); // ✅ Extract applicant
+            } else {
+                nonQualifiedApplicants.add(applicant);
+            }
+        }
+
+        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        listApplicants(nonQualifiedApplicants, selectedJobPost, "Non-Qualified");
     }
+
 
     // Call method for location match
     public void CompanyLocationMatch() {
@@ -449,49 +501,122 @@ public class ApplicantAppliedJobManager {
             System.out.println("No job post selected.");
             return;
         }
-        listOfSuitableApplicant(getSuitableApplicants(), selectedJobPost);
+
+        DoublyLinkedListInterface<Applicant> nonQualifiedApplicants = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Applicant> suitableApplicants = new DoublyLinkedList<>();
+
+        // ✅ Loop through all applicants and calculate location match score
+        for (Applicant applicant : applicantManager.getApplicants()) {
+            double locationScore = locationMatch(selectedJobPost, applicant); // ✅ Returns match score
+
+            if (locationScore == 1) { // ✅ Only store if above threshold
+                suitableApplicants.add(applicant); // ✅ Extract applicant
+            } else {
+                nonQualifiedApplicants.add(applicant);
+            }
+        }
+
+        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        listApplicants(nonQualifiedApplicants, selectedJobPost, "Non-Qualified");
     }
+
     
     // ==================== Report ================
     // ===========================================
-    public void generateMatchReport() {
-        if (matchRecords.isEmpty()) {
-            System.out.println("📋 No matches found to generate a report.");
+    public void generateCompanyMatchReport() {
+        totalMatchScore(jobPostManager.getJobPostList(), applicantManager.getApplicants());
+
+        String companyId = inputUI.getInput("Enter Company ID: ");
+        DoublyLinkedListInterface<ApplicantAppliedJob> companyMatches = new DoublyLinkedList<>();
+
+        for (ApplicantAppliedJob record : matchRecords) {
+            if (record.getJobPost().getCompany().getCompanyId().equals(companyId)) {
+                companyMatches.add(record);
+            }
+        }
+
+        if (companyMatches.isEmpty()) {
+            System.out.println("📋 No matches found for the selected company.");
             return;
         }
 
-        System.out.println("\n📊 Job-Applicant Match Report");
+        // ✅ Sort using Merge Sort (Descending order by match score)
+        companyMatches.mergeSort(Comparator.comparingDouble(ApplicantAppliedJob::getMatchScore).reversed());
+
+        System.out.println("\n📊 Job-Applicant Overall Match Report for Company ID: " + companyId);
         System.out.println("====================================");
 
-        for (ApplicantAppliedJob record : matchRecords) {
+        for (ApplicantAppliedJob record : companyMatches) {
             System.out.println("👤 Applicant: " + record.getApplicant().getName());
             System.out.println("🏢 Company: " + record.getJobPost().getCompany().getCompanyName());
             System.out.println("📌 Job Title: " + record.getJobPost().getJob().getTitle());
+            System.out.println("📍 Job Location: " + record.getJobPost().getJob().getLocation());
+            System.out.println("⭐ Match Score: " + String.format("%.2f", record.getMatchScore() * 100) + "%");
+            System.out.println("------------------------------------");
+        }
+    }
+
+    
+    public void generateApplicantMatchReport() {
+        totalMatchScore(jobPostManager.getJobPostList(), applicantManager.getApplicants());
+
+        String applicantId = inputUI.getInput("Enter Applicant ID: ");
+        Applicant applicant = applicantManager.findApplicantById(applicantId);
+        DoublyLinkedListInterface<ApplicantAppliedJob> applicantMatches = new DoublyLinkedList<>();
+
+        if (applicant == null) {
+            System.out.println("❌ Applicant not found. Please check the ID and try again.");
+            return;
+        }
+
+        for (ApplicantAppliedJob record : matchRecords) {
+            if (record.getApplicant().getApplicantId().equals(applicantId)) {
+                applicantMatches.add(record);
+            }
+        }
+        
+        if (applicantMatches.isEmpty()) {
+            System.out.println("📋 No matches found for the selected company.");
+            return;
+        }
+
+        // ✅ Sort using Merge Sort (Descending order by match score)
+        applicantMatches.mergeSort(Comparator.comparingDouble(ApplicantAppliedJob::getMatchScore).reversed());
+
+        System.out.println("\n📊 Job-Applicant Overall Match Report for Applicant: " + applicant.getName());
+        System.out.println("====================================");
+
+        for (ApplicantAppliedJob record : applicantMatches) {
+            System.out.println("🏢 Company: " + record.getJobPost().getCompany().getCompanyName());
+            System.out.println("📌 Job Title: " + record.getJobPost().getJob().getTitle());
+            System.out.println("📍 Job Location: " + record.getJobPost().getJob().getLocation());
             System.out.println("⭐ Match Score: " + String.format("%.2f", record.getMatchScore() * 100) + "%");
             System.out.println("------------------------------------");
         }
     }
 
 
+
+
+
+    
     // ==================== Helper Method
     // ===========================================
-    public DoublyLinkedListInterface<Applicant> getAllApplicants() {
-        return applicantManager.getApplicants();
-    }
 
     // Print out the suitable applicants with enhanced formatting
-    public void listOfSuitableApplicant(DoublyLinkedListInterface<Applicant> suitableApplicants, JobPost jobPost) {
-        System.out.println("\n👥 Suitable Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
+    public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
+        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
 
-        if (suitableApplicants.isEmpty()) {
-            System.out.println("❌ No qualified applicants found. Consider adjusting the job requirements.");
+        if (applicants.isEmpty()) {
+            System.out.println("❌ No " + status.toLowerCase() + " applicants found.");
         } else {
-            System.out.println("✅ " + suitableApplicants.size() + " applicant(s) found that match the job requirements:\n");
+            System.out.println("✅ " + applicants.size() + " " + status + " applicant(s) found:\n");
             int count = 1;
-            for (Applicant applicant : suitableApplicants) {
+            for (Applicant applicant : applicants) {
                 System.out.println(count + ". 👤 Name: " + applicant.getName());
                 System.out.println("   🎓 Education: " + applicant.getEducationLevel());
                 System.out.println("   🏠 Location: " + applicant.getLocation());
+                System.out.println("   📅 Experience: " + applicant.getYearsOfExperience() + " year(s)");
                 System.out.println("   🛠 Skills: " + formatApplicantSkills(applicant.getSkills()));
                 System.out.println("--------------------------------------------------");
                 count++;
@@ -499,18 +624,20 @@ public class ApplicantAppliedJobManager {
         }
     }
 
-    // Print out the suitable job post with a better format
-    public void listOfSuitableJobPost(Applicant applicant, DoublyLinkedListInterface<JobPost> suitableJobPost) {
-        System.out.println("\n📄 Job Match Results for: " + applicant.getName());
 
-        if (suitableJobPost.isEmpty()) {
-            System.out.println("❌ No suitable jobs found for you. Keep learning and check back later!");
+    // Print out the suitable job post with a better format
+    public void listJobPosts(Applicant applicant, DoublyLinkedListInterface<JobPost> jobPosts, String status) {
+        System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
+
+        if (jobPosts.isEmpty()) {
+            System.out.println("❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
         } else {
-            System.out.println("✅ Congratulations! We found " + suitableJobPost.size() + " job(s) that suitable for you:\n");
+            System.out.println("✅ " + jobPosts.size() + " " + status + " job(s) found:\n");
             int count = 1;
-            for (JobPost jobPost : suitableJobPost) {
-                System.out.println(count + ". 🏢 " + jobPost.getCompany().getCompanyName() + "(" + jobPost.getCompany().getCompanyLocation() + ")");
+            for (JobPost jobPost : jobPosts) {
+                System.out.println(count + ". 🏢 " + jobPost.getCompany().getCompanyName() + " (" + jobPost.getCompany().getCompanyLocation() + ")");
                 System.out.println("   📌 Job Title: " + jobPost.getJob().getTitle());
+                System.out.println("   📍 Job Location: " + jobPost.getJob().getLocation()); // Added job location
                 System.out.println("   🏆 Required Experience: " + jobPost.getJob().getRequired_experience() + " years");
                 System.out.println("   📜 Requirements: " + formatJobRequirements(jobPost.getJob().getJobRequirements()));
                 System.out.println("--------------------------------------------------");
@@ -518,6 +645,7 @@ public class ApplicantAppliedJobManager {
             }
         }
     }
+
     
     // Helper method to format job requirements nicely
     private String formatJobRequirements(DoublyLinkedListInterface<JobRequirements> requirements) {
@@ -549,9 +677,15 @@ public class ApplicantAppliedJobManager {
         return formatted.toString();
     }
     
-    // get suitable applicants
-    public DoublyLinkedListInterface<Applicant> getSuitableApplicants() {
-        return suitableApplicants;
+    // Check if an applicant is already matched to this job
+    private boolean containsMatch(Applicant applicant, JobPost jobPost) {
+        for (ApplicantAppliedJob record : matchRecords) {
+            if (record.getApplicant().equals(applicant) && record.getJobPost().equals(jobPost)) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
     }
-    
+
+
 }
