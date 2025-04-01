@@ -514,7 +514,7 @@ public class InputUI {
                     break;
 
                 case 4:
-                   applicantAppliedJobManager.generateMatchReport();
+                   applicantAppliedJobManager.generateCompanyMatchReport();
                    break;
                 case 5:
                     menuUI.exitSystem();
@@ -548,7 +548,7 @@ public class InputUI {
                     break;
 
                 case 4:
-                    applicantAppliedJobManager.generateMatchReport();
+                    applicantAppliedJobManager.generateApplicantMatchReport();
                     break;
                 case 5:
                     menuUI.exitSystem();
