@@ -7,6 +7,8 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
     private Node<T> head;
     private Node<T> tail;
     private int size;
+    private DoublyLinkedList<T> backupList; // Backup list storage
+
 
     private static class Node<T> {
         T data;
@@ -22,7 +24,9 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         head = null;
         tail = null;
         size = 0;
+        backupList = null; // Initialize backupList as null
     }
+
 
     @Override
     public void add(T element) {
@@ -321,5 +325,20 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         return slow;
     }
 
+    @Override
+    public void backup() {
+        backupList = copyList(); // Ensure backup is a deep copy
+    }
+
+    @Override
+    public DoublyLinkedList<T> copyList() {
+        DoublyLinkedList<T> newList = new DoublyLinkedList<>();
+        Node<T> current = head;
+        while (current != null) {
+            newList.add(current.data); // Deep copy of each node's data
+            current = current.next;
+        }
+        return newList;
+    }
 
 }
