@@ -20,4 +20,6 @@ public interface DoublyLinkedListInterface<T> extends Iterable<T>  {
     void replace(int givenPosition, T newEntry);  // <-- Add this
     int getSize();
     void mergeSort(Comparator<T> comparator);
+    void backup();
+    DoublyLinkedList<T> copyList();
 }

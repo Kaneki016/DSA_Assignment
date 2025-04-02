@@ -6,7 +6,6 @@ import entities.Company;
 import entities.Interview;
 import entities.Skill;
 import entities.TimeSlot;
-import boundary.InputUI;
 
 /**
  * Handles the display of various menus in the system. Provides clear and
@@ -292,16 +291,17 @@ public class MenuUI {
     }
 
     public void displayJobMatchingMenu() {
-        System.out.println("\n╔═════════════════════════════════════════════╗");
-        System.out.println("║            MATCHING CATEGORIES              ║");
-        System.out.println("╠═════════════════════════════════════════════╣");
-        System.out.println("║ 1. Proficiency Levels                       ║");
-        System.out.println("║ 2. Experience Levels and Job Requirements   ║");
-        System.out.println("║ 3. Location Preferences                     ║");
+        System.out.println("\n╔══════════════════════════════════════════════╗");
+        System.out.println("║             MATCHING CATEGORIES              ║");
+        System.out.println("╠══════════════════════════════════════════════╣");
+        System.out.println("║ 1. Proficiency Levels                        ║");
+        System.out.println("║ 2. Experience Levels and Job Requirements    ║");
+        System.out.println("║ 3. Location Preferences                      ║");
         System.out.println("║ 4. Summary Report                            ║");
-        System.out.println("║ 5. Exit                                     ║");
-        System.out.println("╚═════════════════════════════════════════════╝");
+        System.out.println("║ 5. Exit                                      ║");
+        System.out.println("╚══════════════════════════════════════════════╝");
     }
+
 
 
     public void exitSystem() {
