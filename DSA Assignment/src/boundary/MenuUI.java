@@ -212,71 +212,97 @@ public class MenuUI {
     }
 
     public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
-        final int width = 80;
-        System.out.println(repeat("=", width));
-        System.out.println(inputUI.centerString("ACCEPTED INTERVIEW REPORT", width));
-        System.out.println(repeat("=", width));
-        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
-        System.out.println(repeat("=", width));
+        final int width = 100;
+        final String separator = "=".repeat(width);
+
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println(String.format(
+                "%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s",
+                "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format("%" + (width + "ACCEPTED INTERVIEW REPORT".length()) / 2 + "s",
+                "ACCEPTED INTERVIEW REPORT"));
+        System.out.println(String.format("%" + (width + company.getCompanyName().length()) / 2 + "s",
+                "Company: " + company.getCompanyName()));
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println();
 
         boolean found = false;
+
         for (Interview interview : acceptedInterview) {
-            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                    .equalsIgnoreCase(company.getCompanyName())) {
-                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
-                System.out.println(inputUI.centerString("Applicant ID : "
-                        + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
-                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
-                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
-                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
-                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
-                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
-                System.out.println(repeat("-", width));
+            if (interview.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
+                System.out.println(String.format("%-20s : %s", "Interview ID", interview.getInterviewId()));
+                System.out.println(String.format("%-20s : %s", "Applicant ID",
+                        interview.getApplicantAppliedJob().getApplicant().getApplicantId()));
+                System.out.println(String.format("%-20s : %s", "Applicant Name",
+                        interview.getApplicantAppliedJob().getApplicant().getName()));
+                System.out.println(String.format("%-20s : %s", "Time Slot", interview.getTimeslot().getTime()));
+                System.out.println(String.format("%-20s : %s", "Mode", interview.getMode()));
+                System.out.println(String.format("%-20s : %s", "Status", interview.getStatus()));
+                System.out.println(String.format("%-20s : %s", "Feedback", interview.getFeedback()));
+                System.out.println(String.format("%-20s : %d", "Favour Rate", interview.getFavourRate()));
+
+                System.out.println("-".repeat(width));
                 System.out.println();
                 found = true;
             }
         }
 
         if (!found) {
-            System.out.println(inputUI.centerString("No accepted interviews found for this company.", width));
+            System.out.println(
+                    String.format("%" + (width + "No accepted interviews found for this company.".length()) / 2 + "s",
+                            "❌ No accepted interviews found for this company."));
         }
 
-        System.out.println(repeat("=", width));
+        System.out.println(separator);
+        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
+        System.out.println(separator);
     }
 
     public void printRejectedInterviewReport(Company company, DoublyLinkedListInterface<Interview> rejectedInterview) {
-        final int width = 80;
-        System.out.println(repeat("=", width));
-        System.out.println(inputUI.centerString("REJECTED INTERVIEW REPORT", width));
-        System.out.println(repeat("=", width));
-        System.out.println(inputUI.centerString("Company: " + company.getCompanyName(), width));
-        System.out.println(repeat("=", width));
+        final int width = 100;
+        final String separator = "=".repeat(width);
+
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println(String.format(
+                "%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s",
+                "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format("%" + (width + "REJECTED INTERVIEW REPORT".length()) / 2 + "s",
+                "REJECTED INTERVIEW REPORT"));
+        System.out.println(String.format("%" + (width + company.getCompanyName().length()) / 2 + "s",
+                "Company: " + company.getCompanyName()));
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println();
 
         boolean found = false;
+
         for (Interview interview : rejectedInterview) {
-            if (interview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName()
-                    .equalsIgnoreCase(company.getCompanyName())) {
-                System.out.println(inputUI.centerString("Interview ID : " + interview.getInterviewId(), width));
-                System.out.println(inputUI.centerString("Applicant ID : "
-                        + interview.getApplicantAppliedJob().getApplicant().getApplicantId(), width));
-                System.out.println(inputUI.centerString("Time Slot    : " + interview.getTimeslot().getTime(), width));
-                System.out.println(inputUI.centerString("Mode         : " + interview.getMode(), width));
-                System.out.println(inputUI.centerString("Status       : " + interview.getStatus(), width));
-                System.out.println(inputUI.centerString("Feedback     : " + interview.getFeedback(), width));
-                System.out.println(inputUI.centerString("Favour Rate  : " + interview.getFavourRate(), width));
-                System.out.println(repeat("-", width));
+            if (interview.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
+                System.out.println(String.format("%-20s : %s", "Interview ID", interview.getInterviewId()));
+                System.out.println(String.format("%-20s : %s", "Applicant ID",
+                        interview.getApplicantAppliedJob().getApplicant().getApplicantId()));
+                System.out.println(String.format("%-20s : %s", "Applicant Name",
+                        interview.getApplicantAppliedJob().getApplicant().getName()));
+                System.out.println(String.format("%-20s : %s", "Time Slot", interview.getTimeslot().getTime()));
+                System.out.println(String.format("%-20s : %s", "Mode", interview.getMode()));
+                System.out.println(String.format("%-20s : %s", "Status", interview.getStatus()));
+                System.out.println(String.format("%-20s : %s", "Feedback", interview.getFeedback()));
+                System.out.println(String.format("%-20s : %d", "Favour Rate", interview.getFavourRate()));
+
+                System.out.println("-".repeat(width));
                 System.out.println();
                 found = true;
             }
         }
 
         if (!found) {
-            System.out.println(inputUI.centerString("No rejected interviews found for this company.", width));
+            System.out.println(
+                    String.format("%" + (width + "No rejected interviews found for this company.".length()) / 2 + "s",
+                            "❌ No rejected interviews found for this company."));
         }
 
-        System.out.println(repeat("=", width));
+        System.out.println(separator);
+        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
+        System.out.println(separator);
     }
 
     /**
@@ -302,8 +328,6 @@ public class MenuUI {
         System.out.println("╚══════════════════════════════════════════════╝");
     }
 
-
-
     public void exitSystem() {
         System.out.println("\n╔═════════════════════════════════════╗");
         System.out.println("║          EXITING SYSTEM...          ║");
@@ -312,24 +336,27 @@ public class MenuUI {
 
     // Print the applicant table header
     public void printApplicantTableHeader() {
-        System.out.println("╔══════════════╦════════════════════╦═══════╦═════════════════╦════════════╦═══════════════════════════╦════════════════════════════════╦══════════════════════╗");
-        System.out.println("║ Applicant ID ║ Name               ║ Age   ║ Location        ║ Exp (Yr)   ║ Education                 ║ Skills                         ║ Registration Date    ║");
-        System.out.println("╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
+        System.out.println(
+                "╔══════════════╦════════════════════╦═══════╦═════════════════╦════════════╦═══════════════════════════╦════════════════════════════════╦══════════════════════╗");
+        System.out.println(
+                "║ Applicant ID ║ Name               ║ Age   ║ Location        ║ Exp (Yr)   ║ Education                 ║ Skills                         ║ Registration Date    ║");
+        System.out.println(
+                "╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
     }
 
     // Print a single row for an applicant
     public void printApplicantRow(Applicant applicant) {
         String skills = formatSkills(applicant.getSkills());
         String registrationTime = applicant.getDateAdded(); // Get stored date/time
-    
+
         System.out.printf("║ %-12s ║ %-20s ║ %-5d ║ %-15s ║ %-10d ║ %-25s ║ %-30s ║ %-20s ║\n",
                 applicant.getApplicantId(), applicant.getName(), applicant.getAge(),
                 applicant.getLocation(), applicant.getYearsOfExperience(), applicant.getEducationLevel(), skills,
                 registrationTime);
-    
-        System.out.println("╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
+
+        System.out.println(
+                "╠══════════════╬════════════════════╬═══════╬═════════════════╬════════════╬═══════════════════════════╬════════════════════════════════╬══════════════════════╣");
     }
-    
 
     // Print a table of applicants
     public void printApplicants(DoublyLinkedListInterface<Applicant> applicants) {
