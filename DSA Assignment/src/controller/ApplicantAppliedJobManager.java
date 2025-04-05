@@ -15,6 +15,7 @@ public class ApplicantAppliedJobManager {
 
     // Boundary
     private static InputUI inputUI = new InputUI();
+    private static MenuUI menuUI = new MenuUI();    
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -654,7 +655,7 @@ public class ApplicantAppliedJobManager {
         }
 
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = "=".repeat(100);
+        String separator = menuUI.repeat("=", 100);
         String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
 
         // Center-align headers and other text
@@ -728,7 +729,7 @@ public class ApplicantAppliedJobManager {
             int barLength = (int) ((double) applicantCount / maxApplicants * maxBarLength);
 
             // Step 5: Generate and print the bar
-            String bar = "█".repeat(barLength);
+            String bar = menuUI.repeat("█", (barLength));
             String jobTitle = jobPost.getJob().getTitle();
             System.out.println(String.format("%-20s | %s (%d applicants)", jobTitle, bar, applicantCount));
         }
@@ -783,7 +784,7 @@ public class ApplicantAppliedJobManager {
         }
 
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = "=".repeat(100);
+        String separator = menuUI.repeat("=", 100);
 
         // Center-align headers and other text
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
@@ -860,7 +861,7 @@ public class ApplicantAppliedJobManager {
         int barLength = (int) ((double) jobCount / maxApplications * maxBarLength);
 
         // Step 5: Generate and print the bar
-        String bar = "█".repeat(barLength);
+        String bar = menuUI.repeat("█", barLength);
         System.out.println(String.format("%-20s | %s (%d jobs)", company.getCompanyName(), bar, jobCount));
     }
 

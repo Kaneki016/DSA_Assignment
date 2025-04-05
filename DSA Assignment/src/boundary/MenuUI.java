@@ -213,7 +213,7 @@ public class MenuUI {
 
     public void printAcceptedInterviewReport(Company company, DoublyLinkedListInterface<Interview> acceptedInterview) {
         final int width = 100;
-        final String separator = "=".repeat(width);
+        final String separator = repeat("=", width);
 
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println(String.format(
@@ -241,7 +241,7 @@ public class MenuUI {
                 System.out.println(String.format("%-20s : %s", "Feedback", interview.getFeedback()));
                 System.out.println(String.format("%-20s : %d", "Favour Rate", interview.getFavourRate()));
 
-                System.out.println("-".repeat(width));
+                System.out.println(repeat("-", width));
                 System.out.println();
                 found = true;
             }
@@ -260,7 +260,7 @@ public class MenuUI {
 
     public void printRejectedInterviewReport(Company company, DoublyLinkedListInterface<Interview> rejectedInterview) {
         final int width = 100;
-        final String separator = "=".repeat(width);
+        final String separator = repeat("=", width);
 
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println(String.format(
@@ -288,7 +288,7 @@ public class MenuUI {
                 System.out.println(String.format("%-20s : %s", "Feedback", interview.getFeedback()));
                 System.out.println(String.format("%-20s : %d", "Favour Rate", interview.getFavourRate()));
 
-                System.out.println("-".repeat(width));
+                System.out.println(repeat("-", width));
                 System.out.println();
                 found = true;
             }
@@ -308,7 +308,7 @@ public class MenuUI {
     /**
      * Helper method to repeat a given string 's' for 'count' times.
      */
-    private String repeat(String s, int count) {
+    public String repeat(String s, int count) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < count; i++) {
             builder.append(s);
