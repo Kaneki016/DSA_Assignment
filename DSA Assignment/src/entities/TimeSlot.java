@@ -2,7 +2,7 @@ package entities;
 
 public class TimeSlot {
 
-    private static int nextId = 1;  // Auto-increment ID counter
+    private static int nextId = 1; // Auto-increment ID counter
 
     private String timeSlotId;
     private String time;
@@ -10,7 +10,7 @@ public class TimeSlot {
     private String location;
 
     public TimeSlot(String time, String date, String location) {
-        this.timeSlotId = String.format("TS%03d", nextId++); 
+        this.timeSlotId = String.format("TS%03d", nextId++);
         this.time = time;
         this.date = date;
         this.location = location;
@@ -23,7 +23,7 @@ public class TimeSlot {
     public String getTime() {
         return time;
     }
-    
+
     public String getDate() {
         return date;
     }
@@ -43,15 +43,14 @@ public class TimeSlot {
     public void setDate(String date) {
         this.date = date;
     }
-    
+
     public void setLocation(String location) {
         this.location = location;
     }
-    
+
     @Override
     public String toString() {
-        return String.format("%-10s %-10s %-10s %-10s", timeSlotId, time, date, location);
+        return String.format("| %-14s | %-19s | %-19s | %-14s |", timeSlotId, time, date, location);
     }
-    
 
 }

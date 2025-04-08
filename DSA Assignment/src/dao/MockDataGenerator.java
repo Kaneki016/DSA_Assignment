@@ -31,7 +31,7 @@ public class MockDataGenerator {
     //Controller instances
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-    private static CompanyManager3 companyManager = CompanyManager3.getInstance();
+    private static CompanyManager companyManager = CompanyManager.getInstance();
     private static JobManager jobManager = JobManager.getInstance();
     private static JobPostManager jobPostManager = JobPostManager.getInstance();
     private static JobRequirementsManager jobRequirementsManager = JobRequirementsManager.getInstance();
@@ -49,7 +49,7 @@ public class MockDataGenerator {
         // 2. Create skills and applicants using ApplicantManager methods
         // Applicant 1: Lim
         DoublyLinkedListInterface<Skill> skillSet1 = new DoublyLinkedList<>();
-        skillSet1 = applicantManager.addApplicantSkill(skillSet1, "Leadership", "Mental", 3);
+        skillSet1 = applicantManager.addApplicantSkill(skillSet1, "Leadership", "Mental", 2);
         skillSet1 = applicantManager.addApplicantSkill(skillSet1, "C++", "Programming", 5);
         Applicant applicant1 = new Applicant("Lim", 18, "KL", 3, "Degree", skillSet1);
         applicantManager.addApplicant(applicant1);
@@ -66,10 +66,17 @@ public class MockDataGenerator {
         skillSet3 = applicantManager.addApplicantSkill(skillSet3, "C++", "Programming", 5);
         Applicant applicant3 = new Applicant("Tetej", 30, "KLDF", 3, "Master", skillSet3);
         applicantManager.addApplicant(applicant3);
-
+        
+        // Applicant 4: Siti
+        DoublyLinkedListInterface<Skill> skillSet4 = new DoublyLinkedList<>();
+        skillSet4 = applicantManager.addApplicantSkill(skillSet4, "Java", "Programming", 4);
+        skillSet4 = applicantManager.addApplicantSkill(skillSet4, "Communication", "Soft Skill", 5);
+        Applicant applicant4 = new Applicant("Siti", 25, "SG", 2, "Bachelor", skillSet4);
+        applicantManager.addApplicant(applicant4);
+        
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
-        JobRequirements requirement1 = new JobRequirements("Leadership", "Mental", "3");
+        JobRequirements requirement1 = new JobRequirements("Leadership", "3","Mental");
         jobRequirementsManager.addJobRequirement(requirement1);
         jobRequirements.add(requirement1);
 
@@ -88,23 +95,17 @@ public class MockDataGenerator {
         
 
         // 6. Create applicant applied jobs
-        ApplicantAppliedJob application1 = new ApplicantAppliedJob(applicant1, jobPost1);
-        ApplicantAppliedJob application2 = new ApplicantAppliedJob(applicant2, jobPost2);
-        ApplicantAppliedJob application3 = new ApplicantAppliedJob(applicant3, jobPost1);
-
-        applicantAppliedJobManager.addApplicantAppliedJob(application1);
-        applicantAppliedJobManager.addApplicantAppliedJob(application2);
-        applicantAppliedJobManager.addApplicantAppliedJob(application3);
+        applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant1, jobPost1));
+        applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant2, jobPost2));
+        applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant3, jobPost1));
 
         // 7. Create time slots
-        TimeSlot timeSlot1 = new TimeSlot("5.00pm", "6/3/2025", "Bukit Bintang");
-        TimeSlot timeSlot2 = new TimeSlot("7.00pm", "6/3/2025", "Bukit Bintang");
-        TimeSlot timeSlot3 = new TimeSlot("9.00pm", "6/3/2025", "Bukit Bintang");
-        timeSlotManager.addTimeSlot(timeSlot1);
-        timeSlotManager.addTimeSlot(timeSlot2);
-        timeSlotManager.addTimeSlot(timeSlot3);
+        timeSlotManager.addTimeSlot(new TimeSlot("5.00pm", "6/3/2025", "Bukit Bintang"));
+        timeSlotManager.addTimeSlot(new TimeSlot("7.00pm", "6/3/2025", "Bukit Bintang"));
+        timeSlotManager.addTimeSlot(new TimeSlot("9.00pm", "6/3/2025", "Bukit Bintang"));
+        timeSlotManager.addTimeSlot(new TimeSlot("10.00am", "7/3/2025", "Marina Bay"));
+        timeSlotManager.addTimeSlot(new TimeSlot("2.00pm", "7/3/2025", "Marina Bay"));
 
-        System.out.println("Mock Data Generated Successfully!\n");
+        System.out.println("Mock Data Generated Successfully!");
     }
-
 }

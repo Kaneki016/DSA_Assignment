@@ -191,5 +191,5 @@ public class JobManager {
 
         inputUI.displayMessage("Job added successfully! Job ID is: " + newJob.getJobId() + "\n");
     }
-    
 }
+

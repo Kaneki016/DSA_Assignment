@@ -10,18 +10,33 @@ package entities;
  */
 public class ApplicantAppliedJob {
 
-    private static int nextId = 1;  // Auto-increment ID counter
-
-    private String applicantAppliedJobId;
     private Applicant applicant;
     private JobPost jobPost;
+    private double matchScore;
 
-    public ApplicantAppliedJob(Applicant applicant, JobPost jobPost) {
-        this.applicantAppliedJobId = String.format("AAJ%03d", nextId++); // Assign current ID and increment for the next Company
+    private static int nextApplicationId = 1;
+    private String applicationId;
+
+    public ApplicantAppliedJob(Applicant applicant, JobPost jobPost, double matchScore) {
+        this.applicationId = String.format("APP%03d", nextApplicationId++);
         this.applicant = applicant;
         this.jobPost = jobPost;
+        this.matchScore = matchScore; // Default match score
+    }
+    
+    public ApplicantAppliedJob(Applicant applicant, JobPost jobPost) {
+        this.applicationId = String.format("APP%03d", nextApplicationId++);
+        this.applicant = applicant;
+        this.jobPost = jobPost;
+        this.matchScore = 0.0; // Default match score
     }
 
+    
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+    
     public Applicant getApplicant() {
         return applicant;
     }
@@ -30,12 +45,14 @@ public class ApplicantAppliedJob {
         return jobPost;
     }
 
-    public void setApplicant(Applicant applicant) {
-        this.applicant = applicant;
+    public double getMatchScore() {
+        return matchScore;
     }
 
-    public void setJobPost(JobPost jobPost) {
-        this.jobPost = jobPost;
+    @Override
+    public String toString() {
+        return "Applicant: " + applicant.getName()
+                + " | Job: " + jobPost.getJob().getTitle()
+                + " | Match Score: " + matchScore;
     }
-
 }

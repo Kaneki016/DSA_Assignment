@@ -1,11 +1,14 @@
 package adt;
 import java.util.Iterator;
+import java.util.Comparator;
 
 public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
 
     private Node<T> head;
     private Node<T> tail;
     private int size;
+    private DoublyLinkedList<T> backupList; // Backup list storage
+
 
     private static class Node<T> {
         T data;
@@ -21,7 +24,9 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         head = null;
         tail = null;
         size = 0;
+        backupList = null; // Initialize backupList as null
     }
+
 
     @Override
     public void add(T element) {
@@ -250,9 +255,90 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         current.data = newItem;  // Replace the data in the node
     }
     
-        @Override
+    @Override
     public int getSize() {
         return size;
     }
-}
+    
+    public void mergeSort(Comparator<T> comparator) {
+        if (head == null || head.next == null) {
+            return; // List is already sorted if it's empty or has one element
+        }
+        head = mergeSortRecursive(head, comparator);
 
+        // Update tail reference
+        tail = head;
+        while (tail.next != null) {
+            tail = tail.next;
+        }
+    }
+
+    private Node<T> mergeSortRecursive(Node<T> head, Comparator<T> comparator) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        // Split list into two halves
+        Node<T> middle = getMiddle(head);
+        Node<T> nextToMiddle = middle.next;
+        middle.next = null;
+        if (nextToMiddle != null) {
+            nextToMiddle.prev = null;
+        }
+
+        // Recursively sort both halves
+        Node<T> left = mergeSortRecursive(head, comparator);
+        Node<T> right = mergeSortRecursive(nextToMiddle, comparator);
+
+        // Merge the sorted halves
+        return merge(left, right, comparator);
+    }
+
+    private Node<T> merge(Node<T> left, Node<T> right, Comparator<T> comparator) {
+        if (left == null) return right;
+        if (right == null) return left;
+
+        if (comparator.compare(left.data, right.data) <= 0) {
+            left.next = merge(left.next, right, comparator);
+            if (left.next != null) {
+                left.next.prev = left;
+            }
+            left.prev = null;
+            return left;
+        } else {
+            right.next = merge(left, right.next, comparator);
+            if (right.next != null) {
+                right.next.prev = right;
+            }
+            right.prev = null;
+            return right;
+        }
+    }
+
+    private Node<T> getMiddle(Node<T> head) {
+        if (head == null) return head;
+        Node<T> slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    @Override
+    public void backup() {
+        backupList = copyList(); // Ensure backup is a deep copy
+    }
+
+    @Override
+    public DoublyLinkedList<T> copyList() {
+        DoublyLinkedList<T> newList = new DoublyLinkedList<>();
+        Node<T> current = head;
+        while (current != null) {
+            newList.add(current.data); // Deep copy of each node's data
+            current = current.next;
+        }
+        return newList;
+    }
+
+}
