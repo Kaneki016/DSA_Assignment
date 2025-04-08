@@ -714,7 +714,7 @@ public class ApplicantAppliedJobManager {
         }
 
         // Step 3: Generate bars for each job
-        final int maxBarLength = 50;  // Maximum bar length (can be adjusted)
+        final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
         for (JobPost jobPost : jobPosts) {
             int applicantCount = 0;
 
@@ -846,7 +846,7 @@ public class ApplicantAppliedJobManager {
     }
 
     // Step 3: Generate bars for each company
-    final int maxBarLength = 50;  // Maximum bar length (can be adjusted)
+    final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
     for (Company company : companies) {
         int jobCount = 0;
 
