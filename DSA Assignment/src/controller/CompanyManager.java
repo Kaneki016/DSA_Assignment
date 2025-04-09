@@ -31,6 +31,10 @@ public class CompanyManager {
         return instance;
     }
     
+    public DoublyLinkedListInterface<Company> getCompanies() {
+        return companyList;
+    }
+    
  // ----------------- CREATE -----------------
     public void addCompany() {
         inputUI.displayMessage("\n===== Add New Company =====");
