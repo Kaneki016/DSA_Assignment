@@ -25,6 +25,13 @@ public class InputUI {
     private static MenuUI menuUI = new MenuUI();
     private static InputUI inputUI = new InputUI();
 
+    //Clear Screen
+    public static void clearScreen() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
+    }
+
     // Get Input From User
     public String getInput(String prompt) {
         System.out.print(prompt);
@@ -160,12 +167,9 @@ public class InputUI {
                             handleInterviewMenu();
                             break;
                         case 7:
-                            mockDataGenerator.addMockData();
-                            break;
-                        case 8:
                             handleCompanyMatchingCategory();
                             break; // ✅ Added missing break to prevent fall-through
-                        case 9:
+                        case 8:
                             running2 = false;
                             menuUI.exitSystem();
                             break;
@@ -189,7 +193,7 @@ public class InputUI {
     // Middle Side Menu
     public void handleMiddleSideMenuChoice() {
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
         switch (choice) {
             case 1:
                 applicantManager.addApplicant();
@@ -204,8 +208,8 @@ public class InputUI {
                 break;
 
             case 4:
-                Applicant applicant = applicantManager.findApplicantById();
-                System.out.println(applicant);
+                Applicant applicant = applicantManager.searchApplicantById();
+
                 break;
 
             case 5:
@@ -213,10 +217,14 @@ public class InputUI {
                 break;
 
             case 6:
+                applicantAppliedJobManager.displayCompanyApplicantReport();
+                break;
+
+            case 7:
                 menuUI.exitSystem();
                 break;
             default:
-                inputUI.invalidMenuSelection(1, 6);
+                inputUI.invalidMenuSelection(1, 7);
         }
     }
 
@@ -232,15 +240,15 @@ public class InputUI {
             case 2:
                 applicantManager.editApplicantProfile();
                 break;
-                
+
             case 3:
                 displayApplicantAppliedMenu();
                 break;
-                
+
             case 4:
                 handleApplicantMatchingCategory();
                 break;
-                
+
             case 5:
                 menuUI.exitSystem();
                 break; // Add break here to prevent fall-through
@@ -266,11 +274,11 @@ public class InputUI {
             case 3:
                 applicantAppliedJobManager.handleCheckMyApplications();
                 break;
-                
+
             case 4:
-                
+
                 break;
-                
+
             case 5:
                 inputUI.displayMessage("Exiting menu. Thank you!");
                 return; // Exit the menu loop
@@ -436,13 +444,9 @@ public class InputUI {
             switch (choice) {
                 case 1:
                     // View Accepted Interview Report
-                    interviewManager.viewAcceptedInterview(company);
+                    interviewManager.viewInterview(company);
                     break;
                 case 2:
-                    // View Rejected Interview Report
-                    interviewManager.viewRejectedInterviews(company);
-                    break;
-                case 3:
                     running = false;
                     break;
                 default:
@@ -514,8 +518,8 @@ public class InputUI {
                     break;
 
                 case 4:
-                   applicantAppliedJobManager.generateCompanyMatchReport();
-                   break;
+                    applicantAppliedJobManager.generateCompanyMatchReport();
+                    break;
                 case 5:
                     menuUI.exitSystem();
                     return;
@@ -559,4 +563,5 @@ public class InputUI {
             }
         }
     }
+   
 }
