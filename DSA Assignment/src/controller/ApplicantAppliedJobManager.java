@@ -1,5 +1,5 @@
 package controller;
-// Author: Lai Yoke Yau and Lim Wai Ming
+// Author: Lai Yoke Yau, Lim Wai Ming and Ma Jian Chun
 
 import adt.*;
 import entities.*;
@@ -10,7 +10,7 @@ public class ApplicantAppliedJobManager {
 
     private static ApplicantAppliedJobManager instance;
     private static DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
-    private DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords;
+    private static DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords;
     private static DoublyLinkedListInterface<Interview> interviews;
 
     // Boundary
@@ -381,7 +381,7 @@ public class ApplicantAppliedJobManager {
         return applicantAppliedJob;
     }
 
-    // ====================== Matching Method
+    // ====================== Matching Method - Lai Yoke Yau
     // =============================================================
     // Skill Matching with Proficiency Levels - Returns Match Score
     public double skillMatch(JobPost jobPost, Applicant applicant) {
@@ -510,8 +510,8 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
 
     // Call method for finding suitable jobs for an applicant based on experience
@@ -557,8 +557,8 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
 
     ///Call method for finding suitable jobs for an applicant based on applicant location
@@ -604,8 +604,8 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
 
     // ======================== For Company
@@ -659,8 +659,8 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
     // Call method for experience matching
@@ -712,8 +712,8 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
     // Call method for location match
@@ -765,11 +765,24 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
-    // ==================== Report ================
+
+    // ==================== Helper Method
+    // ===========================================
+    // Check if an applicant is already matched to this job
+    private boolean containsMatch(Applicant applicant, JobPost jobPost) {
+        for (ApplicantAppliedJob record : matchRecords) {
+            if (record.getApplicant().equals(applicant) && record.getJobPost().equals(jobPost)) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
+    }
+    
+    // ==================== Yoke Yau - Report ================
     // ===========================================
     public void generateCompanyMatchReport() {
         totalMatchScore(jobPostManager.getJobPostList(), applicantManager.getApplicants());
@@ -804,25 +817,10 @@ public class ApplicantAppliedJobManager {
             }
         }
 
+
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = menuUI.repeat("=", 100);
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
-
-        // Center-align headers and other text
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION PROGRAM".length()) / 2 + "s", "INTERNSHIP APPLICATION PROGRAM"));
-        System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL SCORE MATCHING RANKING REPORT".length()) / 2 + "s", "OVERALL SCORE MATCHING RANKING REPORT"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println();
-        System.out.println(String.format("%" + (width + ("📊 Job-Applicant Overall Match Report for Company: " + companyId).length()) / 2 + "s", "📊 Job-Applicant Overall Match Report for Company: " + companyId));
-        System.out.println(String.format("%" + (width + ("Total Applicants Considered: " + totalApplicants).length()) / 2 + "s", "Total Applicants Considered: " + totalApplicants));
-        System.out.println(String.format("%" + (width + ("Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(header);
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-
+        String separator = menuUI.repeat("=", width);
+        menuUI.printCompanyMatchReportHeader(companyId, totalApplicants, topApplicant, highestScore, width);
         for (ApplicantAppliedJob record : companyMatches) {
             String applicantName = record.getApplicant().getName();
             String jobTitle = record.getJobPost().getJob().getTitle();
@@ -882,10 +880,11 @@ public class ApplicantAppliedJobManager {
             String jobTitle = jobPost.getJob().getTitle();
             System.out.println(String.format("%-20s | %s (%d applicants)", jobTitle, bar, applicantCount));
         }
+        System.out.println();
+        menuUI.printTimestamp();
 
-        System.out.println(separator);
-        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
-        System.out.println(separator);
+        menuUI.printEndOfReport(width);
+
     }
 
     public void generateApplicantMatchReport() {
@@ -931,25 +930,9 @@ public class ApplicantAppliedJobManager {
         }
 
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = menuUI.repeat("=", 100);
+        String separator = menuUI.repeat("=", width);
 
-        // Center-align headers and other text
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
-        System.out.println(String.format("%" + (width + applicant.getName().length()) / 2 + "s", applicant.getName()));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION REPORT".length()) / 2 + "s", "INTERNSHIP APPLICATION REPORT"));
-        System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL JOB MATCHING REPORT FOR APPLICANT".length()) / 2 + "s", "OVERALL JOB MATCHING REPORT FOR APPLICANT"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println();
-        System.out.println(String.format("%" + (width + ("Total Jobs Applied: " + totalJobsApplied).length()) / 2 + "s", "Total Jobs Applied: " + totalJobsApplied));
-        System.out.println(String.format("%" + (width + ("Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-
-        // Header for job details including Level
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
-        System.out.println(header);
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        menuUI.printApplicantMatchReportHeader(applicant, totalJobsApplied, topJobTitle, highestScore, width);
 
         // Displaying the job details with Level
         for (ApplicantAppliedJob record : applicantMatches) {
@@ -965,6 +948,9 @@ public class ApplicantAppliedJobManager {
             // Outputting the job details
             System.out.println(String.format("%-20s | %-20s | %-20s | %-15s | %-10s", companyName, jobTitle, jobLocation, matchScore, level));
         }
+
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+
 
         // 📊 Generate the bar chart at the bottom for number of jobs applied per company
         System.out.println("📊 Jobs Applied Per Company:");
@@ -992,17 +978,13 @@ public class ApplicantAppliedJobManager {
             }
         }
 
+  
+
+
         // Step 3: Generate bars for each company
-        final int maxBarLength = 50;  // Maximum bar length (can be adjusted)
+        final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
         for (Company company : companies) {
             int jobCount = 0;
-
-            // Count how many jobs the applicant applied for at this company
-            for (ApplicantAppliedJob record : applicantMatches) {
-                if (record.getJobPost().getCompany().equals(company)) {
-                    jobCount++;
-                }
-            }
 
             // Step 4: Calculate the bar length
             int barLength = (int) ((double) jobCount / maxApplications * maxBarLength);
@@ -1010,99 +992,13 @@ public class ApplicantAppliedJobManager {
             // Step 5: Generate and print the bar
             String bar = menuUI.repeat("█", barLength);
             System.out.println(String.format("%-20s | %s (%d jobs)", company.getCompanyName(), bar, jobCount));
+
         }
+        System.out.println();
+        menuUI.printTimestamp();
 
-        System.out.println(separator);
-        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
-        System.out.println(separator);
-    }
 
-    // ==================== Helper Method
-    // ===========================================
-    // Print out the suitable applicants with enhanced formatting
-    public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
-        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
-
-        if (applicants.isEmpty()) {
-            System.out.println("❌ No " + status.toLowerCase() + " applicants found.");
-        } else {
-            System.out.println("✅ " + applicants.size() + " " + status + " applicant(s) found:\n");
-            int count = 1;
-            for (Applicant applicant : applicants) {
-                System.out.println(count + ". 👤 Name: " + applicant.getName());
-                System.out.println("   🎓 Education: " + applicant.getEducationLevel());
-                System.out.println("   🏠 Location: " + applicant.getLocation());
-                System.out.println("   📅 Experience: " + applicant.getYearsOfExperience() + " year(s)");
-                System.out.println("   🛠 Skills: " + formatApplicantSkills(applicant.getSkills()));
-                System.out.println("--------------------------------------------------");
-                count++;
-            }
-        }
-    }
-
-    // Print out the suitable job post with a better format
-    public void listJobPosts(Applicant applicant, DoublyLinkedListInterface<JobPost> jobPosts, String status) {
-        System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
-
-        if (jobPosts.isEmpty()) {
-            System.out.println("❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
-        } else {
-            System.out.println("✅ " + jobPosts.size() + " " + status + " job(s) found:\n");
-            int count = 1;
-            for (JobPost jobPost : jobPosts) {
-                System.out.println(count + ". 🏢 " + jobPost.getCompany().getCompanyName() + " (" + jobPost.getCompany().getCompanyLocation() + ")");
-                System.out.println("   📌 Job Title: " + jobPost.getJob().getTitle());
-                System.out.println("   📍 Job Location: " + jobPost.getJob().getLocation()); // Added job location
-                System.out.println("   🏆 Required Experience: " + jobPost.getJob().getRequired_experience() + " years");
-                System.out.println("   📜 Requirements: " + formatJobRequirements(jobPost.getJob().getJobRequirements()));
-                System.out.println("--------------------------------------------------");
-                count++;
-            }
-        }
-    }
-
-    // Helper method to format job requirements nicely
-    private String formatJobRequirements(DoublyLinkedListInterface<JobRequirements> requirements) {
-        if (requirements.isEmpty()) {
-            return "No specific requirements listed.";
-        }
-
-        StringBuilder formatted = new StringBuilder();
-        for (JobRequirements req : requirements) {
-            formatted.append("\n   - ")
-                    .append(req.getName())
-                    .append(" (Proficiency: ")
-                    .append(req.getProficiencyLevel())
-                    .append(")");
-        }
-        return formatted.toString();
-    }
-
-    // Helper method to format applicant skills nicely
-    private String formatApplicantSkills(DoublyLinkedListInterface<Skill> skills) {
-        if (skills.isEmpty()) {
-            return "No skills listed.";
-        }
-
-        StringBuilder formatted = new StringBuilder();
-        for (Skill skill : skills) {
-            formatted.append("\n   - ")
-                    .append(skill.getName())
-                    .append(" (Proficiency: ")
-                    .append(skill.getProficiency_level())
-                    .append(")");
-        }
-        return formatted.toString();
-    }
-
-    // Check if an applicant is already matched to this job
-    private boolean containsMatch(Applicant applicant, JobPost jobPost) {
-        for (ApplicantAppliedJob record : matchRecords) {
-            if (record.getApplicant().equals(applicant) && record.getJobPost().equals(jobPost)) {
-                return true; // Duplicate found
-            }
-        }
-        return false;
+        menuUI.printEndOfReport(width);
     }
 
 }

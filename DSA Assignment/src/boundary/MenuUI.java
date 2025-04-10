@@ -7,6 +7,10 @@ import java.util.Map;
 
 import adt.DoublyLinkedListInterface;
 import entities.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 
 /**
  * Handles the display of various menus in the system. Provides clear and
@@ -304,6 +308,7 @@ public class MenuUI {
         System.out.println(centerText(">> ACCEPTED INTERVIEWS <<", width));
         System.out.println();
 
+
         boolean hasAccepted = false;
         for (Interview interview : acceptedInterviews) {
             if (interview.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
@@ -318,6 +323,8 @@ public class MenuUI {
         if (!hasAccepted) {
             System.out.println(centerText("X No accepted interviews found for this company.", width));
         }
+
+
 
         System.out.println();
         System.out.println(centerText(">> REJECTED INTERVIEWS <<", width));
@@ -547,5 +554,186 @@ public class MenuUI {
             return "N/A";
         }
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+
     }
+    
+    // Helper method to print timestamp
+    public void printTimestamp() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println("🕒 Generated On: " + now.format(formatter));
+    }
+    
+    // Helper method to print end of report
+    public void printEndOfReport(int width) {
+        System.out.println(repeat("=", width));
+        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
+        System.out.println(repeat("=", width));
+    }
+    
+    // Yoke Yau - Report Printing ===============================================
+    // =====================================================================
+    public void printApplicantMatchReportHeader(Applicant applicant, int totalJobsApplied, String topJobTitle, double highestScore, int width) {
+        String separator = repeat("=", width);
+        // Center-align headers and other text
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format("%" + (width + applicant.getName().length()) / 2 + "s", applicant.getName()));
+        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION REPORT".length()) / 2 + "s", "INTERNSHIP APPLICATION REPORT"));
+        System.out.println();
+        System.out.println(String.format("%" + (width + "OVERALL JOB MATCHING REPORT FOR APPLICANT".length()) / 2 + "s", "OVERALL JOB MATCHING REPORT FOR APPLICANT"));
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println();
+        System.out.println(String.format("%" + (width + ("Total Jobs Applied: " + totalJobsApplied).length()) / 2 + "s", "Total Jobs Applied: " + totalJobsApplied));
+        System.out.println(String.format("%" + (width + ("Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
+        System.out.println();
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+
+        // Header for job details including Level
+        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
+        System.out.println(header);
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        
+
+    }
+    
+    public void printCompanyMatchReportHeader(String companyId, int totalApplicants, String topApplicant, double highestScore, int width) {
+        String separator = repeat("=", width);
+        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
+
+        // Center-align headers and other text
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION PROGRAM".length()) / 2 + "s", "INTERNSHIP APPLICATION PROGRAM"));
+        System.out.println();
+        System.out.println(String.format("%" + (width + "OVERALL SCORE MATCHING RANKING REPORT".length()) / 2 + "s", "OVERALL SCORE MATCHING RANKING REPORT"));
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println();
+        System.out.println(String.format("%" + (width + ("📊 Job-Applicant Overall Match Report for Company: " + companyId).length()) / 2 + "s", "📊 Job-Applicant Overall Match Report for Company: " + companyId));
+        System.out.println(String.format("%" + (width + ("Total Applicants Considered: " + totalApplicants).length()) / 2 + "s", "Total Applicants Considered: " + totalApplicants));
+        System.out.println(String.format("%" + (width + ("Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
+        System.out.println();
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        System.out.println(header);
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+    }
+    
+    // Helper method to format job requirements nicely
+    private String formatJobRequirements(DoublyLinkedListInterface<JobRequirements> requirements) {
+        if (requirements.isEmpty()) {
+            return "No specific requirements listed.";
+        }
+
+        StringBuilder formatted = new StringBuilder();
+        for (JobRequirements req : requirements) {
+            if (formatted.length() > 0) {
+                formatted.append(", ");
+            }
+            formatted.append(req.getName())
+                    .append(" (")
+                    .append(req.getProficiencyLevel())
+                    .append(")");
+        }
+        return formatted.toString();
+    }
+
+    // Helper method to format applicant skills as inline string for table display
+    private String formatApplicantSkills(DoublyLinkedListInterface<Skill> skills) {
+        if (skills.isEmpty()) {
+            return "No skills";
+        }
+
+        StringBuilder formatted = new StringBuilder();
+        for (Skill skill : skills) {
+            if (formatted.length() > 0) {
+                formatted.append(", ");
+            }
+            formatted.append(skill.getName())
+                    .append(" (")
+                    .append(skill.getProficiency_level())
+                    .append(")");
+        }
+
+        return formatted.toString();
+    }
+    
+    // Print out the suitable job post with a better format
+    public void listJobPosts(Applicant applicant, DoublyLinkedListInterface<JobPost> jobPosts, String status) {
+        System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
+
+        if (jobPosts.isEmpty()) {
+            System.out.println("❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
+        } else {
+            System.out.println("✅ " + jobPosts.size() + " " + status + " job(s) found:\n");
+
+            // Table header
+            String header = String.format(
+                "%-4s %-25s %-20s %-20s %-12s %-40s",
+                "No.", "Company", "Job Title", "Location", "Experience", "Requirements"
+            );
+            System.out.println(header);
+            System.out.println(repeat("=", header.length()));
+
+            int count = 1;
+            for (JobPost jobPost : jobPosts) {
+                String company = jobPost.getCompany().getCompanyName() + " (" + jobPost.getCompany().getCompanyLocation() + ")";
+                String title = jobPost.getJob().getTitle();
+                String location = jobPost.getJob().getLocation();
+                String experience = jobPost.getJob().getRequired_experience() + " yrs";
+                String requirements = formatJobRequirements(jobPost.getJob().getJobRequirements());
+
+                // Truncate if too long
+                if (requirements.length() > 38) {
+                    requirements = requirements.substring(0, 37) + "...";
+                }
+
+                System.out.printf(
+                    "%-4d %-25s %-20s %-20s %-12s %-40s\n",
+                    count, company, title, location, experience, requirements
+                );
+                count++;
+            }
+        }
+    }
+    
+    // Print out the suitable applicants with enhanced formatting
+    public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
+        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
+
+        if (applicants.isEmpty()) {
+            System.out.println("❌ No " + status.toLowerCase() + " applicants found.");
+        } else {
+            System.out.println("✅ " + applicants.size() + " " + status + " applicant(s) found:\n");
+
+            // Print table header
+            String header = String.format(
+                "%-4s %-20s %-15s %-15s %-12s %-30s",
+                "No.", "Name", "Education", "Location", "Experience", "Skills"
+            );
+            System.out.println(header);
+            System.out.println(repeat("=", header.length()));
+
+            // Print each applicant's details in a row
+            int count = 1;
+            for (Applicant applicant : applicants) {
+                String skills = formatApplicantSkills(applicant.getSkills());
+                if (skills.length() > 28) {
+                    skills = skills.substring(0, 27) + "..."; // Truncate long skills for clean layout
+                }
+                System.out.printf(
+                    "%-4d %-20s %-15s %-15s %-12s %-30s\n",
+                    count,
+                    applicant.getName(),
+                    applicant.getEducationLevel(),
+                    applicant.getLocation(),
+                    applicant.getYearsOfExperience() + " yr",
+                    skills
+                );
+                count++;
+            }
+        }
+    }
+    
+    
+    
 }
