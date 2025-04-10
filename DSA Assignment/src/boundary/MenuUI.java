@@ -10,6 +10,8 @@ import entities.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
+
 /**
  * Handles the display of various menus in the system. Provides clear and
  * structured user interfaces for navigation.
@@ -17,7 +19,8 @@ import java.time.format.DateTimeFormatter;
  * @author MAMBA
  */
 public class MenuUI {
-    
+
+    private InputUI inputUI = new InputUI();
     private static final int MENU_WIDTH = 50; // Standard width for all menus
     private static final String HORIZONTAL_LINE = "-";
     private static final String VERTICAL_LINE = "|";
@@ -305,6 +308,7 @@ public class MenuUI {
         System.out.println(centerText(">> ACCEPTED INTERVIEWS <<", width));
         System.out.println();
 
+
         boolean hasAccepted = false;
         for (Interview interview : acceptedInterviews) {
             if (interview.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
@@ -319,6 +323,8 @@ public class MenuUI {
         if (!hasAccepted) {
             System.out.println(centerText("X No accepted interviews found for this company.", width));
         }
+
+
 
         System.out.println();
         System.out.println(centerText(">> REJECTED INTERVIEWS <<", width));
@@ -548,6 +554,7 @@ public class MenuUI {
             return "N/A";
         }
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+
     }
     
     // Helper method to print timestamp
@@ -587,6 +594,7 @@ public class MenuUI {
         System.out.println(header);
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         
+
     }
     
     public void printCompanyMatchReportHeader(String companyId, int totalApplicants, String topApplicant, double highestScore, int width) {

@@ -95,6 +95,8 @@ public class InterviewManager {
                 i++; // Increment counter for next applicant
             }
         }
+        
+        menuUI.printApplicantsTableFooter();
 
         if (!found) {
             System.out.println("No applicants found for " + company.getCompanyName() + ".");
@@ -488,12 +490,8 @@ public class InterviewManager {
         }
     }
 
-    public void viewAcceptedInterview(Company company) {
-        menuUI.printAcceptedInterviewReport(company, acceptedInterview);
-    }
-
-    public void viewRejectedInterviews(Company company) {
-        menuUI.printRejectedInterviewReport(company, rejectedInterview);
+    public void viewInterview(Company company) {
+        menuUI.printInterviewReport(company, acceptedInterview, rejectedInterview);
     }
 
     public void searchInterview(Company company) {

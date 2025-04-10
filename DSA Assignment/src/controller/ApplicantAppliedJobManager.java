@@ -16,7 +16,6 @@ public class ApplicantAppliedJobManager {
     // Boundary
     private static InputUI inputUI = new InputUI();
     private static MenuUI menuUI = new MenuUI();
-    
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -770,6 +769,7 @@ public class ApplicantAppliedJobManager {
         menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
+
     // ==================== Helper Method
     // ===========================================
     // Check if an applicant is already matched to this job
@@ -821,7 +821,6 @@ public class ApplicantAppliedJobManager {
         int width = 100; // You can adjust this depending on the console width or your preference
         String separator = menuUI.repeat("=", width);
         menuUI.printCompanyMatchReportHeader(companyId, totalApplicants, topApplicant, highestScore, width);
-
         for (ApplicantAppliedJob record : companyMatches) {
             String applicantName = record.getApplicant().getName();
             String jobTitle = record.getJobPost().getJob().getTitle();
@@ -862,7 +861,7 @@ public class ApplicantAppliedJobManager {
         }
 
         // Step 3: Generate bars for each job
-        final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
+        final int maxBarLength = 50;  // Maximum bar length (can be adjusted)
         for (JobPost jobPost : jobPosts) {
             int applicantCount = 0;
 
@@ -885,6 +884,7 @@ public class ApplicantAppliedJobManager {
         menuUI.printTimestamp();
 
         menuUI.printEndOfReport(width);
+
     }
 
     public void generateApplicantMatchReport() {
@@ -948,7 +948,9 @@ public class ApplicantAppliedJobManager {
             // Outputting the job details
             System.out.println(String.format("%-20s | %-20s | %-20s | %-15s | %-10s", companyName, jobTitle, jobLocation, matchScore, level));
         }
+
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+
 
         // 📊 Generate the bar chart at the bottom for number of jobs applied per company
         System.out.println("📊 Jobs Applied Per Company:");
@@ -976,17 +978,13 @@ public class ApplicantAppliedJobManager {
             }
         }
 
+  
+
+
         // Step 3: Generate bars for each company
         final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
         for (Company company : companies) {
             int jobCount = 0;
-
-            // Count how many jobs the applicant applied for at this company
-            for (ApplicantAppliedJob record : applicantMatches) {
-                if (record.getJobPost().getCompany().equals(company)) {
-                    jobCount++;
-                }
-            }
 
             // Step 4: Calculate the bar length
             int barLength = (int) ((double) jobCount / maxApplications * maxBarLength);
@@ -994,12 +992,13 @@ public class ApplicantAppliedJobManager {
             // Step 5: Generate and print the bar
             String bar = menuUI.repeat("█", barLength);
             System.out.println(String.format("%-20s | %s (%d jobs)", company.getCompanyName(), bar, jobCount));
+
         }
         System.out.println();
         menuUI.printTimestamp();
 
+
         menuUI.printEndOfReport(width);
     }
-
 
 }
