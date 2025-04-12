@@ -1,16 +1,10 @@
 package boundary;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import entities.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-
 
 /**
  * Handles the display of various menus in the system. Provides clear and
@@ -285,13 +279,13 @@ public class MenuUI {
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
-    // Print Interview Report
     public void printInterviewReport(Company company,
             DoublyLinkedListInterface<Interview> acceptedInterviews,
             DoublyLinkedListInterface<Interview> rejectedInterviews) {
         final int width = 125;
         final String separator = repeat("=", width);
 
+        // Header
         System.out.println(separator);
         System.out.println(ANSI_CYAN + centerText("TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY", width) + ANSI_RESET);
         System.out.println(ANSI_CYAN + centerText("INTERVIEW STATUS ANALYSIS REPORT", width) + ANSI_RESET);
@@ -303,11 +297,13 @@ public class MenuUI {
         int acceptedCount = 0;
         int rejectedCount = 0;
 
-        Map<String, Integer> applicantInterviewCount = new LinkedHashMap<>();
+        // Initialize parallel lists
+        DoublyLinkedListInterface<String> applicantNames = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> interviewCounts = new DoublyLinkedList<>();
 
+        // Process accepted interviews
         System.out.println(centerText(">> ACCEPTED INTERVIEWS <<", width));
         System.out.println();
-
 
         boolean hasAccepted = false;
         for (Interview interview : acceptedInterviews) {
@@ -317,15 +313,21 @@ public class MenuUI {
                 hasAccepted = true;
 
                 String applicant = interview.getApplicantAppliedJob().getApplicant().getName();
-                applicantInterviewCount.put(applicant, applicantInterviewCount.getOrDefault(applicant, 0) + 1);
+                int index = applicantNames.indexOf(applicant);
+                if (index != -1) {
+                    applicantNames.replace(index, applicant);
+                    interviewCounts.replace(index, interviewCounts.get(index) + 1);
+                } else {
+                    applicantNames.add(applicant);
+                    interviewCounts.add(1);
+                }
             }
         }
         if (!hasAccepted) {
             System.out.println(centerText("X No accepted interviews found for this company.", width));
         }
 
-
-
+        // Process rejected interviews
         System.out.println();
         System.out.println(centerText(">> REJECTED INTERVIEWS <<", width));
         System.out.println();
@@ -338,7 +340,14 @@ public class MenuUI {
                 hasRejected = true;
 
                 String applicant = interview.getApplicantAppliedJob().getApplicant().getName();
-                applicantInterviewCount.put(applicant, applicantInterviewCount.getOrDefault(applicant, 0) + 1);
+                int index = applicantNames.indexOf(applicant);
+                if (index != -1) {
+                    applicantNames.replace(index, applicant);
+                    interviewCounts.replace(index, interviewCounts.get(index) + 1);
+                } else {
+                    applicantNames.add(applicant);
+                    interviewCounts.add(1);
+                }
             }
         }
         if (!hasRejected) {
@@ -351,15 +360,16 @@ public class MenuUI {
         System.out.println("No of interviews");
         for (int i = 5; i >= 1; i--) {
             System.out.printf("%2d | ", i);
-            for (String applicant : applicantInterviewCount.keySet()) {
-                System.out.print((applicantInterviewCount.get(applicant) == i ? "*   " : "    "));
+            for (int j = 0; j < interviewCounts.size(); j++) {
+                Integer count = interviewCounts.get(j);
+                System.out.print((count != null && count == i) ? "*   " : "    ");
             }
             System.out.println();
         }
 
         // Horizontal applicant list
         System.out.print("    ");
-        for (String applicant : applicantInterviewCount.keySet()) {
+        for (String applicant : applicantNames) {
             System.out.printf("|---> %-8s", applicant);
         }
         System.out.println("\n");
@@ -373,29 +383,48 @@ public class MenuUI {
         System.out.printf("%-30s : %d%n", "Total Interviews", acceptedCount + rejectedCount);
 
         // Applicants with most/least interviews
-        int max = applicantInterviewCount.values().stream().max(Integer::compare).orElse(0);
-        int min = applicantInterviewCount.values().stream().min(Integer::compare).orElse(0);
+        if (!interviewCounts.isEmpty()) {
+            int max = 0;
+            int min = Integer.MAX_VALUE;
+            DoublyLinkedListInterface<String> most = new DoublyLinkedList<>();
+            DoublyLinkedListInterface<String> least = new DoublyLinkedList<>();
 
-        List<String> most = new ArrayList<>();
-        List<String> least = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : applicantInterviewCount.entrySet()) {
-            if (entry.getValue() == max) {
-                most.add(entry.getKey());
+            for (int i = 0; i < interviewCounts.size(); i++) {
+                Integer count = interviewCounts.get(i);
+                String name = applicantNames.get(i);
+                if (count != null) {
+                    if (count > max) {
+                        max = count;
+                        most.clear();
+                        most.add(name);
+                    } else if (count == max) {
+                        most.add(name);
+                    }
+                    if (count < min) {
+                        min = count;
+                        least.clear();
+                        least.add(name);
+                    } else if (count == min) {
+                        least.add(name);
+                    }
+                }
             }
-            if (entry.getValue() == min) {
-                least.add(entry.getKey());
-            }
+
+            String mostApplicants = buildApplicantString(most);
+            String leastApplicants = buildApplicantString(least);
+
+            System.out.printf("%-30s : %s (%d)%n", "Applicants with most interviews", mostApplicants, max);
+            System.out.printf("%-30s : %s (%d)%n", "Applicants with least interviews", leastApplicants, min);
+        } else {
+            System.out.printf("%-30s : %s (0)%n", "Applicants with most interviews", "N/A");
+            System.out.printf("%-30s : %s (0)%n", "Applicants with least interviews", "N/A");
         }
-
-        System.out.printf("%-30s : %s (%d)%n", "Applicants with most interviews", String.join(", ", most), max);
-        System.out.printf("%-30s : %s (%d)%n", "Applicants with least interviews", String.join(", ", least), min);
 
         System.out.println(separator);
         System.out.println(centerText("END OF REPORT", width));
         System.out.println(separator);
     }
 
-    // Print Interview Details
     private void printInterviewDetails(Interview interview, int width) {
         System.out.printf("%-20s : %s%n", "Interview ID", interview.getInterviewId());
         System.out.printf("%-20s : %s%n", "Applicant ID",
@@ -408,6 +437,20 @@ public class MenuUI {
         System.out.printf("%-20s : %s%n", "Feedback", interview.getFeedback());
         System.out.printf("%-20s : %d%n", "Favour Rate", interview.getFavourRate());
         System.out.println(repeat("-", width));
+    }
+
+// Helper method to build comma-separated applicant string
+    private String buildApplicantString(DoublyLinkedListInterface<String> applicants) {
+        String result = "";
+        boolean first = true;
+        for (String applicant : applicants) {
+            if (!first) {
+                result += ", ";
+            }
+            result += applicant;
+            first = false;
+        }
+        return result.isEmpty() ? "N/A" : result;
     }
 
     // Display Job Matching Menu
@@ -556,21 +599,21 @@ public class MenuUI {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
 
     }
-    
+
     // Helper method to print timestamp
     public void printTimestamp() {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         System.out.println("🕒 Generated On: " + now.format(formatter));
     }
-    
+
     // Helper method to print end of report
     public void printEndOfReport(int width) {
         System.out.println(repeat("=", width));
         System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
         System.out.println(repeat("=", width));
     }
-    
+
     // Yoke Yau - Report Printing ===============================================
     // =====================================================================
     public void printApplicantMatchReportHeader(Applicant applicant, int totalJobsApplied, String topJobTitle, double highestScore, int width) {
@@ -593,10 +636,9 @@ public class MenuUI {
         String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
         System.out.println(header);
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        
 
     }
-    
+
     public void printCompanyMatchReportHeader(String companyId, int totalApplicants, String topApplicant, double highestScore, int width) {
         String separator = repeat("=", width);
         String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
@@ -617,7 +659,7 @@ public class MenuUI {
         System.out.println(header);
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
     }
-    
+
     // Helper method to format job requirements nicely
     private String formatJobRequirements(DoublyLinkedListInterface<JobRequirements> requirements) {
         if (requirements.isEmpty()) {
@@ -656,7 +698,7 @@ public class MenuUI {
 
         return formatted.toString();
     }
-    
+
     // Print out the suitable job post with a better format
     public void listJobPosts(Applicant applicant, DoublyLinkedListInterface<JobPost> jobPosts, String status) {
         System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
@@ -668,8 +710,8 @@ public class MenuUI {
 
             // Table header
             String header = String.format(
-                "%-4s %-25s %-20s %-20s %-12s %-40s",
-                "No.", "Company", "Job Title", "Location", "Experience", "Requirements"
+                    "%-4s %-25s %-20s %-20s %-12s %-40s",
+                    "No.", "Company", "Job Title", "Location", "Experience", "Requirements"
             );
             System.out.println(header);
             System.out.println(repeat("=", header.length()));
@@ -688,14 +730,14 @@ public class MenuUI {
                 }
 
                 System.out.printf(
-                    "%-4d %-25s %-20s %-20s %-12s %-40s\n",
-                    count, company, title, location, experience, requirements
+                        "%-4d %-25s %-20s %-20s %-12s %-40s\n",
+                        count, company, title, location, experience, requirements
                 );
                 count++;
             }
         }
     }
-    
+
     // Print out the suitable applicants with enhanced formatting
     public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
         System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
@@ -707,8 +749,8 @@ public class MenuUI {
 
             // Print table header
             String header = String.format(
-                "%-4s %-20s %-15s %-15s %-12s %-30s",
-                "No.", "Name", "Education", "Location", "Experience", "Skills"
+                    "%-4s %-20s %-15s %-15s %-12s %-30s",
+                    "No.", "Name", "Education", "Location", "Experience", "Skills"
             );
             System.out.println(header);
             System.out.println(repeat("=", header.length()));
@@ -721,19 +763,17 @@ public class MenuUI {
                     skills = skills.substring(0, 27) + "..."; // Truncate long skills for clean layout
                 }
                 System.out.printf(
-                    "%-4d %-20s %-15s %-15s %-12s %-30s\n",
-                    count,
-                    applicant.getName(),
-                    applicant.getEducationLevel(),
-                    applicant.getLocation(),
-                    applicant.getYearsOfExperience() + " yr",
-                    skills
+                        "%-4d %-20s %-15s %-15s %-12s %-30s\n",
+                        count,
+                        applicant.getName(),
+                        applicant.getEducationLevel(),
+                        applicant.getLocation(),
+                        applicant.getYearsOfExperience() + " yr",
+                        skills
                 );
                 count++;
             }
         }
     }
-    
-    
-    
+
 }
