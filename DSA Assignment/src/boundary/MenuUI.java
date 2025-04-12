@@ -30,6 +30,8 @@ public class MenuUI {
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_CYAN = "\u001B[36m";  // You can change this to RED, GREEN, etc.
+    
+    private static final int REPORT_WIDTH = 125;
 
     // Helper method to create a border line
     private String createBorderLine(String left, String right, String fill) {
@@ -37,7 +39,7 @@ public class MenuUI {
     }
 
     // Helper method to center text within a given width
-    private String centerText(String text, int width) {
+    public String centerText(String text, int width) {
         int padding = (width - text.length()) / 2;
         int leftPadding = padding;
         int rightPadding = width - text.length() - leftPadding;
@@ -53,20 +55,20 @@ public class MenuUI {
     public void displayMainMenu() {
 
         System.out.println("                             ,----,                                                                                                                            ,--,                                            ,----,                                    ");
-        System.out.println("                 ,--.      ,/   .`|                             ,--.                    ,--,        ,-.----.                          ,-.----.   ,-.----.   ,---.'|                                          ,/   .`|            ,----..            ,--. ");
+        System.out.println("                 ,--.      ,/   .|                             ,--.                    ,--,        ,-.----.                          ,-.----.   ,-.----.   ,---.'|                                          ,/   .|            ,----..            ,--. ");
         System.out.println("   ,---,       ,--.'|    ,`   .'  :   ,---,.,-.----.          ,--.'|  .--.--.         ,--.'|   ,---,\\    /  \\             ,---,       \\    /  \\  \\    /  \\  |   | :      ,---,  ,----..     ,---,          ,`   .'  :   ,---,   /   /   \\         ,--.'| ");
-        System.out.println(",`--.' |   ,--,:  : |  ;    ;     / ,'  .' |\\    /  \\     ,--,:  : | /  /    '.    ,--,  | :,`--.' ||   :    \\           '  .' \\      |   :    \\ |   :    \\ :   : |   ,`--.' | /   /   \\   '  .' \\       ;    ;     /,`--.' |  /   .     :    ,--,:  : | ");
-        System.out.println("|   :  :,`--.'`|  ' :.'___,/    ,',---.'   |;   :    \\ ,`--.'`|  ' :|  :  /`. / ,---.'|  : '|   :  :|   |  .\\ :         /  ;    '.    |   |  .\\ :|   |  .\\ :|   ' :   |   :  :|   :     : /  ;    '.   .'___,/    ,' |   :  : .   /   ;.  \\,`--.'`|  ' : ");
+        System.out.println(",--.' |   ,--,:  : |  ;    ;     / ,'  .' |\\    /  \\     ,--,:  : | /  /    '.    ,--,  | :,--.' ||   :    \\           '  .' \\      |   :    \\ |   :    \\ :   : |   ,--.' | /   /   \\   '  .' \\       ;    ;     /,--.' |  /   .     :    ,--,:  : | ");
+        System.out.println("|   :  :,--.'|  ' :.'_,/    ,',---.'   |;   :    \\ ,--.'|  ' :|  :  /. / ,---.'|  : '|   :  :|   |  .\\ :         /  ;    '.    |   |  .\\ :|   |  .\\ :|   ' :   |   :  :|   :     : /  ;    '.   .'___,/    ,' |   :  : .   /   ;.  \\,--.'`|  ' : ");
         System.out.println(":   |  '|   :  :  | ||    :     | |   |   .'|   | .\\ : |   :  :  | |;  |  |--`  |   | : _' |:   |  '.   :  |: |        :  :       \\   .   :  |: |.   :  |: |;   ; '   :   |  '.   ; /--` :  |   /\\   \\ ;    :     |  :   |  '.   ;   /  ` ;|   :  :  | | ");
         System.out.println("|   :  |:   |   \\ | :;    |.';  ; :   :  |-,.   : |: | :   |   \\ | :|  :  ;_    :   : |.'  ||   :  ||   |   \\ :        :  |   /\\   \\  |   |   \\ :|   |   \\ :'   | |__ |   :  |.   ; /--` :  |   /\\   \\ ;    |.';  ;  |   :  |;   |  ; \\ ; |:   |   \\ | : ");
-        System.out.println("'   '  ;|   : '  '; |`----'  |  | :   |  ;/||   |  \\ : |   : '  '; | \\  \\    `. |   ' '  ; :'   '  ;|   : .   /        |  :  ' ;.   : |   : .   /|   : .   /|   | :.'|'   '  ;;   | ;    |  :  ' ;.   :`----'  |  |  '   '  ;|   :  | ; | '|   : '  '; | ");
-        System.out.println("|   |  |'   ' ;.    ;    '   :  ; |   :   .'|   : .  / '   ' ;.    ;  `----.   \\|   |  .'. ||   |  |;   | |`-'         |  |  ;/  \\   \\;   | |`-' ;   | |`-' '   :    ;|   |  ||   : |    |  |  ;/  \\   \\   '   :  ;  |   |  |.   |  ' ' ' :'   ' ;.    ; ");
-        System.out.println("'   :  ;|   | | \\   |    |   |  ' |   |  |-,;   | |  \\ |   | | \\   |  __ \\  \\  ||   | :  | ''   :  ;|   | ;            '  :  | \\  \\ ,'|   | ;    |   | ;    |   |  ./ '   :  ;.   | '___ '  :  | \\  \\ ,'   |   |  '  '   :  ;'   ;  \\; /  ||   | | \\   | ");
+        System.out.println("'   '  ;|   : '  '; |----'  |  | :   |  ;/||   |  \\ : |   : '  '; | \\  \\    `. |   ' '  ; :'   '  ;|   : .   /        |  :  ' ;.   : |   : .   /|   : .   /|   | :.'|'   '  ;;   | ;    |  :  ' ;.   :----'  |  |  '   '  ;|   :  | ; | '|   : '  '; | ");
+        System.out.println("|   |  |'   ' ;.    ;    '   :  ; |   :   .'|   : .  / '   ' ;.    ;  ----.   \\|   |  .'. ||   |  |;   | |-'         |  |  ;/  \\   \\;   | |-' ;   | |-' '   :    ;|   |  ||   : |    |  |  ;/  \\   \\   '   :  ;  |   |  |.   |  ' ' ' :'   ' ;.    ; ");
+        System.out.println("'   :  ;|   | | \\   |    |   |  ' |   |  |-,;   | |  \\ |   | | \\   |  _ \\  \\  ||   | :  | ''   :  ;|   | ;            '  :  | \\  \\ ,'|   | ;    |   | ;    |   |  ./ '   :  ;.   | '__ '  :  | \\  \\ ,'   |   |  '  '   :  ;'   ;  \\; /  ||   | | \\   | ");
         System.out.println("|   |  ''   : |  ; .'    '   :  | '   :  ;/||   | ;\\  \\'   : |  ; .' /  /`--'  /'   : |  : ;|   |  ':   ' |            |  |  '  '--'  :   ' |    :   ' |    ;   : ;   |   |  ''   ; : .'||  |  '  '--'     '   :  |  |   |  ' \\   \\  ',  / '   : |  ; .' ");
-        System.out.println("'   :  ||   | '`--'      ;   |.'  |   |    \\:   ' | \\'|   | '`--'  '--'.     / |   | '  ,/ '   :  |:   : :            |  :  :        :   : :    :   : :    |   ,/    '   :  |'   | '/  :|  :  :           ;   |.'   '   :  |  ;   :    /  |   | '`--'   ");
+        System.out.println("'   :  ||   | '--'      ;   |.'  |   |    \\:   ' | \\'|   | '--'  '--'.     / |   | '  ,/ '   :  |:   : :            |  :  :        :   : :    :   : :    |   ,/    '   :  |'   | '/  :|  :  :           ;   |.'   '   :  |  ;   :    /  |   | '`--'   ");
         System.out.println(";   |.' '   : |          '---'    |   :   .':   : :-'  '   : |        `--'---'  ;   : ;--'  ;   |.' |   | :            |  | ,'        |   | :    |   | :    '---'     ;   |.' |   :    / |  | ,'           '---'     ;   |.'    \\   \\ .'   '   : |       ");
-        System.out.println("'---'   ;   |.'                   |   | ,'  |   |.'    ;   |.'                  |   ,/      '---'   `---'.|            `--''          `---'.|    `---'.|              '---'    \\   \\ .'  `--''                       '---'       `---`     ;   |.'       ");
-        System.out.println("        '---'                     `----'    `---'      '---'                    '---'                 `---`                             `---`      `---`                        `---`                                                      '---'         ");
+        System.out.println("'---'   ;   |.'                   |   | ,'  |   |.'    ;   |.'                  |   ,/      '---'   ---'.|            `--''          `---'.|    `---'.|              '---'    \\   \\ .'  `--''                       '---'       `---     ;   |.'       ");
+        System.out.println("        '---'                     ----'    `---'      '---'                    '---'                 `---                             ---      ---                        ---                                                      '---'         ");
 
         System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
         System.out.println(VERTICAL_LINE + centerText("MAIN MENU", MENU_WIDTH - 2) + VERTICAL_LINE);
@@ -156,7 +158,8 @@ public class MenuUI {
         System.out.println(formatMenuOption(3, "View All Applicants"));
         System.out.println(formatMenuOption(4, "Search Applicant by ID"));
         System.out.println(formatMenuOption(5, "Filter Applicants"));
-        System.out.println(formatMenuOption(6, "Exit"));
+        System.out.println(formatMenuOption(6, "Applicant Summary Report"));
+        System.out.println(formatMenuOption(7, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
@@ -286,11 +289,7 @@ public class MenuUI {
         final String separator = repeat("=", width);
 
         // Header
-        System.out.println(separator);
-        System.out.println(ANSI_CYAN + centerText("TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY", width) + ANSI_RESET);
-        System.out.println(ANSI_CYAN + centerText("INTERVIEW STATUS ANALYSIS REPORT", width) + ANSI_RESET);
-        System.out.println(centerText("Generated at: " + java.time.LocalDateTime.now(), width));
-        System.out.println(separator);
+        printReportHeader("INTERVIEW STATUS ANALYSIS REPORT");
         System.out.println(centerText("Company: " + company.getCompanyName(), width));
         System.out.println();
 
@@ -599,12 +598,25 @@ public class MenuUI {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
 
     }
+    
+    
+    public void printReportHeader(String reportTitle) {
+        String separator = "=".repeat(REPORT_WIDTH);
+
+        System.out.println(separator);
+        System.out.println(ANSI_CYAN + centerText("TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY", REPORT_WIDTH) + ANSI_RESET);
+        System.out.println(ANSI_CYAN + centerText(reportTitle.toUpperCase(), REPORT_WIDTH) + ANSI_RESET);
+        printTimestamp(); // Centered timestamp
+        System.out.println(separator);
+        System.out.println();
+    }
 
     // Helper method to print timestamp
     public void printTimestamp() {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        System.out.println("🕒 Generated On: " + now.format(formatter));
+        String timestamp = "🕒 Generated On: " + now.format(formatter);
+        System.out.println(centerText(timestamp, REPORT_WIDTH));
     }
 
     // Helper method to print end of report

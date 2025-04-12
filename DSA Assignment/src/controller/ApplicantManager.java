@@ -5,6 +5,7 @@ import entities.Applicant;
 import java.util.Scanner;
 import boundary.*;
 import entities.Skill;
+import java.util.Comparator;
 
 public class ApplicantManager {
 
