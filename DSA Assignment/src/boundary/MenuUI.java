@@ -102,8 +102,7 @@ public class MenuUI {
         System.out.println(formatMenuOption(1, "View Available Jobs"));
         System.out.println(formatMenuOption(2, "Apply for a Job"));
         System.out.println(formatMenuOption(3, "View My Applications"));
-        System.out.println(formatMenuOption(4, "Recommend Jobs"));
-        System.out.println(formatMenuOption(5, "Exit"));
+        System.out.println(formatMenuOption(4, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 

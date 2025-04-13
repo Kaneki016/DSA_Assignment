@@ -274,12 +274,7 @@ public class InputUI {
             case 3:
                 applicantAppliedJobManager.handleCheckMyApplications();
                 break;
-
             case 4:
-                
-                break;
-
-            case 5:
                 inputUI.displayMessage("Exiting menu. Thank you!");
                 return; // Exit the menu loop
             default:
