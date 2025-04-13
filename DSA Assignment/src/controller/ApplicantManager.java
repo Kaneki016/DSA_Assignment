@@ -68,9 +68,8 @@ public class ApplicantManager {
     }
 
     // add applicant ( mock data)
-    public void addApplicant(Applicant newApplicant) {
-        applicants.add(newApplicant);
-        inputUI.displayMessage("Applicant added successfully!\n");
+    public void addApplicant(Applicant applicant) {
+        applicants.add(applicant);
     }
 
     // Add Applicant Skill

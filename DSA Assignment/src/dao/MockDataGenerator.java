@@ -99,13 +99,7 @@ public class MockDataGenerator {
         Applicant applicant7 = new Applicant("Zara", 27, "Negeri Sembilan", 4, "Degree", skillSet7);
         applicantManager.addApplicant(applicant7);
 
-        applicantManager.addApplicant(applicant1);
-        applicantManager.addApplicant(applicant2);
-        applicantManager.addApplicant(applicant3);
-        applicantManager.addApplicant(applicant4);
-        applicantManager.addApplicant(applicant5);
-        applicantManager.addApplicant(applicant6);
-        applicantManager.addApplicant(applicant7);
+       
 
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
