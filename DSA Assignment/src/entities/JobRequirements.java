@@ -1,8 +1,6 @@
 /*shu han*/
 package entities;
 
-import java.time.LocalDateTime;
-
 public class JobRequirements {
 
     private static int nextId = 1;  // Auto-increment ID counter
@@ -10,8 +8,6 @@ public class JobRequirements {
     private String name;
     private String proficiencyLevel;
     private String category;
-    private LocalDateTime removedAt;
-
 
     public JobRequirements(String name, String proficiencyLevel, String category) {
         this.jobRequirementId = String.format("JR%03d", nextId++);
@@ -36,10 +32,6 @@ public class JobRequirements {
     public String getCategory() {
         return category;
     }
-    
-    public LocalDateTime getRemovedAt() {
-        return removedAt;
-    }
 
     // Setters
     public void setName(String name) {
@@ -53,31 +45,14 @@ public class JobRequirements {
     public void setCategory(String category) {
         this.category = category;
     }
-    
-    public void setRemovedAt(LocalDateTime removedAt) {
-        this.removedAt = removedAt;
-    }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        // Display Job Requirement data in a table format
-        sb.append("\n===========================================================\n")
-          .append(String.format("| %-20s | %-30s |\n", "Job Requirement ID", "Job Requirement Data"))
-          .append("-----------------------------------------------------------\n");
-
-        // Add job requirement details in table format
-        sb.append(String.format("| %-20s | %-30s |\n", "ID", this.getJobRequirementId()))
-          .append(String.format("| %-20s | %-30s |\n", "Name", this.getName()))
-          .append(String.format("| %-20s | %-30s |\n", "Proficiency Level", this.getProficiencyLevel()))
-          .append(String.format("| %-20s | %-30s |\n", "Category", this.getCategory()));
-
-        sb.append("===========================================================\n");
-        return sb.toString();
-    }
-
-    public String getId() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return "JobRequirements {" +
+               "ID='" + jobRequirementId + '\'' +
+               ", Name='" + name + '\'' +
+               ", Proficiency Level='" + proficiencyLevel + '\'' +
+               ", Category='" + category + '\'' +
+               '}';
     }
 }

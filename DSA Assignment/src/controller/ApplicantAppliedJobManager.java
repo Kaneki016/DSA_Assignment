@@ -16,7 +16,6 @@ public class ApplicantAppliedJobManager {
     // Boundary
     private static InputUI inputUI = new InputUI();
     private static MenuUI menuUI = new MenuUI();
-    
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -109,11 +108,13 @@ public class ApplicantAppliedJobManager {
     public void displayJobApplicationSummaryTable() {
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = getApplicantAppliedJobs();
 
-        inputUI.displayMessage("===========================================================================");
-        inputUI.displayMessage("                      JOB APPLICATION SUMMARY TABLE");
-        inputUI.displayMessage("===========================================================================");
-        inputUI.displayMessage(String.format("| %-30s | %-20s | %-10s |", "Job Title", "Company", "Applicants"));
-        inputUI.displayMessage("---------------------------------------------------------------------------");
+        final int REPORT_WIDTH = 125;
+
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
+        inputUI.displayMessage(menuUI.centerText("JOB APPLICATION SUMMARY TABLE", REPORT_WIDTH));
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
+        inputUI.displayMessage(String.format("| %-50s | %-40s | %-15s |", "Job Title", "Company", "Applicants"));
+        inputUI.displayMessage("-".repeat(REPORT_WIDTH));
 
         DoublyLinkedListInterface<String> trackedKeys = new DoublyLinkedList<>();
         DoublyLinkedListInterface<Integer> applicantCounts = new DoublyLinkedList<>();
@@ -144,15 +145,15 @@ public class ApplicantAppliedJobManager {
             String company = parts[1];
             int count = applicantCounts.get(i);
 
-            inputUI.displayMessage(String.format("| %-30s | %-20s | %-10d |", jobTitle, company, count));
+            inputUI.displayMessage(String.format("| %-50s | %-40s | %-15d |", jobTitle, company, count));
         }
 
-        inputUI.displayMessage("===========================================================================");
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
     }
 
     public void displayCompanyApplicantReport() {
+        menuUI.printReportHeader("Applicant Summary Report");
         displayJobApplicationSummaryTable(); // Table first
-        inputUI.displayMessage("____________________________________________________________________________");
 
         DoublyLinkedListInterface<Company> companies = companyManager.getCompanies();
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = getApplicantAppliedJobs();
@@ -168,7 +169,7 @@ public class ApplicantAppliedJobManager {
 
         printBarChart(companyNames, applicantCounts);
         printSummary(companyNames.getSize(), appliedJobs.getSize(), mostAppliedCompanies, mostAppliedJobs, applicantCounts, jobCounts);
-        inputUI.getInput("Press Enter to continue...");
+        inputUI.getInput("<< Press Enter to continue >>");
     }
 
     private DoublyLinkedListInterface<Integer> countApplicantsPerCompany(
@@ -284,16 +285,19 @@ public class ApplicantAppliedJobManager {
         }
         inputUI.displayMessage(separator.append("-> Companies").toString());
 
-        StringBuilder labels = new StringBuilder("    ");
+        StringBuilder labels = new StringBuilder("    ");  // Start after Y-axis space
         for (int i = 0; i < companyNames.getSize(); i++) {
             String name = companyNames.get(i);
-            if (name.length() > COLUMN_WIDTH - 2) {
-                name = name.substring(0, COLUMN_WIDTH - 2);
-            }
-            int pad = (COLUMN_WIDTH - name.length()) / 2;
-            labels.append(" ".repeat(pad)).append(name).append(" ".repeat(COLUMN_WIDTH - name.length() - pad));
+            name = name.length() > 3 ? name.substring(0, 3) : name;
+
+            int totalPadding = COLUMN_WIDTH;                            // COLUMN_WIDTH = 8 and name is "ABC" (3 chars):
+            int leftPadding = (totalPadding - name.length()) / 2;       //   Left Padding = (8 - 3) / 2 = 2
+            int rightPadding = totalPadding - name.length() - leftPadding; /// Right Padding = 8 - 3 - 2 = 3
+
+            labels.append(" ".repeat(leftPadding)).append(name).append(" ".repeat(rightPadding));
         }
         inputUI.displayMessage(labels.toString());
+
     }
 
     private void printSummary(int totalCompanies, int totalApplicants,
@@ -338,9 +342,7 @@ public class ApplicantAppliedJobManager {
         jobLine.append(" (" + maxJobs + " applicants)");
         inputUI.displayMessage(jobLine.toString());
 
-        inputUI.displayMessage("==============================================================================");
-        inputUI.displayMessage("                               END OF REPORT");
-        inputUI.displayMessage("==============================================================================");
+        menuUI.printEndOfReport(125);
     }
 
     //Accept or rejct 
@@ -781,7 +783,7 @@ public class ApplicantAppliedJobManager {
         }
         return false;
     }
-    
+
     // ==================== Yoke Yau - Report ================
     // ===========================================
     public void generateCompanyMatchReport() {
@@ -816,7 +818,6 @@ public class ApplicantAppliedJobManager {
                 topApplicant = record.getApplicant().getName();
             }
         }
-
 
         int width = 100; // You can adjust this depending on the console width or your preference
         String separator = menuUI.repeat("=", width);
@@ -1000,6 +1001,5 @@ public class ApplicantAppliedJobManager {
 
         menuUI.printEndOfReport(width);
     }
-
 
 }

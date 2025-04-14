@@ -5,28 +5,22 @@ import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import entities.*;
 import boundary.*;
-import java.time.LocalDateTime;
+
 
 public class CompanyManager {
 
     // Menu UI
     private static InputUI inputUI = new InputUI();
-    private static MenuUI menuUI = new MenuUI();
-
 
     // Singleton instance
     private static CompanyManager instance;
 
     // Doubly Linked List to store companies
     private DoublyLinkedListInterface<Company> companyList;
-    private DoublyLinkedListInterface<Company> removedCompanies;
-
-
+    
     // Private constructor for singleton
     private CompanyManager() {
         companyList = new DoublyLinkedList<>();
-        removedCompanies = new DoublyLinkedList<>();
-
     }
 
     // Singleton accessor
@@ -36,45 +30,52 @@ public class CompanyManager {
         }
         return instance;
     }
-
+    
     public DoublyLinkedListInterface<Company> getCompanies() {
         return companyList;
     }
-
-    // ----------------- CREATE -----------------
+    
+ // ----------------- CREATE -----------------
     public void addCompany() {
         inputUI.displayMessage("\n===== Add New Company =====");
-        String name = inputUI.getInput("Enter Company Name (or 'x' to cancel): ");
-        if (name.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        String location = inputUI.getInput("Enter Company Location(or 'x' to cancel): ");
-        if (location.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        int size = inputUI.getIntInput("Enter Company Size(or -1 to cancel): ", 1, 999999999);
-        if (size == -1) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        String description = inputUI.getInput("Enter Company Description(or 'x' to cancel): ");
-        if (description.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
+        String name = inputUI.getInput("Enter Company Name: ");
+        String location = inputUI.getInput("Enter Company Location: ");
+        int size = inputUI.getIntInput("Enter Company Size: ", 1, 999999999);
+        String description = inputUI.getInput("Enter Company Description: ");
+
+        String password;
+        do {
+            password = inputUI.getInput("Enter Password (at least 6 characters, must include letters and numbers): ");
+            if (!isValidPassword(password)) {
+                inputUI.displayMessage("Password does not meet the criteria. Try again.");
+            }
+        } while (!isValidPassword(password));
 
         // Create and add the company
-        Company newCompany = new Company(name, location, size, description);
+        Company newCompany = new Company(name, location, size, description, password);
         companyList.add(newCompany);
 
         inputUI.displayMessage("Company added successfully! Company ID is: " + newCompany.getCompanyId() + "\n");
     }
-
-    //Add company
+    
+        //Add company
     public void addCompany(Company newCompany) {
         companyList.add(newCompany);
+    }
+
+    // Password validation helper
+    private boolean isValidPassword(String password) {
+        if (password.length() < 6) return false;
+
+        boolean hasLetter = false;
+        boolean hasDigit = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isLetter(c)) hasLetter = true;
+            if (Character.isDigit(c)) hasDigit = true;
+        }
+
+        return hasLetter && hasDigit;
     }
 
     // ----------------- READ -----------------
@@ -85,155 +86,121 @@ public class CompanyManager {
             }
         }
         inputUI.displayMessage("Company with ID " + companyId + " not found.\n");
-        inputUI.displayMessage("Please try again.\n");
         return null;
     }
 
     public void displayCompanies() {
         inputUI.displayMessage("\n===== Company List =====");
-
         if (companyList.isEmpty()) {
             inputUI.displayMessage("No companies found.\n");
             return;
         }
 
-        // Print company list using menuUI (similar to the applicants)
-        menuUI.printCompanies(companyList);
-
-        // Prompt to continue
-        inputUI.getInput("Press Enter to continue...");
+        int index = 1;
+        for (Company company : companyList) {
+            inputUI.displayMessage(index + ". " + company);
+            index++;
+        }
     }
-
 
     // ----------------- EDIT -----------------
-    public void editCompany() {
-        inputUI.displayMessage("\n===== Edit Company =====");
-        this.displayCompanies();
-        Company company = null;
+public void editCompany() {
+    inputUI.displayMessage("\n===== Edit Company =====");
 
-        // Loop until a valid company is found
-        while (company == null) {
-            String companyId = inputUI.getInput("Enter Company ID to edit (or 'x' to cancel): ").trim();
+    String companyId = inputUI.getInput("Enter Company ID to edit: ");
+    Company company = findCompanyById(companyId);
 
-            if (companyId.equalsIgnoreCase("x")) {
-                inputUI.displayMessage("Edit operation cancelled.");
-                return; // Exit the method
-            }
-
-            company = findCompanyById(companyId);
-
-        }
-
-        inputUI.displayMessage("Editing company: " + company.getCompanyName());
-
-        // Name
-        String name = inputUI.getInput("Enter New Name (Enter 'x' to cancel or press Enter to keep: " + company.getCompanyName() + "): ");
-        if (name.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        if (!name.isEmpty()) company.setCompanyName(name);
-
-        // Location
-        String location = inputUI.getInput("Enter New Location (Enter 'x' to cancel or press Enter to keep: " + company.getCompanyLocation() + "): ");
-        if (location.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        if (!location.isEmpty()) company.setCompanyLocation(location);
-
-        // Size
-        String sizeInput = inputUI.getInput("Enter New Size (Enter '-1' to cancel or press existing size to keep: " + company.getCompanySize() + "): ");
-        if (sizeInput.equalsIgnoreCase("-1")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        if (!sizeInput.isEmpty()) {
-            try {
-                int size = Integer.parseInt(sizeInput);
-                company.setCompanySize(size);
-            } catch (NumberFormatException e) {
-                inputUI.displayMessage("Invalid size input. Keeping existing size.");
-            }
-        }
-
-        // Description
-        String description = inputUI.getInput("Enter New Description (Enter 'x' to cancel or press Enter to keep: " + company.getCompanyDescription() + "): ");
-        if (description.equalsIgnoreCase("x")) {
-            inputUI.displayMessage("Add operation cancelled.\n");
-            return;
-        }
-        if (!description.isEmpty()) company.setCompanyDescription(description);
-
-        inputUI.displayMessage("Company profile updated successfully!");
+    if (company == null) {
+        inputUI.displayMessage("Company not found!");
+        return;
     }
+
+    inputUI.displayMessage("Editing company: " + company.getCompanyName());
+
+    // Name
+    String name = inputUI.getInput("Enter New Name (or press Enter to keep: " + company.getCompanyName() + "): ");
+    if (!name.isEmpty()) company.setCompanyName(name);
+
+    // Location
+    String location = inputUI.getInput("Enter New Location (or press Enter to keep: " + company.getCompanyLocation() + "): ");
+    if (!location.isEmpty()) company.setCompanyLocation(location);
+
+    // Size
+    String sizeInput = inputUI.getInput("Enter New Size (or press existing size to keep: " + company.getCompanySize() + "): ");
+    if (!sizeInput.isEmpty()) {
+        try {
+            int size = Integer.parseInt(sizeInput);
+            company.setCompanySize(size);
+        } catch (NumberFormatException e) {
+            inputUI.displayMessage("Invalid size input. Keeping existing size.");
+        }
+    }
+
+    // Description
+    String description = inputUI.getInput("Enter New Description (or press Enter to keep: " + company.getCompanyDescription() + "): ");
+    if (!description.isEmpty()) company.setCompanyDescription(description);
+
+    // Password update section
+    String updatePassword = inputUI.getInput("Do you want to update the password? (yes/no): ").trim().toLowerCase();
+    if (updatePassword.equals("y") || updatePassword.equals("yes")) {
+        String newPassword;
+        while (true) {
+            newPassword = inputUI.getInput("Enter new password (at least 6 characters): ");
+            String confirmPassword = inputUI.getInput("Confirm new password: ");
+
+            if (!newPassword.equals(confirmPassword)) {
+                inputUI.displayMessage("Passwords do not match. Try again.");
+                continue;
+            }
+
+            if (newPassword.length() >= 6) {
+                company.setPassword(newPassword);
+                inputUI.displayMessage("Password updated successfully!");
+                break;
+            } else {
+                inputUI.displayMessage("Password too short! Must be at least 6 characters.");
+            }
+        }
+    }
+
+    inputUI.displayMessage("Company profile updated successfully!");
+}
 
     // ----------------- DELETE -----------------
     public void removeCompany() {
-        inputUI.displayMessage("===== Remove Company =====");
-        this.displayCompanies();
-        Company company = null;
+        inputUI.displayMessage("Enter Company ID to remove:");
+        String companyId = inputUI.getInput("Company ID: ");
 
-        // Loop until a valid company is found or user exits
-        while (company == null) {
-            String companyId = inputUI.getInput("Enter Company ID to remove (or 'x' to cancel): ");
+        // Find the company
+        Company company = findCompanyById(companyId);
+        if (company == null) return;
 
-            if (companyId.equalsIgnoreCase("x")) {
-                inputUI.displayMessage("Remove operation cancelled.\n");
-                return;
-            }
-
-            company = findCompanyById(companyId);
-
-            if (company != null) {
-                // Find its index
-                int index = getCompanyIndex(company);
-                if (index == -1) {
-                    inputUI.displayMessage("Company not found in the list.\n");
-                    return;
-                }
-
-                // Remove from active list and archive
-                company.setRemovedAt(LocalDateTime.now());
-                companyList.remove(index);
-                removedCompanies.add(company);
-                inputUI.displayMessage("Company " + company.getCompanyId() + " removed successfully.\n");
-
-                return;
-            }
-        }
-    }
-
-    public void displayRemovedCompanies() {
-        inputUI.displayMessage("\n===== Removed Companies =====");
-
-        if (removedCompanies.isEmpty()) {
-            inputUI.displayMessage("No removed companies found.\n");
+        // Find its index
+        int index = getCompanyIndex(company);
+        if (index == -1) {
+            inputUI.displayMessage("Company not found in the list.\n");
             return;
         }
 
-        // Print the removed companies using the new table method
-        menuUI.printRemovedCompanies(removedCompanies);
-
-        // Prompt the user to continue
-        inputUI.getInput("Press Enter to continue...");
+        // Remove by index
+        companyList.remove(index);
+        inputUI.displayMessage("Company " + companyId + " removed successfully.\n");
     }
-
-
     
     private int getCompanyIndex(Company company) {
-        int index = 0;
-        for (Company c : companyList) {
-            if (c.getCompanyId().equals(company.getCompanyId())) {
-                return index;
-            }
-            index++;
+    int index = 0;
+    for (Company c : companyList) {
+        if (c.getCompanyId().equals(company.getCompanyId())) {
+            return index;
         }
-        return -1; // not found
+        index++;
     }
-
+    return -1; // not found
+}
+    
     public boolean isEmpty() {
-        return companyList.isEmpty();  // Delegates to the list
-    }
-
+    return companyList.isEmpty();  // Delegates to the list
+}
+    
+    
 }

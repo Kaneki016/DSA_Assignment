@@ -2,7 +2,6 @@
 package entities;
 
 import adt.*;
-import java.time.LocalDateTime;
 
 public class Job {
 
@@ -12,8 +11,6 @@ public class Job {
     private int required_experience;
     private DoublyLinkedListInterface<JobRequirements> jobRequirements;
     private float salary;
-    private LocalDateTime removedAt;
-
 
     private static int nextId = 1000;
 
@@ -53,10 +50,6 @@ public class Job {
     public static int getNextId() {
         return nextId;
     }
-    
-    public LocalDateTime getRemovedAt() {
-        return removedAt;
-    }
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
@@ -86,37 +79,28 @@ public class Job {
         Job.nextId = nextId;
     }
     
-    public void setRemovedAt(LocalDateTime removedAt) {
-       this.removedAt = removedAt;
-    }
-    
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+public String toString() {
+    StringBuilder sb = new StringBuilder();
 
-        sb.append("\n===========================================================\n")
-          .append(String.format("| %-20s | %-30s |\n", "Job ID", jobId))
-          .append("-----------------------------------------------------------\n")
-          .append(String.format("| %-20s | %-30s |\n", "Job Title", title))
-          .append(String.format("| %-20s | %-30s |\n", "Location", location))
-          .append(String.format("| %-20s | %-30d |\n", "Experience (yrs)", required_experience))
-          .append(String.format("| %-20s | $%-29.2f |\n", "Salary", salary))
-          .append("===========================================================\n")
-          .append(String.format("| %-20s | %-30s |\n", "Job Requirements", ""))
-          .append("-----------------------------------------------------------\n");
+    sb.append("Job ID: ").append(jobId).append("\n");
+    sb.append("Title: ").append(title).append("\n");
+    sb.append("Location: ").append(location).append("\n");
+    sb.append("Required Experience: ").append(required_experience).append(" years\n");
+    sb.append("Salary: $").append(String.format("%.2f", salary)).append("\n");
 
-        if (jobRequirements == null || jobRequirements.isEmpty()) {
-            sb.append(String.format("| %-20s | %-30s |\n", "", "None"));
-        } else {
-            int count = 1;
-            for (JobRequirements req : jobRequirements) {
-                String name = req.getName();
-                String details = req.getCategory() + " (Level " + req.getProficiencyLevel() + ")";
-                sb.append(String.format("| %-3d. %-16s | %-30s |\n", count++, name, details));
-            }
+    sb.append("Requirements:\n");
+
+    if (jobRequirements == null || jobRequirements.isEmpty()) {
+        sb.append("  None\n");
+    } else {
+        int index = 1;
+        for (JobRequirements req : jobRequirements) {
+            sb.append("  ").append(index++).append(". ").append(req.toString()).append("\n");
         }
-
-        sb.append("===========================================================\n");
-        return sb.toString();
     }
+
+    return sb.toString();
+}
+
 }
