@@ -30,7 +30,7 @@ public class MenuUI {
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_CYAN = "\u001B[36m";  // You can change this to RED, GREEN, etc.
-    
+
     private static final int REPORT_WIDTH = 125;
 
     // Helper method to create a border line
@@ -102,8 +102,7 @@ public class MenuUI {
         System.out.println(formatMenuOption(1, "View Available Jobs"));
         System.out.println(formatMenuOption(2, "Apply for a Job"));
         System.out.println(formatMenuOption(3, "View My Applications"));
-        System.out.println(formatMenuOption(4, "Recommend Jobs"));
-        System.out.println(formatMenuOption(5, "Exit"));
+        System.out.println(formatMenuOption(4, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
@@ -474,9 +473,29 @@ public class MenuUI {
 
     // Print Applicant Table Header
     public void printApplicantTableHeader() {
-        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+" + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+");
-        System.out.println(TABLE_VERTICAL + " Applicant ID " + " " + TABLE_VERTICAL + " Name                 " + " " + TABLE_VERTICAL + " Age   " + " " + TABLE_VERTICAL + " Location         " + " " + TABLE_VERTICAL + " Exp (Yr)   " + " " + TABLE_VERTICAL + " Education                 " + " " + TABLE_VERTICAL + " Skills                       " + " " + TABLE_VERTICAL + " Registration Date    " + " " + TABLE_VERTICAL);
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+" + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+");
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
+                   TABLE_CROSS);
+
+        System.out.printf("| %-12s | %-20s | %-5s | %-16s | %-10s | %-25s | %-28s | %-20s |\n",
+                "Applicant ID", "Name", "Age", "Location", "Exp (Yr)",
+                "Education", "Skills", "Registration Date");
+
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30) +
+                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
+                   TABLE_CROSS);
     }
 
     // Print a Single Applicant Row
@@ -488,6 +507,7 @@ public class MenuUI {
                 applicant.getApplicantId(), truncate(applicant.getName(), 20), applicant.getAge(),
                 truncate(applicant.getLocation(), 16), applicant.getYearsOfExperience(),
                 truncate(applicant.getEducationLevel(), 25), truncate(skills, 28), registrationTime);
+              
     }
 
     // Print Applicants Table
@@ -598,8 +618,7 @@ public class MenuUI {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
 
     }
-    
-    
+
     public void printReportHeader(String reportTitle) {
         String separator = "=".repeat(REPORT_WIDTH);
 
