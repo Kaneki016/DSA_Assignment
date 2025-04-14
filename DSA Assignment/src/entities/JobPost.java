@@ -1,6 +1,8 @@
 /*shu han*/
 package entities;
 
+import java.time.LocalDateTime;
+
 public class JobPost {
 
     private static int nextId = 1;  // Auto-increment ID counter
@@ -8,6 +10,8 @@ public class JobPost {
     private String jobPostId;
     private Job job;
     private Company company;
+    private LocalDateTime removedAt;
+    
 
     public JobPost(Job job, Company company) {
         this.jobPostId = String.format("JP%03d", nextId++); // Assign current ID and increment for the next Company
@@ -27,6 +31,10 @@ public class JobPost {
     public Company getCompany() {
         return company;
     }
+    
+    public LocalDateTime getRemovedAt() {
+        return removedAt;
+    }
 
     //setter
     public void setCompany(Company company) {
@@ -35,6 +43,10 @@ public class JobPost {
 
     public void setJob(Job job) {
         this.job = job;
+    }
+    
+    public void setRemovedAt(LocalDateTime removedAt) {
+        this.removedAt = removedAt;
     }
 
     @Override
