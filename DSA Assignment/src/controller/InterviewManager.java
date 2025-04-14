@@ -5,6 +5,13 @@ import boundary.InputUI;
 import boundary.MenuUI;
 import entities.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 public class InterviewManager {
 
     private static InterviewManager instance;
@@ -88,7 +95,7 @@ public class InterviewManager {
                 i++; // Increment counter for next applicant
             }
         }
-
+        
         menuUI.printApplicantsTableFooter();
 
         if (!found) {
@@ -496,10 +503,9 @@ public class InterviewManager {
             return;
         }
 
-        int maxAllowedDistance = 1;
+        int maxAllowedDistance = 1; 
 
-        DoublyLinkedListInterface<Interview> matchedInterviews = new DoublyLinkedList<>();
-
+        List<Interview> matchedInterviews = new ArrayList<>();
         for (Interview interviewObj : interview) {
             if (interviewObj != null
                     && interviewObj.getApplicantAppliedJob() != null
@@ -526,6 +532,7 @@ public class InterviewManager {
             return;
         }
 
+        // Let the user confirm the best match
         for (Interview foundInterview : matchedInterviews) {
             System.out.println("\nPossible Match Found:");
             System.out.println(
@@ -534,11 +541,12 @@ public class InterviewManager {
                     "Company: " + foundInterview.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName());
             System.out.println("========================================");
 
+            // Ask user if this is the correct match
             String confirmation = inputUI.getInput("Is this the correct applicant? (yes/no): ").trim().toLowerCase();
             if (confirmation.equals("yes")) {
                 inputUI.displayMessage("Proceeding with selected applicant.");
                 inputUI.handleSearchInterview(foundInterview.getApplicantAppliedJob());
-                return;
+                return; // Stop after finding a confirmed match
             }
         }
 
@@ -597,6 +605,10 @@ public class InterviewManager {
             System.out.println("No interview found for this applicant.");
         }
      */
+
+
+
+
     public void searchInterviewApplicantDetails(ApplicantAppliedJob applicantAppliedJob) {
         if (applicantAppliedJob == null) {
             System.out.println("Applicant details are not available.");
@@ -647,7 +659,7 @@ public class InterviewManager {
                     dp[i][j] = Math.min(Math.min(
                             dp[i - 1][j] + 1,
                             dp[i][j - 1] + 1),
-                            dp[i - 1][j - 1] + cost
+                            dp[i - 1][j - 1] + cost 
                     );
                 }
             }

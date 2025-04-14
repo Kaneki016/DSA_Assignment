@@ -3,19 +3,26 @@ package controller;
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import boundary.InputUI;
+import boundary.MenuUI;
 import entities.Company;
 import entities.Job;
 import entities.JobPost;
+import java.time.LocalDateTime;
 
 public class JobPostManager {
     private static JobPostManager instance;
 
     private DoublyLinkedListInterface<JobPost> jobPostList;
+    private DoublyLinkedListInterface<JobPost> removedJobPosts;
+
 
     private static InputUI inputUI = new InputUI();
+    private static MenuUI menuUI = new MenuUI();
 
+    //constructor
     private JobPostManager() {
         jobPostList = new DoublyLinkedList<>();
+        removedJobPosts = new DoublyLinkedList<>();
     }
 
     public static JobPostManager getInstance() {
@@ -25,7 +32,7 @@ public class JobPostManager {
         return instance;
     }
     
-    // ----------------- CREATE -----------------
+    // ----------------- CREATE ------------------------------------------------------------------------------------------------------
     public void addJobPost() {
         inputUI.displayMessage("\n===== Add New Job Post =====");
 
@@ -37,40 +44,44 @@ public class JobPostManager {
             return;
         }
 
+        Company selectedCompany = null;
         companyManager.displayCompanies();
-        String companyId = inputUI.getInput("Enter Company ID to link this job post: ");
-        Company selectedCompany = companyManager.findCompanyById(companyId);
-        if (selectedCompany == null) {
-            inputUI.displayMessage("Invalid Company ID. Aborting job post creation.\n");
-            return;
+        while (selectedCompany == null) {
+            String companyId = inputUI.getInput("Enter Company ID to link this job post (or 'X' to cancel): ");
+
+            if (companyId.equalsIgnoreCase("x")) {
+                inputUI.displayMessage("Job post creation cancelled.\n");
+                return;
+            }
+
+            selectedCompany = companyManager.findCompanyById(companyId);
+            // ❌ Removed duplicate error message here
         }
 
         // ---------- Job Selection / Creation ----------
         JobManager jobManager = JobManager.getInstance();
 
-        // If no jobs exist, force job creation first
         if (jobManager.isEmpty()) {
             inputUI.displayMessage("No jobs found. You need to add a job before creating a job post.");
-            jobManager.addJobWithRequirements();
+            jobManager.addJob();
         }
 
-        boolean jobSelected = false;
         Job selectedJob = null;
-
-        while (!jobSelected) {
+        while (selectedJob == null) {
             jobManager.displayJobs();
-            String jobId = inputUI.getInput("Enter Job ID to link this job post, or type 'new' to add a new job: ");
+            String jobId = inputUI.getInput("Enter Job ID to link this job post, 'new' to add a new job, or 'X' to cancel: ");
 
-            if (jobId.equalsIgnoreCase("new")) {
-                jobManager.addJobWithRequirements();
-                continue; // after adding, show the jobs again
+            if (jobId.equalsIgnoreCase("x")) {
+                inputUI.displayMessage("Job post creation cancelled.\n");
+                return;
+            } else if (jobId.equalsIgnoreCase("new")) {
+                jobManager.addJob();
+                continue;
             }
 
             selectedJob = jobManager.findJobById(jobId);
-            if (selectedJob != null) {
-                jobSelected = true;
-            } else {
-                inputUI.displayMessage("Invalid Job ID. Try again.\n");
+            if (selectedJob == null) {
+                inputUI.displayMessage("Invalid Job ID. Please try again.\n");
             }
         }
 
@@ -84,8 +95,10 @@ public class JobPostManager {
     public void addJobPost(JobPost jobPost) {
         jobPostList.add(jobPost);
     }
+
+
     
-    // ----------------- READ -----------------
+    // ----------------- READ --------------------------------------------------------------------------------------------------------
     public void displayJobPosts() {
         inputUI.displayMessage("\n===== Job Post List =====");
 
@@ -94,11 +107,11 @@ public class JobPostManager {
             return;
         }
 
-        int index = 1;
-        for (JobPost jobPost : jobPostList) {
-            inputUI.displayMessage(index + ". " + jobPost.toString());
-            index++;
-        }
+        // Print the job posts using menuUI (consistent with applicants)
+        menuUI.printJobPosts(jobPostList);
+
+        // Prompt the user to continue
+        inputUI.getInput("Press Enter to continue...");
     }
 
     public JobPost findJobPostById(String jobPostId) {
@@ -110,7 +123,8 @@ public class JobPostManager {
         return null;
     }
     
-    // ----------------- UPDATE -----------------
+    
+    // ----------------- UPDATE ------------------------------------------------------------------------------------------------------
     public void editJobPost() {
         inputUI.displayMessage("\n===== Edit Job Post =====");
 
@@ -120,9 +134,13 @@ public class JobPostManager {
         }
 
         displayJobPosts();
-        String jobPostId = inputUI.getInput("Enter Job Post ID to edit: ");
+        String jobPostId = inputUI.getInput("Enter Job Post ID to edit(Enter x to cancel): ");
+        if (jobPostId.equalsIgnoreCase("x")) {
+            inputUI.displayMessage("Edit cancelled.\n");
+            return;
+        }
+        
         JobPost jobPost = findJobPostById(jobPostId);
-
         if (jobPost == null) {
             inputUI.displayMessage("Job Post not found!\n");
             return;
@@ -169,7 +187,8 @@ public class JobPostManager {
         }
     }
 
-    // ----------------- DELETE -----------------
+    
+    // ----------------- DELETE ------------------------------------------------------------------------------------------------------
     public void removeJobPost() {
         inputUI.displayMessage("\n===== Remove Job Post =====");
 
@@ -178,20 +197,51 @@ public class JobPostManager {
             return;
         }
 
-        displayJobPosts();
-        String jobPostId = inputUI.getInput("Enter Job Post ID to remove: ");
-        int index = getJobPostIndex(jobPostId);
+        displayJobPosts(); // Show once initially
 
-        if (index == -1) {
-            inputUI.displayMessage("Job Post not found!\n");
+        while (true) {
+            String jobPostId = inputUI.getInput("Enter Job Post ID to remove (or 'X' to cancel): ");
+
+            if (jobPostId.equalsIgnoreCase("X")) {
+                inputUI.displayMessage("Removal cancelled.\n");
+                break;
+            }
+
+            int index = getJobPostIndex(jobPostId);
+            if (index != -1) {
+                JobPost removed = jobPostList.get(index);
+                removed.setRemovedAt(LocalDateTime.now());
+                jobPostList.remove(index);
+                removedJobPosts.add(removed);
+                inputUI.displayMessage("Job Post removed successfully.\n");
+                return;
+            } else {
+                inputUI.displayMessage("Job Post not found! Please try again or type 'X' to cancel.\n");
+            }
+        }
+}
+    
+    public void displayRemovedPosts() {
+        inputUI.displayMessage("\n===== Removed Job Posts =====");
+
+        if (removedJobPosts.isEmpty()) {
+            inputUI.displayMessage("No removed job posts.\n");
             return;
         }
 
-        jobPostList.remove(index);
-        inputUI.displayMessage("Job Post removed successfully.\n");
+        // Use the new table display method
+        menuUI.printRemovedJobPosts(removedJobPosts);
+
+        // Prompt user to continue
+        inputUI.getInput("Press Enter to continue...");
     }
 
-    // ----------------- Helper Methods -----------------
+    public void printJobPostReports() {
+        menuUI.printJobPostReports(jobPostList);
+    }
+
+
+    // ----------------- Helper Methods ------------------------------------------------------------------------------------------------------
     private int getJobPostIndex(String jobPostId) {
         int index = 0;
         for (JobPost jobPost : jobPostList) {

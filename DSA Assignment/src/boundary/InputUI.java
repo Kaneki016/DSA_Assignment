@@ -146,35 +146,29 @@ public class InputUI {
                 boolean running2 = true;
                 while (running2) {
                     menuUI.displayCompanyMainMenu();
-                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 9);
+                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
                     switch (choice) {
                         case 1:
-                            jobPostManager.addJobPost();
+                            handleJobPostManagement();
                             break;
                         case 2:
-                            jobPostManager.editJobPost();
+                            handleJobManagement();
                             break;
                         case 3:
-                            jobPostManager.removeJobPost();
+                            handleJobReqManagement();
                             break;
                         case 4:
-                            jobPostManager.displayJobPosts();
-                            break;
-                        case 5:
-                            jobManager.displayJobs();
-                            break;
-                        case 6:
                             handleInterviewMenu();
                             break;
-                        case 7:
+                        case 5:
                             handleCompanyMatchingCategory();
-                            break; // ✅ Added missing break to prevent fall-through
-                        case 8:
+                            break;
+                        case 6:
                             running2 = false;
                             menuUI.exitSystem();
                             break;
                         default:
-                            inputUI.invalidMenuSelection(1, 9);
+                            inputUI.invalidMenuSelection(1, 6);
                             break;
                     }
                 }
@@ -274,7 +268,12 @@ public class InputUI {
             case 3:
                 applicantAppliedJobManager.handleCheckMyApplications();
                 break;
+
             case 4:
+
+                break;
+
+            case 5:
                 inputUI.displayMessage("Exiting menu. Thank you!");
                 return; // Exit the menu loop
             default:
@@ -285,29 +284,143 @@ public class InputUI {
 
     // Handle Company Management Menu in middle side
     public void handleCompanyManagement() {
-        menuUI.displayCompanyManagement();
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
-        switch (choice) {
-            case 1:
-                companyManager.addCompany();
+        do {
+            menuUI.displayCompanyManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+            switch (choice) {
+                case 1:
+                    companyManager.addCompany();
+                    break;
+                case 2:
+                    companyManager.editCompany();
+                    break;
+                case 3:
+                    companyManager.displayCompanies();
+                    break;
+                case 4:
+                    companyManager.removeCompany();
+                    break;
+                case 5:
+                    companyManager.displayRemovedCompanies();
+                    break;
+                case 6:
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 6);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 6);
+    }
+    
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobPostManagement() {
+        int choice;
+        do {
+            menuUI.displayJobPostManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
+            switch (choice) {
+                case 1:
+                    jobPostManager.addJobPost();
+                    break;
+                case 2:
+                    jobPostManager.editJobPost();
+                    break;
+                case 3:
+                    jobPostManager.displayJobPosts();
+                    break;
+                case 4:
+                    jobPostManager.removeJobPost();
+                    break;
+                case 5:
+                    jobPostManager.displayRemovedPosts();
+                    break;
+                case 6:
+                    System.out.println("search job post module not yet done");
+                    break;
+                case 7:
+                    jobPostManager.printJobPostReports();
+                    break;
+                case 8:
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 8);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 8);
+
+    }
+    
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobManagement() {
+        int choice;
+        do{
+            menuUI.displayJobManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+            switch (choice) {
+                case 1:
+                    jobManager.addJob();
+                    break;
+                case 2:
+                    jobManager.editJob();
+                    break;
+                case 3:
+                    jobManager.displayJobs();
+                    break;
+                case 4:
+                    jobManager.removeJob();
+                    break;
+                case 5:
+                    jobManager.displayRemovedJobs();
+                    break;
+                case 6:
+                    System.out.println("search job post module not yet done");
+                    break;
+                case 7:                    
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 7);
+                    break; // Add break here to prevent fall-through
+            }
+        }while (choice != 7);
+    }
+    
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobReqManagement() {
+        int choice;
+        do{
+            menuUI.displayJobRequirementManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+            switch (choice) {
+                case 1:
+                    jobRequirementsManager.addJobRequirement();
+                    break;
+                case 2:
+                    jobRequirementsManager.editJobRequirement();
+                    break;
+                case 3:
+                    jobRequirementsManager.displayJobRequirements();
+                    break;
+                case 4:
+                    jobRequirementsManager.removeJobRequirement();
+                    break;
+                case 5:
+                    jobRequirementsManager.displayRemovedReq();
                 break;
-            case 2:
-                companyManager.editCompany();
+                case 6:
+                    System.out.println("search job requirement module not yet done");
                 break;
-            case 3:
-                companyManager.displayCompanies();
-                break;
-            case 4:
-                companyManager.removeCompany();
-                break;
-            case 5:
-                menuUI.exitSystem();
-                break; // Add break here to prevent fall-through
-            default:
-                inputUI.invalidMenuSelection(1, 5);
-                break; // Add break here to prevent fall-through
-        }
+                case 7:                    
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 7);
+                    break; // Add break here to prevent fall-through
+            }
+        }while (choice != 7);
     }
 
     // Handle Interview Main Menu
