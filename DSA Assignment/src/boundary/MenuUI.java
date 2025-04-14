@@ -649,7 +649,7 @@ public class MenuUI {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String timestamp = "🕒 Generated On: " + now.format(formatter);
-        System.out.println(centerText(timestamp, REPORT_WIDTH));
+        System.out.println(timestamp);
     }
 
     // Helper method to print end of report
