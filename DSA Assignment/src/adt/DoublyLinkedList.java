@@ -43,45 +43,6 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
     }
 
     @Override
-    public boolean add(int index, T element) {
-        if (index < 0 || index > size) return false;
-
-        Node<T> newNode = new Node<>(element);
-
-        if (index == 0) { // Insert at head
-            newNode.next = head;
-            if (head != null) {
-                head.prev = newNode;
-            }
-            head = newNode;
-            if (size == 0) {
-                tail = newNode;
-            }
-        } else if (index == size) { // Insert at tail
-            add(element);
-            return true;
-        } else { // Insert at middle
-            Node<T> current = getNodeAt(index);
-            newNode.next = current;
-            newNode.prev = current.prev;
-            if (current.prev != null) {
-                current.prev.next = newNode;
-            }
-            current.prev = newNode;
-        }
-        size++;
-        return true;
-    }
-
-    @Override
-    public T remove() {
-        if (head == null) {
-            return null;
-        }
-        return remove(0);
-    }
-
-    @Override
     public T remove(int index) {
         if (index < 0 || index >= size) {
             return null;
@@ -139,14 +100,6 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
     }
 
     @Override
-    public void set(int index, T newElement) {
-        Node<T> node = getNodeAt(index);
-        if (node != null) {
-            node.data = newElement;
-        }
-    }
-
-    @Override
     public int size() {
         return size;
     }
@@ -185,24 +138,6 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
     @Override
     public void clear() {
         removeAll();
-    }
-
-    @Override
-    public void listAll() {
-        display();
-    }
-
-    @Override
-    public void display() {
-        Node<T> current = head;
-        while (current != null) {
-            System.out.print(current.data);
-            if (current.next != null) {
-                System.out.print(" <-> ");
-            }
-            current = current.next;
-        }
-        System.out.println();
     }
 
     @Override

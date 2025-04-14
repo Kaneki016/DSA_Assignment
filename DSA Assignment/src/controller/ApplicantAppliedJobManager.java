@@ -1,5 +1,5 @@
 package controller;
-// Author: Lai Yoke Yau and Lim Wai Ming
+// Author: Lai Yoke Yau, Lim Wai Ming and Ma Jian Chun
 
 import adt.*;
 import entities.*;
@@ -10,12 +10,12 @@ public class ApplicantAppliedJobManager {
 
     private static ApplicantAppliedJobManager instance;
     private static DoublyLinkedListInterface<ApplicantAppliedJob> applicantAppliedJob;
-    private DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords;
+    private static DoublyLinkedListInterface<ApplicantAppliedJob> matchRecords;
     private static DoublyLinkedListInterface<Interview> interviews;
 
     // Boundary
     private static InputUI inputUI = new InputUI();
-    private static MenuUI menuUI = new MenuUI();    
+    private static MenuUI menuUI = new MenuUI();
 
     private ApplicantAppliedJobManager() {
         applicantAppliedJob = new DoublyLinkedList<>();
@@ -32,6 +32,7 @@ public class ApplicantAppliedJobManager {
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static JobPostManager jobPostManager = JobPostManager.getInstance();
     private static InterviewManager interviewManager = InterviewManager.getInstance();
+    private static CompanyManager companyManager = CompanyManager.getInstance();
 
     public void viewAvailableJobs() {
 
@@ -65,7 +66,10 @@ public class ApplicantAppliedJobManager {
         }
 
         // Step 4: Display available jobs
-        jobPostManager.displayJobPosts();
+       // jobPostManager.displayJobPosts();
+
+        //Step 4: TESTING MATCHED JOB
+        jobPostManager.displayMatchedJobPosts(applicant);
 
         // Step 5: Get user choice
         int choice = inputUI.getValidIntInput("\nEnter the job number to apply for: ", 1, jobPosts.getSize());
@@ -104,112 +108,278 @@ public class ApplicantAppliedJobManager {
         }
     }
 
-    public void handleCheckMyApplications() {
-        // Step 1: Get Applicant ID using InputUI
-        String applicantId = inputUI.getInput("\nEnter your Applicant ID (or type 'back' to return): ");
+    public void displayJobApplicationSummaryTable() {
+        DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = getApplicantAppliedJobs();
 
+        final int REPORT_WIDTH = 125;
+
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
+        inputUI.displayMessage(menuUI.centerText("JOB APPLICATION SUMMARY TABLE", REPORT_WIDTH));
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
+        inputUI.displayMessage(String.format("| %-50s | %-40s | %-15s |", "Job Title", "Company", "Applicants"));
+        inputUI.displayMessage("-".repeat(REPORT_WIDTH));
+
+        DoublyLinkedListInterface<String> trackedKeys = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> applicantCounts = new DoublyLinkedList<>();
+
+        for (ApplicantAppliedJob app : appliedJobs) {
+            String jobTitle = app.getJobPost().getJob().getTitle();
+            String companyName = app.getJobPost().getCompany().getCompanyName();
+            String key = jobTitle + "@" + companyName;
+
+            boolean found = false;
+            for (int i = 0; i < trackedKeys.getSize(); i++) {
+                if (trackedKeys.get(i).equalsIgnoreCase(key)) {
+                    applicantCounts.replace(i, applicantCounts.get(i) + 1);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                trackedKeys.add(key);
+                applicantCounts.add(1);
+            }
+        }
+
+        for (int i = 0; i < trackedKeys.getSize(); i++) {
+            String[] parts = trackedKeys.get(i).split("@");
+            String jobTitle = parts[0];
+            String company = parts[1];
+            int count = applicantCounts.get(i);
+
+            inputUI.displayMessage(String.format("| %-50s | %-40s | %-15d |", jobTitle, company, count));
+        }
+
+        inputUI.displayMessage("=".repeat(REPORT_WIDTH));
+    }
+
+    public void displayCompanyApplicantReport() {
+        menuUI.printReportHeader("Applicant Summary Report");
+        displayJobApplicationSummaryTable(); // Table first
+
+        DoublyLinkedListInterface<Company> companies = companyManager.getCompanies();
+        DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = getApplicantAppliedJobs();
+
+        DoublyLinkedListInterface<String> companyNames = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> applicantCounts = countApplicantsPerCompany(companies, appliedJobs, companyNames);
+        DoublyLinkedListInterface<String> mostAppliedCompanies = findMostAppliedCompanies(companyNames, applicantCounts);
+
+        DoublyLinkedListInterface<String> jobTitles = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> jobCounts = new DoublyLinkedList<>();
+        int highestJobCount = countApplicantsPerJob(appliedJobs, jobTitles, jobCounts);
+        DoublyLinkedListInterface<String> mostAppliedJobs = findMostAppliedJobs(jobTitles, jobCounts, highestJobCount);
+
+        printBarChart(companyNames, applicantCounts);
+        printSummary(companyNames.getSize(), appliedJobs.getSize(), mostAppliedCompanies, mostAppliedJobs, applicantCounts, jobCounts);
+        inputUI.getInput("<< Press Enter to continue >>");
+    }
+
+    private DoublyLinkedListInterface<Integer> countApplicantsPerCompany(
+            DoublyLinkedListInterface<Company> companies,
+            DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs,
+            DoublyLinkedListInterface<String> companyNames) {
+
+        DoublyLinkedListInterface<Integer> counts = new DoublyLinkedList<>();
+
+        for (Company company : companies) {
+            int count = 0;
+            for (ApplicantAppliedJob app : appliedJobs) {
+                if (app.getJobPost().getCompany().equals(company)) {
+                    count++;
+                }
+            }
+            companyNames.add(company.getCompanyName());
+            counts.add(count);
+        }
+        return counts;
+    }
+
+    private DoublyLinkedListInterface<String> findMostAppliedCompanies(
+            DoublyLinkedListInterface<String> companyNames,
+            DoublyLinkedListInterface<Integer> counts) {
+
+        DoublyLinkedListInterface<String> result = new DoublyLinkedList<>();
+        int max = 0;
+
+        for (int i = 0; i < counts.getSize(); i++) {
+            int count = counts.get(i);
+            if (count > max) {
+                max = count;
+                result.clear();
+                result.add(companyNames.get(i));
+            } else if (count == max && count > 0) {
+                result.add(companyNames.get(i));
+            }
+        }
+        return result;
+    }
+
+    private int countApplicantsPerJob(
+            DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs,
+            DoublyLinkedListInterface<String> jobTitles,
+            DoublyLinkedListInterface<Integer> jobCounts) {
+
+        int max = 0;
+
+        for (ApplicantAppliedJob app : appliedJobs) {
+            String title = app.getJobPost().getJob().getTitle();
+            boolean found = false;
+            for (int i = 0; i < jobTitles.getSize(); i++) {
+                if (jobTitles.get(i).equalsIgnoreCase(title)) {
+                    jobCounts.replace(i, jobCounts.get(i) + 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                jobTitles.add(title);
+                jobCounts.add(1);
+            }
+        }
+
+        for (int count : jobCounts) {
+            if (count > max) {
+                max = count;
+            }
+        }
+
+        return max;
+    }
+
+    private DoublyLinkedListInterface<String> findMostAppliedJobs(DoublyLinkedListInterface<String> jobTitles, DoublyLinkedListInterface<Integer> jobCounts, int highestCount) {
+
+        DoublyLinkedListInterface<String> result = new DoublyLinkedList<>();
+
+        for (int i = 0; i < jobCounts.getSize(); i++) {
+            if (jobCounts.get(i) == highestCount) {
+                result.add(jobTitles.get(i));
+            }
+        }
+        return result;
+    }
+
+    private void printBarChart(DoublyLinkedListInterface<String> companyNames,
+            DoublyLinkedListInterface<Integer> applicantCounts) {
+
+        final int COLUMN_WIDTH = 8;
+        int max = 0;
+        for (int count : applicantCounts) {
+            if (count > max) {
+                max = count;
+            }
+        }
+
+        inputUI.displayMessage("No. of Applicants");
+
+        for (int level = max; level >= 1; level--) {
+            StringBuilder row = new StringBuilder();
+            row.append(String.format("%2d |", level));
+            for (int count : applicantCounts) {
+                String bar = count >= level ? "*" : " ";
+                row.append(String.format("   %-2s   ", bar));
+            }
+            inputUI.displayMessage(row.toString());
+        }
+
+        StringBuilder separator = new StringBuilder("   +");
+        for (int i = 0; i < companyNames.getSize(); i++) {
+            separator.append("-".repeat(COLUMN_WIDTH - 1)).append("+");
+        }
+        inputUI.displayMessage(separator.append("-> Companies").toString());
+
+        StringBuilder labels = new StringBuilder("    ");  // Start after Y-axis space
+        for (int i = 0; i < companyNames.getSize(); i++) {
+            String name = companyNames.get(i);
+            name = name.length() > 3 ? name.substring(0, 3) : name;
+
+            int totalPadding = COLUMN_WIDTH;                            // COLUMN_WIDTH = 8 and name is "ABC" (3 chars):
+            int leftPadding = (totalPadding - name.length()) / 2;       //   Left Padding = (8 - 3) / 2 = 2
+            int rightPadding = totalPadding - name.length() - leftPadding; /// Right Padding = 8 - 3 - 2 = 3
+
+            labels.append(" ".repeat(leftPadding)).append(name).append(" ".repeat(rightPadding));
+        }
+        inputUI.displayMessage(labels.toString());
+
+    }
+
+    private void printSummary(int totalCompanies, int totalApplicants,
+            DoublyLinkedListInterface<String> mostCompanies,
+            DoublyLinkedListInterface<String> mostJobs,
+            DoublyLinkedListInterface<Integer> companyCounts,
+            DoublyLinkedListInterface<Integer> jobCounts) {
+
+        int maxApplicants = 0, maxJobs = 0;
+        for (int c : companyCounts) {
+            if (c > maxApplicants) {
+                maxApplicants = c;
+            }
+        }
+        for (int j : jobCounts) {
+            if (j > maxJobs) {
+                maxJobs = j;
+            }
+        }
+
+        inputUI.displayMessage("\nSummary:");
+        inputUI.displayMessage("Total Companies       : " + totalCompanies);
+        inputUI.displayMessage("Total Applicants      : " + totalApplicants);
+
+        StringBuilder companyLine = new StringBuilder("Most Applied Company  : ");
+        for (int i = 0; i < mostCompanies.getSize(); i++) {
+            if (i > 0) {
+                companyLine.append(", ");
+            }
+            companyLine.append(mostCompanies.get(i));
+        }
+        companyLine.append(" (" + maxApplicants + " applicants)");
+        inputUI.displayMessage(companyLine.toString());
+
+        StringBuilder jobLine = new StringBuilder("Most Applied Job Title: ");
+        for (int i = 0; i < mostJobs.getSize(); i++) {
+            if (i > 0) {
+                jobLine.append(", ");
+            }
+            jobLine.append(mostJobs.get(i));
+        }
+        jobLine.append(" (" + maxJobs + " applicants)");
+        inputUI.displayMessage(jobLine.toString());
+
+        menuUI.printEndOfReport(125);
+    }
+
+    //Accept or rejct 
+    public void handleCheckMyApplications() {
+        String applicantId = inputUI.getInput("\nEnter your Applicant ID (or type 'back' to return): ");
         if (applicantId.equalsIgnoreCase("back")) {
             inputUI.displayMessage("Returning to main menu...");
             return;
         }
 
         Applicant applicant = applicantManager.findApplicantById(applicantId);
-
         if (applicant == null) {
             inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
             return;
         }
 
-        // Step 2: Retrieve interview data
         DoublyLinkedListInterface<Interview> interviews = interviewManager.getInterviews();
-
-        // Step 3: Display the user's job applications
-        int index = 1;
-        int totalApplications = 0;
         DoublyLinkedListInterface<ApplicantAppliedJob> userApplications = new DoublyLinkedList<>();
+        int index = 1;
 
-        inputUI.displayMessage("\n📌 Your Submitted Job Applications:");
-        for (ApplicantAppliedJob application : applicantAppliedJob) {
-            if (application.getApplicant().equals(applicant)) {
-                // Default values if no interview is scheduled
-                String interviewStatus = "Pending";
-                String interviewTimeSlot = "Not Scheduled";
-
-                // Step 4: Check if an interview exists for this application
-                for (Interview interview : interviews) {
-                    if (interview.getApplicantAppliedJob().equals(application)) {
-                        interviewStatus = interview.getStatus();
-                        TimeSlot timeslot = interview.getTimeslot();
-                        interviewTimeSlot = timeslot.getTime() + ", " + timeslot.getDate() + " at "
-                                + timeslot.getLocation();
-                        break;
-                    }
-                }
-
-                // Step 5: Display application details with interview info
-                inputUI.displayMessage(index + ". " + application.getJobPost().getJob().getTitle()
-                        + " at " + application.getJobPost().getCompany().getCompanyName()
-                        + " | Status: " + interviewStatus
-                        + " | Interview TimeSlot: " + interviewTimeSlot);
-
-                userApplications.add(application); // Store indexed applications
-                index++;
-                totalApplications++;
+        for (ApplicantAppliedJob app : applicantAppliedJob) {
+            if (app.getApplicant().equals(applicant)) {
+                userApplications.add(app);
             }
         }
 
-        if (totalApplications == 0) {
+        if (userApplications.isEmpty()) {
             inputUI.displayMessage("❌ You have not applied for any jobs yet.");
             return;
         }
 
-        // Step 6: Ask user to select an application to take action
-        int choice = inputUI.getValidIntInput(
-                "\nEnter the number of the application to take action (or type 0 to go back): ", 0, totalApplications);
-
-        if (choice == 0) {
-            inputUI.displayMessage("Returning to previous menu...");
-            return;
-        }
-
-        ApplicantAppliedJob selectedApplication = userApplications.get(choice - 1);
-
-        // Step 7: Ask user to Accept or Reject
-        inputUI.displayMessage("\nYou selected: " + selectedApplication.getJobPost().getJob().getTitle()
-                + " at " + selectedApplication.getJobPost().getCompany().getCompanyName());
-
-        String action;
-        do {
-            action = inputUI.getInput("Do you want to ACCEPT or REJECT this application? (accept/reject/back): ")
-                    .toLowerCase();
-
-            if (action.equals("back")) {
-                inputUI.displayMessage("Returning to application selection...");
-                return;
-            } else if (action.equals("accept")) {
-                // Step 8: Accept the application (Confirm the interview if scheduled)
-                boolean interviewFound = false;
-                for (Interview interview : interviews) {
-                    if (interview.getApplicantAppliedJob().equals(selectedApplication)) {
-                        interview.setStatus("Accepted");
-                        inputUI.displayMessage("\n✅ You have accepted the interview for: "
-                                + selectedApplication.getJobPost().getJob().getTitle());
-                        interviewFound = true;
-                        break;
-                    }
-                }
-                if (!interviewFound) {
-                    inputUI.displayMessage("\n⚠ No interview scheduled yet. Your application remains in process.");
-                }
-            } else if (action.equals("reject")) {
-                // Step 9: Reject the application
-                removeApplicantAppliedJob(selectedApplication);
-                inputUI.displayMessage("\n❌ You have rejected the job application for: "
-                        + selectedApplication.getJobPost().getJob().getTitle());
-            } else {
-                inputUI.displayMessage("Invalid choice. Please enter 'accept', 'reject', or 'back'.");
-            }
-        } while (!action.equals("accept") && !action.equals("reject"));
+        // ✅ Print nicely formatted table using MenuUI
+        menuUI.printApplicantApplicationsTable(userApplications, interviews);
+        inputUI.getInput("Press Enter to continue...");
     }
 
     // New getter method to expose the list
@@ -217,7 +387,7 @@ public class ApplicantAppliedJobManager {
         return applicantAppliedJob;
     }
 
-    // ====================== Matching Method
+    // ====================== Matching Method - Lai Yoke Yau
     // =============================================================
     // Skill Matching with Proficiency Levels - Returns Match Score
     public double skillMatch(JobPost jobPost, Applicant applicant) {
@@ -225,7 +395,9 @@ public class ApplicantAppliedJobManager {
 
         for (JobRequirements requiredSkill : jobPost.getJob().getJobRequirements()) {
             int requiredProficiency = Integer.parseInt(requiredSkill.getProficiencyLevel());
-            if (requiredProficiency == 0) continue;
+            if (requiredProficiency == 0) {
+                continue;
+            }
 
             int applicantProficiency = 0;
             for (Skill skill : applicant.getSkills()) {
@@ -244,7 +416,6 @@ public class ApplicantAppliedJobManager {
         return (totalWeight > 0) ? matchScore / totalWeight : 0; // ✅ Return match score instead of storing applicants
     }
 
-
     // Experience Level Matching
     public double experienceMatch(JobPost jobPost, Applicant applicant) {
         int jobExperienceRequired = jobPost.getJob().getRequired_experience();
@@ -253,13 +424,11 @@ public class ApplicantAppliedJobManager {
         return (jobExperienceRequired == 0) ? 1.0 : Math.min((double) applicantExperience / jobExperienceRequired, 1.0);
     }
 
-
     // Location Preference Matching
     public double locationMatch(JobPost jobPost, Applicant applicant) {
         return applicant.getLocation().equalsIgnoreCase(jobPost.getJob().getLocation()) ? 1.0 : 0.0;
     }
 
-    
     // Total Match Score Matching
     public void totalMatchScore(DoublyLinkedListInterface<JobPost> jobPosts, DoublyLinkedListInterface<Applicant> applicants) {
         if (matchRecords == null) {
@@ -287,9 +456,9 @@ public class ApplicantAppliedJobManager {
                     double locationWeight = 0.2;
 
                     // Weighted total match score
-                    double totalScore = (skillScore * skillWeight) + 
-                                        (experienceScore * experienceWeight) + 
-                                        (locationScore * locationWeight);
+                    double totalScore = (skillScore * skillWeight)
+                            + (experienceScore * experienceWeight)
+                            + (locationScore * locationWeight);
 
                     // Check if this match already exists
                     if (!containsMatch(applicant, jobPost)) {
@@ -299,10 +468,6 @@ public class ApplicantAppliedJobManager {
             }
         }
     }
-
-
-
-
 
     // ====================== For Applicant
     // ==========================================
@@ -351,10 +516,9 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
-
 
     // Call method for finding suitable jobs for an applicant based on experience
     public void ApplicantExperienceMatch() {
@@ -399,12 +563,10 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
 
-
-    
     ///Call method for finding suitable jobs for an applicant based on applicant location
     public void ApplicantLocationMatch() {
         String applicantId = inputUI.getInput("Enter Applicant ID: ");
@@ -448,12 +610,10 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display jobs based on suitability
-        listJobPosts(applicant, suitableJobs, "Suitable");
-        listJobPosts(applicant, notSuitableJobs, "Unsuitable");
+        menuUI.listJobPosts(applicant, suitableJobs, "Suitable");
+        menuUI.listJobPosts(applicant, notSuitableJobs, "Unsuitable");
     }
 
-
-    
     // ======================== For Company
     // ===========================================
     // Call method for skill matching
@@ -505,12 +665,10 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
-
-    
     // Call method for experience matching
     public void CompanyExperienceMatch() {
         String companyId = inputUI.getInput("Enter Company ID: ");
@@ -560,10 +718,9 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
-
 
     // Call method for location match
     public void CompanyLocationMatch() {
@@ -614,12 +771,23 @@ public class ApplicantAppliedJobManager {
         }
 
         // Display the qualified and non-qualified applicants
-        listApplicants(suitableApplicants, selectedJobPost, "Qualified");
-        listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
+        menuUI.listApplicants(suitableApplicants, selectedJobPost, "Qualified");
+        menuUI.listApplicants(nonQualifiedApplicants, selectedJobPost, "Unqualified");
     }
 
-    
-    // ==================== Report ================
+    // ==================== Helper Method
+    // ===========================================
+    // Check if an applicant is already matched to this job
+    private boolean containsMatch(Applicant applicant, JobPost jobPost) {
+        for (ApplicantAppliedJob record : matchRecords) {
+            if (record.getApplicant().equals(applicant) && record.getJobPost().equals(jobPost)) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
+    }
+
+    // ==================== Yoke Yau - Report ================
     // ===========================================
     public void generateCompanyMatchReport() {
         totalMatchScore(jobPostManager.getJobPostList(), applicantManager.getApplicants());
@@ -632,7 +800,7 @@ public class ApplicantAppliedJobManager {
                 companyMatches.add(record);
             }
         }
-         
+
         if (companyMatches.isEmpty()) {
             System.out.println("📋 No matches found for the selected company.");
             return;
@@ -655,24 +823,8 @@ public class ApplicantAppliedJobManager {
         }
 
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = menuUI.repeat("=", 100);
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
-
-        // Center-align headers and other text
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION PROGRAM".length()) / 2 + "s", "INTERNSHIP APPLICATION PROGRAM"));
-        System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL SCORE MATCHING RANKING REPORT".length()) / 2 + "s", "OVERALL SCORE MATCHING RANKING REPORT"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println();
-        System.out.println(String.format("%" + (width + ("📊 Job-Applicant Overall Match Report for Company: " + companyId).length()) / 2 + "s", "📊 Job-Applicant Overall Match Report for Company: " + companyId));
-        System.out.println(String.format("%" + (width + ("Total Applicants Considered: " + totalApplicants).length()) / 2 + "s", "Total Applicants Considered: " + totalApplicants));
-        System.out.println(String.format("%" + (width + ("Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(header);
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-
+        String separator = menuUI.repeat("=", width);
+        menuUI.printCompanyMatchReportHeader(companyId, totalApplicants, topApplicant, highestScore, width);
 
         for (ApplicantAppliedJob record : companyMatches) {
             String applicantName = record.getApplicant().getName();
@@ -733,14 +885,12 @@ public class ApplicantAppliedJobManager {
             String jobTitle = jobPost.getJob().getTitle();
             System.out.println(String.format("%-20s | %s (%d applicants)", jobTitle, bar, applicantCount));
         }
+        System.out.println();
+        menuUI.printTimestamp();
 
-        System.out.println(separator);
-        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
-        System.out.println(separator);
-     }
+        menuUI.printEndOfReport(width);
+    }
 
-
-    
     public void generateApplicantMatchReport() {
         totalMatchScore(jobPostManager.getJobPostList(), applicantManager.getApplicants());
 
@@ -784,25 +934,9 @@ public class ApplicantAppliedJobManager {
         }
 
         int width = 100; // You can adjust this depending on the console width or your preference
-        String separator = menuUI.repeat("=", 100);
+        String separator = menuUI.repeat("=", width);
 
-        // Center-align headers and other text
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
-        System.out.println(String.format("%" + (width + applicant.getName().length()) / 2 + "s", applicant.getName()));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION REPORT".length()) / 2 + "s", "INTERNSHIP APPLICATION REPORT"));
-        System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL JOB MATCHING REPORT FOR APPLICANT".length()) / 2 + "s", "OVERALL JOB MATCHING REPORT FOR APPLICANT"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println();
-        System.out.println(String.format("%" + (width + ("Total Jobs Applied: " + totalJobsApplied).length()) / 2 + "s", "Total Jobs Applied: " + totalJobsApplied));
-        System.out.println(String.format("%" + (width + ("Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-
-        // Header for job details including Level
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
-        System.out.println(header);
-        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+        menuUI.printApplicantMatchReportHeader(applicant, totalJobsApplied, topJobTitle, highestScore, width);
 
         // Displaying the job details with Level
         for (ApplicantAppliedJob record : applicantMatches) {
@@ -818,146 +952,57 @@ public class ApplicantAppliedJobManager {
             // Outputting the job details
             System.out.println(String.format("%-20s | %-20s | %-20s | %-15s | %-10s", companyName, jobTitle, jobLocation, matchScore, level));
         }
-        
+        System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
+
         // 📊 Generate the bar chart at the bottom for number of jobs applied per company
-    System.out.println("📊 Jobs Applied Per Company:");
+        System.out.println("📊 Jobs Applied Per Company:");
 
-    // Step 1: Get the list of unique companies using DoublyLinkedList
-    DoublyLinkedListInterface<Company> companies = new DoublyLinkedList<>();
-    for (ApplicantAppliedJob record : applicantMatches) {
-        Company company = record.getJobPost().getCompany();
-        if (!companies.contains(company)) {
-            companies.add(company);
-        }
-    }
-
-    // Step 2: Find the max job applications in a single company
-    int maxApplications = 0;
-    for (Company company : companies) {
-        int count = 0;
+        // Step 1: Get the list of unique companies using DoublyLinkedList
+        DoublyLinkedListInterface<Company> companies = new DoublyLinkedList<>();
         for (ApplicantAppliedJob record : applicantMatches) {
-            if (record.getJobPost().getCompany().equals(company)) {
-                count++;
-            }
-        }
-        if (count > maxApplications) {
-            maxApplications = count;
-        }
-    }
-
-    // Step 3: Generate bars for each company
-    final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
-    for (Company company : companies) {
-        int jobCount = 0;
-
-        // Count how many jobs the applicant applied for at this company
-        for (ApplicantAppliedJob record : applicantMatches) {
-            if (record.getJobPost().getCompany().equals(company)) {
-                jobCount++;
+            Company company = record.getJobPost().getCompany();
+            if (!companies.contains(company)) {
+                companies.add(company);
             }
         }
 
-        // Step 4: Calculate the bar length
-        int barLength = (int) ((double) jobCount / maxApplications * maxBarLength);
-
-        // Step 5: Generate and print the bar
-        String bar = menuUI.repeat("█", barLength);
-        System.out.println(String.format("%-20s | %s (%d jobs)", company.getCompanyName(), bar, jobCount));
-    }
-
-        System.out.println(separator);
-        System.out.println(String.format("%" + (width + "END OF REPORT".length()) / 2 + "s", "END OF REPORT"));
-        System.out.println(separator);
-    }
-
-
-
-    // ==================== Helper Method
-    // ===========================================
-
-    // Print out the suitable applicants with enhanced formatting
-    public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
-        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
-
-        if (applicants.isEmpty()) {
-            System.out.println("❌ No " + status.toLowerCase() + " applicants found.");
-        } else {
-            System.out.println("✅ " + applicants.size() + " " + status + " applicant(s) found:\n");
-            int count = 1;
-            for (Applicant applicant : applicants) {
-                System.out.println(count + ". 👤 Name: " + applicant.getName());
-                System.out.println("   🎓 Education: " + applicant.getEducationLevel());
-                System.out.println("   🏠 Location: " + applicant.getLocation());
-                System.out.println("   📅 Experience: " + applicant.getYearsOfExperience() + " year(s)");
-                System.out.println("   🛠 Skills: " + formatApplicantSkills(applicant.getSkills()));
-                System.out.println("--------------------------------------------------");
-                count++;
+        // Step 2: Find the max job applications in a single company
+        int maxApplications = 0;
+        for (Company company : companies) {
+            int count = 0;
+            for (ApplicantAppliedJob record : applicantMatches) {
+                if (record.getJobPost().getCompany().equals(company)) {
+                    count++;
+                }
+            }
+            if (count > maxApplications) {
+                maxApplications = count;
             }
         }
-    }
 
+        // Step 3: Generate bars for each company
+        final int maxBarLength = 36;  // Maximum bar length (can be adjusted)
+        for (Company company : companies) {
+            int jobCount = 0;
 
-    // Print out the suitable job post with a better format
-    public void listJobPosts(Applicant applicant, DoublyLinkedListInterface<JobPost> jobPosts, String status) {
-        System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
-
-        if (jobPosts.isEmpty()) {
-            System.out.println("❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
-        } else {
-            System.out.println("✅ " + jobPosts.size() + " " + status + " job(s) found:\n");
-            int count = 1;
-            for (JobPost jobPost : jobPosts) {
-                System.out.println(count + ". 🏢 " + jobPost.getCompany().getCompanyName() + " (" + jobPost.getCompany().getCompanyLocation() + ")");
-                System.out.println("   📌 Job Title: " + jobPost.getJob().getTitle());
-                System.out.println("   📍 Job Location: " + jobPost.getJob().getLocation()); // Added job location
-                System.out.println("   🏆 Required Experience: " + jobPost.getJob().getRequired_experience() + " years");
-                System.out.println("   📜 Requirements: " + formatJobRequirements(jobPost.getJob().getJobRequirements()));
-                System.out.println("--------------------------------------------------");
-                count++;
+            // Count how many jobs the applicant applied for at this company
+            for (ApplicantAppliedJob record : applicantMatches) {
+                if (record.getJobPost().getCompany().equals(company)) {
+                    jobCount++;
+                }
             }
-        }
-    }
 
-    
-    // Helper method to format job requirements nicely
-    private String formatJobRequirements(DoublyLinkedListInterface<JobRequirements> requirements) {
-        if (requirements.isEmpty()) return "No specific requirements listed.";
+            // Step 4: Calculate the bar length
+            int barLength = (int) ((double) jobCount / maxApplications * maxBarLength);
 
-        StringBuilder formatted = new StringBuilder();
-        for (JobRequirements req : requirements) {
-            formatted.append("\n   - ")
-                    .append(req.getName())
-                    .append(" (Proficiency: ")
-                    .append(req.getProficiencyLevel())
-                    .append(")");
+            // Step 5: Generate and print the bar
+            String bar = menuUI.repeat("█", barLength);
+            System.out.println(String.format("%-20s | %s (%d jobs)", company.getCompanyName(), bar, jobCount));
         }
-        return formatted.toString();
-    }
-    
-    // Helper method to format applicant skills nicely
-    private String formatApplicantSkills(DoublyLinkedListInterface<Skill> skills) {
-        if (skills.isEmpty()) return "No skills listed.";
+        System.out.println();
+        menuUI.printTimestamp();
 
-        StringBuilder formatted = new StringBuilder();
-        for (Skill skill : skills) {
-            formatted.append("\n   - ")
-                    .append(skill.getName())
-                    .append(" (Proficiency: ")
-                    .append(skill.getProficiency_level())
-                    .append(")");
-        }
-        return formatted.toString();
+        menuUI.printEndOfReport(width);
     }
-    
-    // Check if an applicant is already matched to this job
-    private boolean containsMatch(Applicant applicant, JobPost jobPost) {
-        for (ApplicantAppliedJob record : matchRecords) {
-            if (record.getApplicant().equals(applicant) && record.getJobPost().equals(jobPost)) {
-                return true; // Duplicate found
-            }
-        }
-        return false;
-    }
-
 
 }
