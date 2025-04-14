@@ -1,6 +1,14 @@
 package controller;
 
 import entities.TimeSlot;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Date;
+
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 
@@ -40,6 +48,33 @@ public class TimeSlotManager {
 
     public DoublyLinkedListInterface<TimeSlot> getSuggestedTimeSlots() {
         return suggestedTimeSlots;
+    }
+
+    public void sortTheTimeTable() {
+        timeSlots.mergeSort((t1, t2) -> t1.compareTo(t2));
+    }
+
+    public boolean isValidTimeFormat(String time) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h.mma");
+            time = time.toLowerCase().replaceAll("\\s+", "");
+            if (!time.endsWith("am") && !time.endsWith("pm"))
+                return false;
+            LocalDateTime.parse("1/1/2025 " + time, DateTimeFormatter.ofPattern("d/M/yyyy h.mma"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isValidDateFormat(String date) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+            formatter.parse(date);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

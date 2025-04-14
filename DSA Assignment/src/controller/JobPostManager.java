@@ -3,9 +3,12 @@ package controller;
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import boundary.InputUI;
+import entities.Applicant;
 import entities.Company;
 import entities.Job;
 import entities.JobPost;
+import entities.JobRequirements;
+import entities.Skill;
 
 public class JobPostManager {
     private static JobPostManager instance;
@@ -24,7 +27,7 @@ public class JobPostManager {
         }
         return instance;
     }
-    
+
     // ----------------- CREATE -----------------
     public void addJobPost() {
         inputUI.displayMessage("\n===== Add New Job Post =====");
@@ -84,7 +87,7 @@ public class JobPostManager {
     public void addJobPost(JobPost jobPost) {
         jobPostList.add(jobPost);
     }
-    
+
     // ----------------- READ -----------------
     public void displayJobPosts() {
         inputUI.displayMessage("\n===== Job Post List =====");
@@ -101,6 +104,53 @@ public class JobPostManager {
         }
     }
 
+    public void displayMatchedJobPosts(Applicant applicant) {
+        inputUI.displayMessage("\n===== Matched Job Posts =====");
+
+        if (jobPostList.isEmpty()) {
+            inputUI.displayMessage("No job posts available.\n");
+            return;
+        }
+
+        int index = 1;
+        boolean hasMatched = false;
+
+        System.out.println("\nMatched Jobs (Based on Skills):");
+        for (JobPost jobPost : jobPostList) {
+            if (isSkillMatched(jobPost, applicant)) {
+                System.out.println("\u001B[32m" + index + ". " + jobPost.toString() + "\u001B[0m"); // Green
+                hasMatched = true;
+            }
+            index++;
+        }
+
+        if (!hasMatched) {
+            inputUI.displayMessage("No matched job posts found based on your skills.\n");
+        }
+
+        System.out.println("\nOther Available Jobs:");
+        index = 1;
+        for (JobPost jobPost : jobPostList) {
+            if (!isSkillMatched(jobPost, applicant)) {
+                System.out.println(index + ". " + jobPost.toString()); // Default color
+            }
+            index++;
+        }
+    }
+
+    public boolean isSkillMatched(JobPost jobPost, Applicant applicant) {
+        for (JobRequirements required : jobPost.getJob().getJobRequirements()) {
+            for (Skill skill : applicant.getSkills()) {
+                if (required.getName().equalsIgnoreCase(skill.getName())
+                    && skill.getProficiency_level() >= Integer.parseInt(required.getProficiencyLevel())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+
     public JobPost findJobPostById(String jobPostId) {
         for (JobPost jobPost : jobPostList) {
             if (jobPost.getJobPostId().equalsIgnoreCase(jobPostId)) {
@@ -109,7 +159,7 @@ public class JobPostManager {
         }
         return null;
     }
-    
+
     // ----------------- UPDATE -----------------
     public void editJobPost() {
         inputUI.displayMessage("\n===== Edit Job Post =====");
@@ -222,7 +272,7 @@ public class JobPostManager {
 
         return filteredJobPosts;
     }
-    
+
     public JobPost selectJobPost(DoublyLinkedListInterface<JobPost> jobPosts) {
         if (jobPosts.isEmpty()) {
             System.out.println("No job posts available.");
@@ -241,11 +291,10 @@ public class JobPostManager {
             System.out.println("User input: " + input); // Debugging output
 
             // Check if input is a number
-            if (!input.matches("\\d+")) { 
+            if (!input.matches("\\d+")) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
             }
-            
 
             int choice = Integer.parseInt(input);
             if (choice >= 1 && choice <= jobPosts.size()) {

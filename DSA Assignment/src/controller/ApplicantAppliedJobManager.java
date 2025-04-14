@@ -66,7 +66,10 @@ public class ApplicantAppliedJobManager {
         }
 
         // Step 4: Display available jobs
-        jobPostManager.displayJobPosts();
+       // jobPostManager.displayJobPosts();
+
+        //Step 4: TESTING MATCHED JOB
+        jobPostManager.displayMatchedJobPosts(applicant);
 
         // Step 5: Get user choice
         int choice = inputUI.getValidIntInput("\nEnter the job number to apply for: ", 1, jobPosts.getSize());

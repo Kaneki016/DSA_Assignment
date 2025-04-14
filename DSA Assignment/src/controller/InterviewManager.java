@@ -197,14 +197,26 @@ public class InterviewManager {
 
     // Suggest time slot to middle man
     public void suggestTimeSlotToMiddleMan() {
-
         DoublyLinkedListInterface<TimeSlot> suggestedTimeSlots = timeSlotManager.getSuggestedTimeSlots();
         System.out.println("\n===== Suggest Time Slot To Middle Man =====");
 
-        String timeSuggested = inputUI.getInput("Enter time suggested (HH:mm(am/pm)): ");
-        String dateSuggested = inputUI.getInput("Enter date suggested (DD/MM/YYY5): ");
-        String locationSuggested = inputUI.getInput("Enter location suggested: ");
+        String timeSuggested, dateSuggested;
 
+        while (true) {
+            timeSuggested = inputUI.getInput("Enter time suggested (e.g., 5.00pm): ");
+            if (timeSlotManager.isValidTimeFormat(timeSuggested))
+                break;
+            System.out.println("Invalid time format! Please use format like 5.00pm or 10.30am.");
+        }
+
+        while (true) {
+            dateSuggested = inputUI.getInput("Enter date suggested (e.g., 6/3/2025): ");
+            if (timeSlotManager.isValidDateFormat(dateSuggested))
+                break;
+            System.out.println("Invalid date format! Please use format like 6/3/2025.");
+        }
+
+        String locationSuggested = inputUI.getInput("Enter location suggested: ");
         TimeSlot timeSlot = new TimeSlot(timeSuggested, dateSuggested, locationSuggested);
         suggestedTimeSlots.add(timeSlot);
 
@@ -386,6 +398,7 @@ public class InterviewManager {
     // View Time SLot Table
     public void viewTimeSlotTable(Company company) {
         DoublyLinkedListInterface<TimeSlot> timeSlots = timeSlotManager.getTimeSlots();
+        timeSlotManager.sortTheTimeTable();
         System.out.println("\n===== Time Slot Table =====");
         if (timeSlots.isEmpty()) {
             System.out.println("No time slots available.");
@@ -545,57 +558,58 @@ public class InterviewManager {
         System.out.println("No confirmed matches found.");
     }
 
-
     /*
-        OLD SEARCH INTERVIEW METHOD
-        public void searchInterview(Company company) {
-        System.out.println("\n===== Search Interview =====");
-
-        // Validate input for applicant ID
-        String applicantId = inputUI.getInput("Enter Applicant ID: ");
-        if (applicantId == null || applicantId.trim().isEmpty()) {
-            inputUI.displayMessage("Applicant ID cannot be empty.");
-            return;
-        }
-
-        // Collect interviews that match both the applicant ID and the company name
-        List<Interview> matchedInterviews = new ArrayList<>();
-        for (Interview interviewObj : interview) {
-            // Ensure that the chain of objects is not null to prevent NullPointerException
-            if (interviewObj != null &&
-                    interviewObj.getApplicantAppliedJob() != null &&
-                    interviewObj.getApplicantAppliedJob().getApplicant() != null &&
-                    interviewObj.getApplicantAppliedJob().getJobPost() != null &&
-                    interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
-
-                boolean applicantMatches = applicantId.equals(
-                        interviewObj.getApplicantAppliedJob().getApplicant().getApplicantId());
-                boolean companyMatches = company.getCompanyName().equalsIgnoreCase(
-                        interviewObj.getApplicantAppliedJob().getJobPost().getCompany().getCompanyName());
-                if (applicantMatches && companyMatches) {
-                    matchedInterviews.add(interviewObj);
-                }
-            }
-        }
-
-        if (matchedInterviews.isEmpty()) {
-            System.out.println("No interview found for this applicant.");
-            return;
-        }
-
-        // Display all matched interviews
-        for (Interview foundInterview : matchedInterviews) {
-            System.out.println(foundInterview);
-            System.out.println("========================================");
-        }
-
-        if (!matchedInterviews.isEmpty()) {
-            Interview interviewToProcess = matchedInterviews.get(0);
-            inputUI.displayMessage("Do you wish to further dig into their information?");
-            inputUI.handleSearchInterview(interviewToProcess.getApplicantAppliedJob());
-        } else {
-            System.out.println("No interview found for this applicant.");
-        }
+     * OLD SEARCH INTERVIEW METHOD
+     * public void searchInterview(Company company) {
+     * System.out.println("\n===== Search Interview =====");
+     * 
+     * // Validate input for applicant ID
+     * String applicantId = inputUI.getInput("Enter Applicant ID: ");
+     * if (applicantId == null || applicantId.trim().isEmpty()) {
+     * inputUI.displayMessage("Applicant ID cannot be empty.");
+     * return;
+     * }
+     * 
+     * // Collect interviews that match both the applicant ID and the company name
+     * List<Interview> matchedInterviews = new ArrayList<>();
+     * for (Interview interviewObj : interview) {
+     * // Ensure that the chain of objects is not null to prevent
+     * NullPointerException
+     * if (interviewObj != null &&
+     * interviewObj.getApplicantAppliedJob() != null &&
+     * interviewObj.getApplicantAppliedJob().getApplicant() != null &&
+     * interviewObj.getApplicantAppliedJob().getJobPost() != null &&
+     * interviewObj.getApplicantAppliedJob().getJobPost().getCompany() != null) {
+     * 
+     * boolean applicantMatches = applicantId.equals(
+     * interviewObj.getApplicantAppliedJob().getApplicant().getApplicantId());
+     * boolean companyMatches = company.getCompanyName().equalsIgnoreCase(
+     * interviewObj.getApplicantAppliedJob().getJobPost().getCompany().
+     * getCompanyName());
+     * if (applicantMatches && companyMatches) {
+     * matchedInterviews.add(interviewObj);
+     * }
+     * }
+     * }
+     * 
+     * if (matchedInterviews.isEmpty()) {
+     * System.out.println("No interview found for this applicant.");
+     * return;
+     * }
+     * 
+     * // Display all matched interviews
+     * for (Interview foundInterview : matchedInterviews) {
+     * System.out.println(foundInterview);
+     * System.out.println("========================================");
+     * }
+     * 
+     * if (!matchedInterviews.isEmpty()) {
+     * Interview interviewToProcess = matchedInterviews.get(0);
+     * inputUI.displayMessage("Do you wish to further dig into their information?");
+     * inputUI.handleSearchInterview(interviewToProcess.getApplicantAppliedJob());
+     * } else {
+     * System.out.println("No interview found for this applicant.");
+     * }
      */
     public void searchInterviewApplicantDetails(ApplicantAppliedJob applicantAppliedJob) {
         if (applicantAppliedJob == null) {
@@ -647,8 +661,7 @@ public class InterviewManager {
                     dp[i][j] = Math.min(Math.min(
                             dp[i - 1][j] + 1,
                             dp[i][j - 1] + 1),
-                            dp[i - 1][j - 1] + cost
-                    );
+                            dp[i - 1][j - 1] + cost);
                 }
             }
         }

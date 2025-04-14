@@ -17,7 +17,7 @@ public class MockDataGenerator {
 
     private Scanner scanner = new Scanner(System.in);
 
-    //Instance Definer
+    // Instance Definer
     private static MockDataGenerator instance;
 
     // Singleton accessor
@@ -28,7 +28,7 @@ public class MockDataGenerator {
         return instance;
     }
 
-    //Controller instances
+    // Controller instances
     private static ApplicantManager applicantManager = ApplicantManager.getInstance();
     private static ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
     private static CompanyManager companyManager = CompanyManager.getInstance();
@@ -78,28 +78,26 @@ public class MockDataGenerator {
         Applicant applicant4 = new Applicant("Siti", 25, "SG", 2, "Bachelor", skillSet4);
         applicantManager.addApplicant(applicant4);
 
-        //Applicant 5
+        // Applicant 5
         DoublyLinkedListInterface<Skill> skillSet5 = new DoublyLinkedList<>();
         skillSet5 = applicantManager.addApplicantSkill(skillSet4, "Java", "Programming", 2);
         skillSet5 = applicantManager.addApplicantSkill(skillSet4, "Communication", "Soft Skill", 5);
         Applicant applicant5 = new Applicant("Lina", 24, "Melaka", 1, "Degree", skillSet5);
         applicantManager.addApplicant(applicant5);
 
-        //Applicant 6
+        // Applicant 6
         DoublyLinkedListInterface<Skill> skillSet6 = new DoublyLinkedList<>();
         skillSet6 = applicantManager.addApplicantSkill(skillSet6, "AWS", "Cloud", 5);
         skillSet6 = applicantManager.addApplicantSkill(skillSet6, "Communication", "Soft Skill", 5);
         Applicant applicant6 = new Applicant("Eric", 35, "Sabah", 8, "PhD", skillSet6);
         applicantManager.addApplicant(applicant6);
 
-        //Applicant 7
+        // Applicant 7
         DoublyLinkedListInterface<Skill> skillSet7 = new DoublyLinkedList<>();
         skillSet7 = applicantManager.addApplicantSkill(skillSet6, "Python", "Programming", 4);
         skillSet7 = applicantManager.addApplicantSkill(skillSet6, "Leadership,Communication", "Mental", 3);
         Applicant applicant7 = new Applicant("Zara", 27, "Negeri Sembilan", 4, "Degree", skillSet7);
         applicantManager.addApplicant(applicant7);
-
-       
 
         // 3. Create job requirements
         DoublyLinkedListInterface<JobRequirements> jobRequirements = new DoublyLinkedList<>();
@@ -110,7 +108,6 @@ public class MockDataGenerator {
         // 4. Create jobs
         Job softwareEngineerJob = new Job("Software Engineer", "KL", 3, jobRequirements, 3000);
         Job dataEngineerJob = new Job("Data Engineer", "KL", 3, jobRequirements, 3000);
-
         Job job3 = new Job("Data Analyst", "Penang", 2, jobRequirements, 3200);
         Job job4 = new Job("DevOps Engineer", "Johor", 4, jobRequirements, 4000);
         Job job5 = new Job("Cloud Architect", "Sabah", 5, jobRequirements, 4500);
@@ -153,6 +150,7 @@ public class MockDataGenerator {
         applicantAppliedJobManager.addApplicantAppliedJob(new ApplicantAppliedJob(applicant4, jobPost7));
 
         // 7. Create time slots
+        // Modify your TimeSlot mock data in addMockData():
         timeSlotManager.addTimeSlot(new TimeSlot("5.00pm", "6/3/2025", "Bukit Bintang"));
         timeSlotManager.addTimeSlot(new TimeSlot("7.00pm", "6/3/2025", "Bukit Bintang"));
         timeSlotManager.addTimeSlot(new TimeSlot("9.00pm", "6/3/2025", "Bukit Bintang"));
