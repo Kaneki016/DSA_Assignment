@@ -222,17 +222,31 @@ public class MenuUI {
 
     // Display Time Slot Table Header
     public void printTimeSlotTableHeader() {
-        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
-        System.out.println(TABLE_VERTICAL + " Time Slot ID " + " " + TABLE_VERTICAL + "     Start Time        " + " " + TABLE_VERTICAL + "      End Time         " + " " + TABLE_VERTICAL + " Availability  " + " " + TABLE_VERTICAL);
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+");
+
+        System.out.printf(TABLE_VERTICAL + " %-14s " + TABLE_VERTICAL + " %-19s "
+                + TABLE_VERTICAL + " %-19s " + TABLE_VERTICAL + " %-14s " + TABLE_VERTICAL + "\n",
+                "Time Slot ID", "Start Time", "End Time", "Availability");
+
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+");
     }
 
     // Print Time Slot Row
     public void printTimeSlotRow(DoublyLinkedListInterface<TimeSlot> timeSlots) {
         for (TimeSlot timeSlot : timeSlots) {
-            System.out.println(timeSlot);
+            System.out.println(timeSlot); // Uses toString(), which is now correctly formatted
         }
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 23) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
+
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+");
     }
 
     // Display Interview Report Menu
@@ -473,29 +487,29 @@ public class MenuUI {
 
     // Print Applicant Table Header
     public void printApplicantTableHeader() {
-        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
-                   TABLE_CROSS);
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS);
 
         System.out.printf("| %-12s | %-20s | %-5s | %-16s | %-10s | %-25s | %-28s | %-20s |\n",
                 "Applicant ID", "Name", "Age", "Location", "Exp (Yr)",
                 "Education", "Skills", "Registration Date");
 
-        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30) +
-                   TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22) +
-                   TABLE_CROSS);
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 7)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 18)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 12)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 27)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 30)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS);
     }
 
     // Print a Single Applicant Row
@@ -507,7 +521,7 @@ public class MenuUI {
                 applicant.getApplicantId(), truncate(applicant.getName(), 20), applicant.getAge(),
                 truncate(applicant.getLocation(), 16), applicant.getYearsOfExperience(),
                 truncate(applicant.getEducationLevel(), 25), truncate(skills, 28), registrationTime);
-              
+
     }
 
     // Print Applicants Table
