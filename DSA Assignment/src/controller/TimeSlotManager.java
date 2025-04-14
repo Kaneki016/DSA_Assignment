@@ -2,12 +2,8 @@ package controller;
 
 import entities.TimeSlot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Date;
 
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
