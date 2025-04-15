@@ -326,7 +326,7 @@ public class InputUI {
             }
         } while (choice != 6);
     }
-
+    
     // Handle Job Post Management Menu in Compnay side side
     public void handleJobPostManagement() {
         int choice;
@@ -471,7 +471,7 @@ public class InputUI {
         while (running) {
             menuUI.displayTimeSlotInterviewMenu(company.getCompanyName());
             int choice;
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 12);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 10);
             switch (choice) {
                 case 1:
                     // Assign Interview
@@ -510,17 +510,11 @@ public class InputUI {
                     interviewManager.searchInterview(company);
                     break;
                 case 10:
-                    interviewManager.rescheduleInterviewSlot(company);
-                    break;
-                case 11:
-                    interviewManager.displayAllInterivew(company);
-                    break;
-                case 12:
                     // Return to previous menu
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 12);
+                    inputUI.invalidMenuSelection(1, 10);
                     break;
             }
         }

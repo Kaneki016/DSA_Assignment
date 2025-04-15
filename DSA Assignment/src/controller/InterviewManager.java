@@ -512,6 +512,68 @@ public class InterviewManager {
         inputUI.getInput("Press Enter to continue...");
     }
 
+    public void rescheduleInterviewSlot(Company company) {
+        System.out.println("\n===== Reschedule Interview =====");
+
+        DoublyLinkedListInterface<Interview> reschedulable = new DoublyLinkedList<>();
+
+        // Collect matching interviews
+        for (Interview i : interview) {
+            if ((i.getStatus().equalsIgnoreCase("Waiting") || i.getStatus().equalsIgnoreCase("Accepted"))
+                    && i.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
+                reschedulable.add(i);
+            }
+        }
+
+        if (reschedulable.isEmpty()) {
+            System.out.println("No interviews available for rescheduling.");
+            return;
+        }
+
+        // Use menuUI to print nicely formatted table
+        menuUI.printReschedulableInterviewTable(reschedulable, company);
+
+        // Choose interview
+        int choice = inputUI.getIntInput("Select an interview to reschedule: ", 1, reschedulable.size());
+        Interview selectedInterview = reschedulable.get(choice - 1);
+
+        // Show available time slots
+        DoublyLinkedListInterface<TimeSlot> availableTimeSlots = new DoublyLinkedList<>();
+        for (TimeSlot slot : timeSlotManager.getTimeSlots()) {
+            boolean isOccupied = false;
+            for (Interview i : interview) {
+                if (i.getTimeslot().getTime().equals(slot.getTime())
+                        && i.getTimeslot().getDate().equals(slot.getDate())
+                        && i.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
+                    isOccupied = true;
+                    break;
+                }
+            }
+            if (!isOccupied) {
+                availableTimeSlots.add(slot);
+            }
+        }
+
+        if (availableTimeSlots.isEmpty()) {
+            System.out.println("No available time slots.");
+            return;
+        }
+
+        System.out.println("\nAvailable Time Slots:");
+        // menuUI.printTimeSlotTableHeader();
+        // menuUI.printTimeSlotRow(availableTimeSlots);
+        menuUI.printNumberedTimeSlotTable(availableTimeSlots);
+
+        int newSlotChoice = inputUI.getIntInput("Select a new time slot: ", 1, availableTimeSlots.size());
+        TimeSlot newSlot = availableTimeSlots.get(newSlotChoice - 1);
+
+        selectedInterview.setTimeslot(newSlot);
+
+        System.out.println("\nInterview successfully rescheduled!");
+        System.out.printf("New Time Slot: %s | %s @ %s%n",
+                newSlot.getTime(), newSlot.getDate(), newSlot.getLocation());
+    }
+
     // Interview Feedback of Completed Interviews
     public void viewInterviewFeedback(Company company) {
         System.out.println("\n===== Interview Feedback =====");

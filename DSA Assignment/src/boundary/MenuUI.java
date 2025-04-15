@@ -274,6 +274,20 @@ public class MenuUI {
                 VERTICAL_LINE + " >  7. Give Interview Feedback" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
         System.out
                 .println(VERTICAL_LINE + " >  8. View Time Slot Table" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  2. View Waiting Interviews" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  3. View Completed Interviews" + " ".repeat(dynamicWidth - 35) + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  4. View Interviews Based on Skills" + " ".repeat(dynamicWidth - 41)
+                + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  5. View Interviews Based on Experience" + " ".repeat(dynamicWidth - 45)
+                + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  6. Suggest Time Slot to Middle Side" + " ".repeat(dynamicWidth - 42)
+                + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  7. Give Interview Feedback" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
+        System.out
+                .println(VERTICAL_LINE + " >  8. View Time Slot Table" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
         System.out.println(VERTICAL_LINE + " >  9. Search" + " ".repeat(dynamicWidth - 16) + VERTICAL_LINE);
         System.out
                 .println(VERTICAL_LINE + " > 10. Reschedule Interview" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
@@ -684,7 +698,10 @@ public class MenuUI {
         String skills = formatSkills(applicant.getSkills());
         String registrationTime = applicant.getDateAdded();
 
-        System.out.printf(TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-5d " + TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL + " %-25s " + TABLE_VERTICAL + " %-28s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + "\n",
+        System.out.printf(
+                TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-5d " + TABLE_VERTICAL
+                        + " %-16s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL + " %-25s " + TABLE_VERTICAL
+                        + " %-28s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + "\n",
                 applicant.getApplicantId(), truncate(applicant.getName(), 20), applicant.getAge(),
                 truncate(applicant.getLocation(), 16), applicant.getYearsOfExperience(),
                 truncate(applicant.getEducationLevel(), 25), truncate(skills, 28), registrationTime);
@@ -1076,6 +1093,7 @@ public class MenuUI {
                 + "+");
     }
 
+
     // Print a Single Company Row
     public void printCompanyRow(Company company) {
         String description = truncate(company.getCompanyDescription(), 30); // Truncate description to fit the table
@@ -1185,6 +1203,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
                 + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
     }
+
 
     // Print a Single JobPost Row
     public void printJobPostRow(JobPost jobPost) {
