@@ -40,10 +40,11 @@ public class MockDataGenerator {
 
     public void addMockData() {
         // 1. Companies
-        Company companyABC = new Company("ABC Tech", "Kuala Lumpur", 150, "Innovative Tech Solutions", "011-2345678");
-        Company companyXYZ = new Company("XYZ Corp", "Penang", 80, "Reliable IT Partner", "017-8889988");
-        Company companyDBC = new Company("DBC Systems", "Johor", 60, "Digital Business Consultancy", "016-5522331");
-        Company companyLMN = new Company("LMN Global", "Sabah", 120, "Global Logistics and Tech", "012-3322110");
+        Company companyABC = new Company("ABC Tech", "Kuala Lumpur", 150, "Innovative Tech Solutions");
+        Company companyXYZ = new Company("XYZ Corp", "Penang", 80, "Reliable IT Partner");
+        Company companyDBC = new Company("DBC Systems", "Johor", 60, "Digital Business Consultancy");
+        Company companyLMN = new Company("LMN Global", "Sabah", 120, "Global Logistics and Tech");
+
 
         companyManager.addCompany(companyABC);
         companyManager.addCompany(companyXYZ);
