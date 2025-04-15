@@ -397,7 +397,7 @@ public class InputUI {
                     break; // Add break here to prevent fall-through
             }
         } while (choice != 6);
-        } while (choice != 6);
+        
     }
 
 
@@ -424,7 +424,7 @@ public class InputUI {
                 case 5:
                     jobRequirementsManager.displayRemovedReq();
                     break;
-                    break;
+                   
                 case 6:
                     menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
@@ -524,7 +524,7 @@ public class InputUI {
                 case 12:
                     interviewManager.rescheduleInterviewSlot(company);
                     break;
-                case 11:
+                case 13:
                     // Return to previous menu
                     running = false;
                     break;
