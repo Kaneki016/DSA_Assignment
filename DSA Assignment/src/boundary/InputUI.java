@@ -308,7 +308,7 @@ public class InputUI {
             }
         } while (choice != 6);
     }
-    
+
     // Handle Job Post Management Menu in Compnay side side
     public void handleJobPostManagement() {
         int choice;
@@ -347,11 +347,11 @@ public class InputUI {
         } while (choice != 8);
 
     }
-    
+
     // Handle Job Post Management Menu in Compnay side side
     public void handleJobManagement() {
         int choice;
-        do{
+        do {
             menuUI.displayJobManagement();
             choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
             switch (choice) {
@@ -377,13 +377,13 @@ public class InputUI {
                     inputUI.invalidMenuSelection(1, 6);
                     break; // Add break here to prevent fall-through
             }
-        }while (choice != 6);
+        } while (choice != 6);
     }
-    
+
     // Handle Job Post Management Menu in Compnay side side
     public void handleJobReqManagement() {
         int choice;
-        do{
+        do {
             menuUI.displayJobRequirementManagement();
             choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
             switch (choice) {
@@ -401,7 +401,7 @@ public class InputUI {
                     break;
                 case 5:
                     jobRequirementsManager.displayRemovedReq();
-                break;
+                    break;
                 case 6:
                     menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
@@ -409,7 +409,7 @@ public class InputUI {
                     inputUI.invalidMenuSelection(1, 6);
                     break; // Add break here to prevent fall-through
             }
-        }while (choice != 6);
+        } while (choice != 6);
     }
 
     // Handle Interview Main Menu
@@ -453,7 +453,7 @@ public class InputUI {
         while (running) {
             menuUI.displayTimeSlotInterviewMenu(company.getCompanyName());
             int choice;
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 10);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 11);
             switch (choice) {
                 case 1:
                     // Assign Interview
@@ -492,11 +492,14 @@ public class InputUI {
                     interviewManager.searchInterview(company);
                     break;
                 case 10:
+                    interviewManager.rescheduleInterviewSlot(company);
+                    break;
+                case 11:
                     // Return to previous menu
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 10);
+                    inputUI.invalidMenuSelection(1, 11);
                     break;
             }
         }
@@ -660,5 +663,5 @@ public class InputUI {
             }
         }
     }
-   
+
 }

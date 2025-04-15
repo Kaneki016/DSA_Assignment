@@ -55,6 +55,7 @@ public class ApplicantAppliedJobManager {
         // Step 2: Validate Applicant
         if (applicant == null) {
             inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
+            inputUI.getInput("Press Enter to continue...");
             return;
         }
 
@@ -96,6 +97,8 @@ public class ApplicantAppliedJobManager {
         inputUI.displayMessage("\n✅ Application submitted successfully!");
         inputUI.displayMessage("You applied for: " + selectedJobPost.getJob().getTitle()
                 + " at " + selectedJobPost.getCompany().getCompanyName());
+        inputUI.getInput("Press Enter to continue...");
+      
     }
 
     // remove
