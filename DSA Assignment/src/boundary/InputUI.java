@@ -405,7 +405,6 @@ public class InputUI {
     public void handleJobReqManagement() {
         int choice;
         do {
-        do {
             menuUI.displayJobRequirementManagement();
             choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
             switch (choice) {
@@ -432,7 +431,6 @@ public class InputUI {
                     inputUI.invalidMenuSelection(1, 6);
                     break; // Add break here to prevent fall-through
             }
-        } while (choice != 6);
         } while (choice != 6);
     }
 
