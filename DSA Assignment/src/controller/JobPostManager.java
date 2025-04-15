@@ -26,7 +26,7 @@ public class JobPostManager {
     private JobPostManager() {
         jobPostList = new DoublyLinkedList<>();
         removedJobPosts = new DoublyLinkedList<>();
-NET    }
+    }
 
     public static JobPostManager getInstance() {
         if (instance == null) {

@@ -45,6 +45,7 @@ public class ApplicantAppliedJobManager {
         applicantAppliedJob.add(newApplication);
     }
 
+    //author : Ma jian chun
     public void applyJob() {
         System.out.println("\n======= Apply for a Job =======");
 
@@ -55,6 +56,7 @@ public class ApplicantAppliedJobManager {
         // Step 2: Validate Applicant
         if (applicant == null) {
             inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
+            inputUI.getInput("Press Enter to continue...");
             return;
         }
 
@@ -96,8 +98,11 @@ public class ApplicantAppliedJobManager {
         inputUI.displayMessage("\n✅ Application submitted successfully!");
         inputUI.displayMessage("You applied for: " + selectedJobPost.getJob().getTitle()
                 + " at " + selectedJobPost.getCompany().getCompanyName());
+        inputUI.getInput("Press Enter to continue...");
+      
     }
 
+    //author : Ma jian chun
     // remove
     public void removeApplicantAppliedJob(ApplicantAppliedJob appliedJob) {
         if (applicantAppliedJob.contains(appliedJob)) {
@@ -108,6 +113,7 @@ public class ApplicantAppliedJobManager {
         }
     }
 
+    //author : Ma jian chun
     public void displayJobApplicationSummaryTable() {
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = getApplicantAppliedJobs();
 
@@ -154,6 +160,7 @@ public class ApplicantAppliedJobManager {
         inputUI.displayMessage("=".repeat(REPORT_WIDTH));
     }
 
+    //author : Ma jian chun
     public void displayCompanyApplicantReport() {
         menuUI.printReportHeader("Applicant Summary Report");
         displayJobApplicationSummaryTable(); // Table first
@@ -175,6 +182,7 @@ public class ApplicantAppliedJobManager {
         inputUI.getInput("<< Press Enter to continue >>");
     }
 
+    //author : Ma jian chun
     private DoublyLinkedListInterface<Integer> countApplicantsPerCompany(
             DoublyLinkedListInterface<Company> companies,
             DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs,
@@ -194,7 +202,8 @@ public class ApplicantAppliedJobManager {
         }
         return counts;
     }
-
+    
+    //author : Ma jian chun
     private DoublyLinkedListInterface<String> findMostAppliedCompanies(
             DoublyLinkedListInterface<String> companyNames,
             DoublyLinkedListInterface<Integer> counts) {
@@ -215,6 +224,7 @@ public class ApplicantAppliedJobManager {
         return result;
     }
 
+    //author : Ma jian chun
     private int countApplicantsPerJob(
             DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs,
             DoublyLinkedListInterface<String> jobTitles,
@@ -259,6 +269,7 @@ public class ApplicantAppliedJobManager {
         return result;
     }
 
+    //author : Ma jian chun
     private void printBarChart(DoublyLinkedListInterface<String> companyNames,
             DoublyLinkedListInterface<Integer> applicantCounts) {
 
