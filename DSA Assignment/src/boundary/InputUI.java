@@ -522,9 +522,6 @@ public class InputUI {
                     interviewManager.displayAllInterivew(company);
                     break;
                 case 12:
-                    interviewManager.rescheduleInterviewSlot(company);
-                    break;
-                case 13:
                     // Return to previous menu
                     running = false;
                     break;
