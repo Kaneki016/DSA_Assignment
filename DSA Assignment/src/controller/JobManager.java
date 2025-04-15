@@ -7,6 +7,7 @@ import boundary.*;
 import java.time.LocalDateTime;
 import controller.JobRequirementsManager;
 
+
 public class JobManager {
     
     // Menu UI
@@ -180,7 +181,7 @@ public class JobManager {
     // ----------------- UPDATE -----------------
     public void editJob() {
         inputUI.displayMessage("\n===== Edit Job =====");
-        this.displayJobs();
+        menuUI.printJobs(jobList);
         Job job = null;
         while (true) {
             String jobId = inputUI.getInput("Enter Job ID to edit (Enter X to cancel): ");
@@ -194,6 +195,7 @@ public class JobManager {
                 break;
             }
             inputUI.displayMessage("Job not found. Please try again.");
+
         }
 
         inputUI.displayMessage("Editing job: " + job.getTitle());
@@ -360,6 +362,7 @@ public class JobManager {
 
         // Prompt the user to continue
         inputUI.getInput("Press Enter to continue...");
+
     }
 
     // ----------------- HELPER -----------------
@@ -377,6 +380,5 @@ public class JobManager {
     public boolean isEmpty() {
         return jobList.isEmpty();
     }
-        
 }
 

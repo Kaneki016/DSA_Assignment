@@ -13,11 +13,13 @@ public class CompanyManager {
     private static InputUI inputUI = new InputUI();
     private static MenuUI menuUI = new MenuUI();
 
+
     // Singleton instance
     private static CompanyManager instance;
 
     // Doubly Linked List to store companies
     private DoublyLinkedListInterface<Company> companyList;
+
     private DoublyLinkedListInterface<Company> removedCompanies;
 
     // Private constructor for singleton
@@ -74,6 +76,7 @@ public class CompanyManager {
         companyList.add(newCompany);
     }
 
+
     // ----------------- READ -----------------
     public Company findCompanyById(String companyId) {
         for (Company company : companyList) {
@@ -103,7 +106,7 @@ public class CompanyManager {
     // ----------------- EDIT -----------------
     public void editCompany() {
         inputUI.displayMessage("\n===== Edit Company =====");
-        this.displayCompanies();
+        menuUI.printCompanies(companyList);
         Company company = null;
 
         // Loop until a valid company is found
@@ -166,7 +169,7 @@ public class CompanyManager {
     // ----------------- DELETE -----------------
     public void removeCompany() {
         inputUI.displayMessage("===== Remove Company =====");
-        this.displayCompanies();
+        menuUI.printCompanies(companyList);
         Company company = null;
 
         // Loop until a valid company is found or user exits

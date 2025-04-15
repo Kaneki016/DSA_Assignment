@@ -12,7 +12,6 @@ public class JobRequirements {
     private String category;
     private LocalDateTime removedAt;
 
-
     public JobRequirements(String name, String proficiencyLevel, String category) {
         this.jobRequirementId = String.format("JR%03d", nextId++);
         this.name = name;
@@ -53,7 +52,7 @@ public class JobRequirements {
     public void setCategory(String category) {
         this.category = category;
     }
-    
+   
     public void setRemovedAt(LocalDateTime removedAt) {
         this.removedAt = removedAt;
     }
@@ -79,5 +78,6 @@ public class JobRequirements {
 
         sb.append("===========================================================\n");
         return sb.toString();
+
     }
 }

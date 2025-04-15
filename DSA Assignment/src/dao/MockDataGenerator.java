@@ -45,6 +45,7 @@ public class MockDataGenerator {
         Company companyDBC = new Company("DBC Systems", "Johor", 60, "Digital Business Consultancy");
         Company companyLMN = new Company("LMN Global", "Sabah", 120, "Global Logistics and Tech");
 
+
         companyManager.addCompany(companyABC);
         companyManager.addCompany(companyXYZ);
         companyManager.addCompany(companyDBC);

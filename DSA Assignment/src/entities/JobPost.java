@@ -12,7 +12,6 @@ public class JobPost {
     private Company company;
     private LocalDateTime removedAt;
     
-
     public JobPost(Job job, Company company) {
         this.jobPostId = String.format("JP%03d", nextId++); // Assign current ID and increment for the next Company
         this.job = job;

@@ -13,7 +13,6 @@ public class Company {
     private String companyDescription;
     private LocalDateTime removedAt;
 
-
     // Constructor
     public Company(String companyName, String companyLocation, int companySize, String companyDescription) {
         this.companyId = String.format("C%03d", nextId++); // e.g., C001, C002, etc.

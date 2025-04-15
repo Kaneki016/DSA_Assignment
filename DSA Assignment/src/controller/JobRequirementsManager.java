@@ -109,7 +109,7 @@ public class JobRequirementsManager {
     // -------------------- EDIT --------------------
     public void editJobRequirement() {
         inputUI.displayMessage("\n===== Edit Job Requirement =====");
-        this.displayJobRequirements();
+        menuUI.printJobRequirements(jobRequirementsList); // Calls the table-based view
         JobRequirements requirement = null;
 
         while (true) {
@@ -140,7 +140,7 @@ public class JobRequirementsManager {
     // -------------------- REMOVE --------------------
     public void removeJobRequirement() {
         inputUI.displayMessage("\n===== Remove Job Requirement =====");
-        this.displayJobRequirements();
+        menuUI.printJobRequirements(jobRequirementsList); // Calls the table-based view
 
         JobRequirements requirement = null;
 
@@ -226,6 +226,5 @@ public class JobRequirementsManager {
         }
         JobRequirements.setNextId(maxId + 1);
     }
-
 }
 

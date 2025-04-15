@@ -4,6 +4,7 @@ package entities;
 import adt.*;
 import java.time.LocalDateTime;
 
+
 public class Job {
 
     private String jobId;
@@ -13,7 +14,6 @@ public class Job {
     private DoublyLinkedListInterface<JobRequirements> jobRequirements;
     private float salary;
     private LocalDateTime removedAt;
-
 
     private static int nextId = 1000;
 
@@ -119,4 +119,5 @@ public class Job {
         sb.append("===========================================================\n");
         return sb.toString();
     }
+
 }

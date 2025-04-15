@@ -12,6 +12,7 @@ import entities.JobRequirements;
 import entities.Skill;
 import java.time.LocalDateTime;
 
+
 public class JobPostManager {
     private static JobPostManager instance;
 
@@ -25,8 +26,7 @@ public class JobPostManager {
     private JobPostManager() {
         jobPostList = new DoublyLinkedList<>();
         removedJobPosts = new DoublyLinkedList<>();
-
-    }
+NET    }
 
     public static JobPostManager getInstance() {
         if (instance == null) {
@@ -58,6 +58,7 @@ public class JobPostManager {
             }
 
             selectedCompany = companyManager.findCompanyById(companyId);
+
         }
 
         // ---------- Job Selection / Creation ----------
@@ -69,8 +70,8 @@ public class JobPostManager {
         }
 
         Job selectedJob = null;
+        jobManager.displayJobs();
         while (selectedJob == null) {
-            jobManager.displayJobs();
             String jobId = inputUI.getInput("Enter Job ID to link this job post, 'new' to add a new job, or 'X' to cancel: ");
 
             if (jobId.equalsIgnoreCase("x")) {
@@ -82,9 +83,6 @@ public class JobPostManager {
             }
 
             selectedJob = jobManager.findJobById(jobId);
-            if (selectedJob == null) {
-                inputUI.displayMessage("Invalid Job ID. Please try again.\n");
-            }
         }
 
         // ---------- Create and Add JobPost ----------
@@ -193,7 +191,7 @@ public class JobPostManager {
             return;
         }
 
-        displayJobPosts(); // Display the list of job posts initially
+        menuUI.printJobPosts(jobPostList);
 
         while (true) {
             String jobPostId = inputUI.getInput("Enter Job Post ID to edit (Enter 'x' to cancel): ");
@@ -260,7 +258,7 @@ public class JobPostManager {
             return;
         }
 
-        displayJobPosts(); // Show once initially
+        menuUI.printJobPosts(jobPostList);
 
         while (true) {
             String jobPostId = inputUI.getInput("Enter Job Post ID to remove (or 'X' to cancel): ");
@@ -403,7 +401,6 @@ public class JobPostManager {
 
         inputUI.getInput("Press Enter to continue...");
     }
-
 
     // ----------------- Helper Methods -----------------
     private int getJobPostIndex(String jobPostId) {
