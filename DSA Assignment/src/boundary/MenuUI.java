@@ -1065,6 +1065,7 @@ public class MenuUI {
     // SHU HAN - UI PRINTING
     // ======================================================================================================================================================================
 // Print Company Table Header
+
     public void printCompanyTableHeader() {
         System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
@@ -1076,6 +1077,8 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
                 + "+");
     }
+
+
     // Print a Single Company Row
     public void printCompanyRow(Company company) {
         String description = truncate(company.getCompanyDescription(), 30); // Truncate description to fit the table
@@ -1088,6 +1091,7 @@ public class MenuUI {
                 truncate(company.getCompanyLocation(), 16),
                 company.getCompanySize(), description);
     }
+
     // Print Companies Table
     public void printCompanies(DoublyLinkedListInterface<Company> companies) {
         if (companies.isEmpty()) {
@@ -1103,6 +1107,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
                 + "+");
     }
+
     // Print Companies Footer
     public void printCompaniesTableFooter() {
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
@@ -1123,6 +1128,8 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
                 + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
     }
+
+
     // Print a Single JobPost Row
     public void printJobPostRow(JobPost jobPost) {
         System.out.printf(
@@ -1134,6 +1141,7 @@ public class MenuUI {
                 truncate(jobPost.getJob().getLocation(), 14), jobPost.getJob().getRequired_experience(),
                 jobPost.getJob().getSalary());
     }
+
     // Print JobPosts Table
     public void printJobPosts(DoublyLinkedListInterface<JobPost> jobPosts) {
         if (jobPosts.isEmpty()) {
@@ -1149,6 +1157,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
                 + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
     }
+
     // Print JobPost Table Footer
     public void printJobPostsTableFooter() {
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
@@ -1180,6 +1189,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 16) + "+"
                 + repeat(TABLE_HORIZONTAL, 21) + "+");
     }
+
     // Print a single Removed JobPost row
     public void printRemovedJobPostRow(JobPost jobPost) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -1197,6 +1207,7 @@ public class MenuUI {
                 job.getSalary(),
                 jobPost.getRemovedAt().format(formatter));
     }
+
     // Print Removed JobPost Table Footer
     public void printRemovedJobPostTableFooter() {
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+"
@@ -1207,6 +1218,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 16) + "+"
                 + repeat(TABLE_HORIZONTAL, 21) + "+");
     }
+
     // Print all Removed JobPosts
     public void printRemovedJobPosts(DoublyLinkedListInterface<JobPost> removedJobPosts) {
         if (removedJobPosts.isEmpty()) {
@@ -1233,6 +1245,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
                 + "+");
     }
+
     // ----------------- Print a Single Job Row -----------------
     public void printJobRow(Job job) {
         System.out.printf(TABLE_VERTICAL + " %-10s " + TABLE_VERTICAL + " %-22s " + TABLE_VERTICAL
@@ -1262,6 +1275,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
                 + "+");
     }
+
     // ----------------- Print All Job Records -----------------
     public void printJobs(DoublyLinkedListInterface<Job> jobList) {
         if (jobList.isEmpty()) {
@@ -1274,6 +1288,7 @@ public class MenuUI {
             printJobRow(job);
         }
     }
+
     // ----------------- Print Job Table Footer -----------------
     public void printJobTableFooter() {
         // Optional: You can add a footer at the very end of the table
@@ -1292,6 +1307,7 @@ public class MenuUI {
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+"
                 + repeat(TABLE_HORIZONTAL, 24) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+");
     }
+
     // Print a single JobRequirement row
     public void printJobRequirementRow(JobRequirements req) {
         System.out.printf(
@@ -1302,6 +1318,7 @@ public class MenuUI {
                 truncate(req.getProficiencyLevel(), 22),
                 truncate(req.getCategory(), 22));
     }
+
     // Print the entire list of JobRequirements
     public void printJobRequirements(DoublyLinkedListInterface<JobRequirements> requirementsList) {
         if (requirementsList.isEmpty()) {
@@ -1315,6 +1332,7 @@ public class MenuUI {
         }
         printJobRequirementTableFooter();
     }
+
     // Print JobRequirement Table Footer
     public void printJobRequirementTableFooter() {
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+"
@@ -1324,6 +1342,7 @@ public class MenuUI {
     
 // ======================================================================================================================================================================
     // SHU HAN - REPORT PRINTING
+
     public void printJobPostReports(DoublyLinkedListInterface<JobPost> jobPosts) {
         final int width = 125;
         final String separator = repeat("=", width);
@@ -1384,6 +1403,7 @@ public class MenuUI {
             System.out.println("Company ID not found. Please try again.");
             return;
         }
+
 
         // Proceed with generating the report for the selected company
         generateCompanyReport(selectedCompany, jobPosts);

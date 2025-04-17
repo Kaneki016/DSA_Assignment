@@ -9,3 +9,4 @@ DSA Assignment/nbproject/build-impl.xml
 DSA Assignment/dist/README.TXT
 DSA Assignment/manifest.mf
 DSA Assignment/build.xml
+*.class
