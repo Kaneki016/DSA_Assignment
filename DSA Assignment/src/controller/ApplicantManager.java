@@ -2,6 +2,8 @@ package controller;
 
 import adt.*;
 import entities.Applicant;
+import entities.ApplicantAppliedJob;
+
 import java.util.Scanner;
 import boundary.*;
 import entities.Skill;
@@ -10,6 +12,9 @@ import java.util.Comparator;
 public class ApplicantManager {
 
     private static ApplicantManager instance;
+    
+    //Controller
+    ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
 
     // ADT
     private DoublyLinkedListInterface<Applicant> applicants; // Custom DoublyLinkedList to store applicants
@@ -33,7 +38,7 @@ public class ApplicantManager {
 
     // Add an applicant
     public void addApplicant() {
-        inputUI.displayMessage("\n🔹 ADD NEW APPLICANT");
+        inputUI.displayMessage("\n ADD NEW APPLICANT");
         inputUI.displayMessage("(You can type 'back' or -1 at any time to cancel this entry.)");
 
         String name = inputUI.getInput("Enter Name: ");
@@ -81,7 +86,7 @@ public class ApplicantManager {
         }
 
         skills = addApplicantSkill(skills, skill, category, proficiency_level);
-        inputUI.displayMessage("✅ First skill added successfully!");
+        inputUI.displayMessage(" First skill added successfully!");
 
         // Additional skills
         int choice = 1;
@@ -105,7 +110,7 @@ public class ApplicantManager {
                 }
 
                 skills = addApplicantSkill(skills, skill, category, proficiency_level);
-                inputUI.displayMessage("✅ Skill added successfully!");
+                inputUI.displayMessage(" Skill added successfully!");
             }
         }
 
@@ -113,14 +118,14 @@ public class ApplicantManager {
         inputUI.displayMessage("\nDo you want to save this applicant? (yes/no)");
         String confirm = inputUI.getInput("Confirm: ");
         if (!confirm.equalsIgnoreCase("yes")) {
-            inputUI.displayMessage("❌ Applicant entry cancelled.");
+            inputUI.displayMessage("Applicant entry cancelled.");
             return;
         }
 
         // Create and add the applicant
         Applicant newApplicant = new Applicant(name, age, location, yearsOfExperience, educationLevel, skills);
         applicants.add(newApplicant);
-        inputUI.displayMessage("\n✅ Applicant added successfully!");
+        inputUI.displayMessage("\n Applicant added successfully!");
 
         // Display the added applicant
         menuUI.printApplicantTableHeader();
@@ -144,7 +149,12 @@ public class ApplicantManager {
 
     // Remove an applicant by ID
     public void removeApplicant() {
-        String id = inputUI.getInput("Enter the Applicant ID to remove!");
+        String id = inputUI.getInput("Enter the Applicant ID to remove (or type 'back' to return):").trim();
+
+        if (id.equalsIgnoreCase("back")) {
+            inputUI.displayMessage("Returning to previous menu...");
+            return;
+        }
 
         if (id.isEmpty()) {
             inputUI.displayMessage("Applicant ID cannot be empty!");
@@ -153,15 +163,39 @@ public class ApplicantManager {
 
         Applicant toRemove = findApplicantById(id);
 
-        if (toRemove != null) {
-            applicants.removeSpecific(toRemove);
-            inputUI.displayMessage("Applicant " + id + " removed.\n");
-        } else {
+        if (toRemove == null) {
             inputUI.displayMessage("Applicant not found!\n");
+            return;
+        }
+
+        // Check if this applicant is associated with any applied jobs
+       
+        DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager
+                .getApplicantAppliedJobs();
+
+        for (int i = 0; i < appliedJobs.size(); i++) {
+            ApplicantAppliedJob appliedJob = appliedJobs.get(i);
+            if (appliedJob.getApplicant().getApplicantId().equalsIgnoreCase(id)) {
+                inputUI.displayMessage("Cannot remove this applicant. He has applied to a job.\n");
+                return;
+            }
+        }
+
+        // Show applicant details before deletion
+        menuUI.printApplicantTableHeader();
+        menuUI.printApplicantRow(toRemove);
+        menuUI.printApplicantsTableFooter();
+
+        String confirm = inputUI.getInput("Are you sure you want to remove this applicant? (yes/no): ").trim();
+        if (confirm.equalsIgnoreCase("yes")) {
+            applicants.removeSpecific(toRemove);
+            inputUI.displayMessage("Applicant " + id + " has been removed.\n");
+        } else {
+            inputUI.displayMessage("Removal cancelled.");
         }
     }
 
-    // Find and return applicant by ID 
+    // Find and return applicant by ID
     public Applicant findApplicantById(String id) {
         if (id == null || id.trim().isEmpty()) {
             return null;
@@ -176,31 +210,38 @@ public class ApplicantManager {
         return null;
     }
 
-// Prompt and search for applicant by ID (includes printing logic)
+    // Prompt and search for applicant by ID (includes printing logic)
     public Applicant searchApplicantById() {
-        String id = inputUI.getInput("Enter Applicant ID to search: ").trim();
+        while (true) {
+            String id = inputUI.getInput("Enter Applicant ID to search (or type 'back' to return): ").trim();
 
-        if (id.isEmpty()) {
-            inputUI.displayMessage("❌ Applicant ID cannot be empty!");
-            return null;
+            if (id.equalsIgnoreCase("back")) {
+                inputUI.displayMessage("Returning to previous menu...");
+                return null;
+            }
+
+            if (id.isEmpty()) {
+                inputUI.displayMessage(" Applicant ID cannot be empty!");
+                continue;
+            }
+
+            Applicant foundApplicant = findApplicantById(id);
+
+            if (foundApplicant != null) {
+                inputUI.displayMessage("\n Applicant Found:");
+                menuUI.printApplicantTableHeader();
+                menuUI.printApplicantRow(foundApplicant);
+                menuUI.printApplicantsTableFooter();
+                inputUI.getInput("<< Press \"Enter\" to continue >>");
+                return foundApplicant;
+            } else {
+                inputUI.displayMessage(" Applicant not found. Please try again.");
+                inputUI.getInput("<< Press \"Enter\" to retry >>");
+            }
         }
-
-        Applicant foundApplicant = findApplicantById(id);
-
-        if (foundApplicant != null) {
-            inputUI.displayMessage("\n✅ Applicant Found:");
-            menuUI.printApplicantTableHeader();
-            menuUI.printApplicantRow(foundApplicant);
-            menuUI.printApplicantsTableFooter();
-            inputUI.getInput("<< Press \"Enter\" to continue >>");
-        } else {
-            inputUI.displayMessage("❌ Applicant not found.");
-        }
-
-        return foundApplicant;
     }
 
-// Check if an applicant exists
+    // Check if an applicant exists
     public boolean isValidApplicant(String applicantId) {
         return findApplicantById(applicantId) != null;
     }
@@ -224,11 +265,9 @@ public class ApplicantManager {
 
         Applicant applicant = findApplicantById(applicantId);
         if (applicant == null) {
-            inputUI.displayMessage("❌ Applicant not found!\n");
+            inputUI.displayMessage(" Applicant not found!\n");
             return;
         }
-
-        inputUI.displayMessage("\n=============== ✏️ Edit Applicant Profile ===============");
 
         updateApplicantDetails(applicant);
 
@@ -255,71 +294,74 @@ public class ApplicantManager {
                     String name = inputUI.getInput("Enter new name [Current: " + applicant.getName() + "]: ").trim();
                     if (!name.isEmpty() && !name.equals(applicant.getName())) {
                         applicant.setName(name);
-                        inputUI.displayMessage("✅ Name updated.");
+                        inputUI.displayMessage(" Name updated.");
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 2 :
+                case 2:
                     int age = inputUI.getIntInput("Enter new age [Current: " + applicant.getAge() + "]: ", 18, 100);
                     if (age != applicant.getAge()) {
                         applicant.setAge(age);
-                        inputUI.displayMessage("✅ Age updated.");
+                        inputUI.displayMessage(" Age updated.");
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 3 :
-                    String location = inputUI.getInput("Enter new location [Current: " + applicant.getLocation() + "]: ").trim();
+                case 3:
+                    String location = inputUI
+                            .getInput("Enter new location [Current: " + applicant.getLocation() + "]: ").trim();
                     if (!location.isEmpty() && !location.equalsIgnoreCase(applicant.getLocation())) {
                         applicant.setLocation(location);
-                        inputUI.displayMessage("✅ Location updated.");
+                        inputUI.displayMessage(" Location updated.");
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 4 :
-                    int exp = inputUI.getIntInput("Enter new years of experience [Current: " + applicant.getYearsOfExperience() + "]: ", 0, 50);
+                case 4:
+                    int exp = inputUI.getIntInput(
+                            "Enter new years of experience [Current: " + applicant.getYearsOfExperience() + "]: ", 0,
+                            50);
                     if (exp != applicant.getYearsOfExperience()) {
                         applicant.setYearsOfExperience(exp);
-                        inputUI.displayMessage("✅ Experience updated.");
+                        inputUI.displayMessage(" Experience updated.");
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 5 :
-                    String edu = inputUI.getInput("Enter new education level [Current: " + applicant.getEducationLevel() + "]: ").trim();
+                case 5:
+                    String edu = inputUI
+                            .getInput("Enter new education level [Current: " + applicant.getEducationLevel() + "]: ")
+                            .trim();
                     if (!edu.isEmpty() && !edu.equalsIgnoreCase(applicant.getEducationLevel())) {
                         applicant.setEducationLevel(edu);
-                        inputUI.displayMessage("✅ Education level updated.");
+                        inputUI.displayMessage(" Education level updated.");
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 6 : 
+                case 6:
                     int prevSkillSize = applicant.getSkills().size();
                     handleSkillEditing(applicant.getSkills());
                     int newSkillSize = applicant.getSkills().size();
                     if (newSkillSize != prevSkillSize) {
                         isUpdated = true;
                     }
-                break;
+                    break;
 
-                case 7 : 
+                case 7:
                     // Exit and display success if any change happened
                     if (isUpdated) {
-                        inputUI.displayMessage("\n✅ Profile updated successfully!");
+                        inputUI.displayMessage("\n Profile updated successfully!");
                         menuUI.printApplicantTableHeader();
                         menuUI.printApplicantRow(applicant);
                         menuUI.printApplicantsTableFooter();
                         inputUI.getInput("<< Press Enter to continue >>");
                     }
                     return;
-                
-               
 
-                default :
-                    inputUI.displayMessage("❌ Invalid option. Please try again.");
+                default:
+                    inputUI.displayMessage(" Invalid option. Please try again.");
             }
 
         } while (true);
@@ -382,7 +424,7 @@ public class ApplicantManager {
         }
 
         skills = addApplicantSkill(skills, newSkill, newCategory, newProficiency);
-        inputUI.displayMessage("✅ New skill added successfully!");
+        inputUI.displayMessage("New skill added successfully!");
         inputUI.displayMessage("Current Skills:");
         displaySkills(skills);
     }
@@ -400,7 +442,8 @@ public class ApplicantManager {
 
         Skill selectedSkill = skills.get(skillIndex - 1);
 
-        String updatedSkill = inputUI.getInput("New skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
+        String updatedSkill = inputUI
+                .getInput("New skill name (or press Enter to keep: " + selectedSkill.getName() + "): ");
         if (updatedSkill.equalsIgnoreCase("back")) {
             return;
         }
@@ -408,7 +451,8 @@ public class ApplicantManager {
             selectedSkill.setName(updatedSkill);
         }
 
-        String updatedCategory = inputUI.getInput("New category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
+        String updatedCategory = inputUI
+                .getInput("New category (or press Enter to keep: " + selectedSkill.getCategory() + "): ");
         if (updatedCategory.equalsIgnoreCase("back")) {
             return;
         }
@@ -416,14 +460,15 @@ public class ApplicantManager {
             selectedSkill.setCategory(updatedCategory);
         }
 
-        int updatedProficiency = inputUI.getIntInput("New proficiency level (1-5 or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1, 5);
+        int updatedProficiency = inputUI.getIntInput(
+                "New proficiency level (1-5 or -1 to keep: " + selectedSkill.getProficiency_level() + "): ", -1, 5);
         if (updatedProficiency == -1) {
             inputUI.displayMessage("Proficiency unchanged.");
         } else {
             selectedSkill.setProficiency_level(updatedProficiency);
         }
 
-        inputUI.displayMessage("✅ Skill updated successfully!");
+        inputUI.displayMessage(" Skill updated successfully!");
         inputUI.displayMessage("Current Skills:");
         displaySkills(skills);
     }
@@ -434,103 +479,137 @@ public class ApplicantManager {
             return;
         }
 
-        int removeIndex = inputUI.getIntInput("Enter the skill number to remove (or -1 to cancel): ", -1, skills.size());
+        int removeIndex = inputUI.getIntInput("Enter the skill number to remove (or -1 to cancel): ", -1,
+                skills.size());
         if (removeIndex == -1) {
             return;
         }
 
         Skill removedSkill = skills.get(removeIndex - 1);
         skills.remove(removeIndex - 1);
-        inputUI.displayMessage("❌ Skill '" + removedSkill.getName() + "' removed.");
+        inputUI.displayMessage("Skill '" + removedSkill.getName() + "' removed.");
 
         inputUI.displayMessage("Current Skills:");
         displaySkills(skills);
     }
 
     public void filterApplicants() {
-        while (true) {  // Keep showing the filter menu until user chooses to exit the loop
+        while (true) {
             menuUI.filterApplicantMenu();
-            int choice = inputUI.getIntInput("Enter your choice: ", 1, 6);  // Adjust range as needed
+            int choice = inputUI.getIntInput("Enter your choice: ", 1, 6);
 
             DoublyLinkedListInterface<Applicant> filteredApplicants = new DoublyLinkedList<>();
 
             switch (choice) {
-                case 1: {
-                    int minAge = inputUI.getValidIntInput("Enter minimum age: ", 18, 100);
-                    int maxAge = inputUI.getValidIntInput("Enter maximum age: ", minAge, 100);
-                    for (Applicant a : applicants) {
-                        if (a.getAge() >= minAge && a.getAge() <= maxAge) {
-                            if (!filteredApplicants.contains(a)) {
-                                filteredApplicants.add(a);
-                            }
-                        }
-                    }
+                case 1:
+                    filteredApplicants = filterByAgeRange();
                     break;
-                }
-                case 2: {
-                    String location = inputUI.getInput("Enter location: ");
-                    for (Applicant a : applicants) {
-                        if (a.getLocation().equalsIgnoreCase(location)) {
-                            if (!filteredApplicants.contains(a)) {
-                                filteredApplicants.add(a);
-                            }
-                        }
-                    }
+
+                case 2:
+                    filteredApplicants = filterByLocation();
                     break;
-                }
-                case 3: {
-                    int minExp = inputUI.getValidIntInput("Enter minimum years of experience: ", 0, 50);
-                    int maxExp = inputUI.getValidIntInput("Enter maximum years of experience: ", minExp, 50);
-                    for (Applicant a : applicants) {
-                        if (a.getYearsOfExperience() >= minExp && a.getYearsOfExperience() <= maxExp) {
-                            if (!filteredApplicants.contains(a)) {
-                                filteredApplicants.add(a);
-                            }
-                        }
-                    }
+
+                case 3:
+                    filteredApplicants = filterByExperience();
                     break;
-                }
-                case 4: {
-                    String education = inputUI.getInput("Enter education level: ");
-                    for (Applicant a : applicants) {
-                        if (a.getEducationLevel().equalsIgnoreCase(education)) {
-                            if (!filteredApplicants.contains(a)) {
-                                filteredApplicants.add(a);
-                            }
-                        }
-                    }
+
+                case 4:
+                    filteredApplicants = filterByEducationLevel();
                     break;
-                }
-                case 5: {
-                    String skillName = inputUI.getInput("Enter skill name: ");
-                    boolean found = false;
-                    for (Applicant a : applicants) {
-                        for (Skill skill : a.getSkills()) {
-                            if (skill.getName().equalsIgnoreCase(skillName)) {
-                                if (!filteredApplicants.contains(a)) {
-                                    filteredApplicants.add(a);
-                                }
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        inputUI.displayMessage("No applicants found with the skill: " + skillName);
-                    }
+
+                case 5:
+                    filteredApplicants = filterBySkill();
                     break;
-                }
+
                 case 6:
                     inputUI.displayMessage("Returning to previous menu...");
-                    return;  // Exit only from this function, not the full program
+                    return;
+
+                default:
+                    inputUI.displayMessage("❌ Invalid option. Please select again.");
+                    break;
             }
 
             if (!filteredApplicants.isEmpty()) {
                 menuUI.printApplicants(filteredApplicants);
             }
 
-            inputUI.getInput("Press Enter to continue...");
+            inputUI.getInput("<< Press \"Enter\" to continue >>");
         }
+    }
+
+    private DoublyLinkedListInterface<Applicant> filterByAgeRange() {
+        DoublyLinkedListInterface<Applicant> result = new DoublyLinkedList<>();
+        int minAge = inputUI.getValidIntInput("Enter minimum age: ", 18, 100);
+        int maxAge = inputUI.getValidIntInput("Enter maximum age: ", minAge, 100);
+
+        for (Applicant a : applicants) {
+            if (a.getAge() >= minAge && a.getAge() <= maxAge && !result.contains(a)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
+
+    private DoublyLinkedListInterface<Applicant> filterByLocation() {
+        DoublyLinkedListInterface<Applicant> result = new DoublyLinkedList<>();
+        String location = inputUI.getInput("Enter location: ");
+
+        for (Applicant a : applicants) {
+            if (a.getLocation().equalsIgnoreCase(location) && !result.contains(a)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
+
+    private DoublyLinkedListInterface<Applicant> filterByExperience() {
+        DoublyLinkedListInterface<Applicant> result = new DoublyLinkedList<>();
+        int minExp = inputUI.getValidIntInput("Enter minimum years of experience: ", 0, 50);
+        int maxExp = inputUI.getValidIntInput("Enter maximum years of experience: ", minExp, 50);
+
+        for (Applicant a : applicants) {
+            if (a.getYearsOfExperience() >= minExp && a.getYearsOfExperience() <= maxExp && !result.contains(a)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
+
+    private DoublyLinkedListInterface<Applicant> filterByEducationLevel() {
+        DoublyLinkedListInterface<Applicant> result = new DoublyLinkedList<>();
+        String education = inputUI.getInput("Enter education level: ");
+
+        for (Applicant a : applicants) {
+            if (a.getEducationLevel().equalsIgnoreCase(education) && !result.contains(a)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
+
+    private DoublyLinkedListInterface<Applicant> filterBySkill() {
+        DoublyLinkedListInterface<Applicant> result = new DoublyLinkedList<>();
+        String skillName = inputUI.getInput("Enter skill name: ");
+        boolean found = false;
+
+        for (Applicant a : applicants) {
+            for (Skill skill : a.getSkills()) {
+                if (skill.getName().equalsIgnoreCase(skillName)) {
+                    if (!result.contains(a)) {
+                        result.add(a);
+                    }
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            inputUI.displayMessage("No applicants found with the skill: " + skillName);
+        }
+
+        return result;
     }
 
     public DoublyLinkedListInterface<Applicant> getApplicants() {

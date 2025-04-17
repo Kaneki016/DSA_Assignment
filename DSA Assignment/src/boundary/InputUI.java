@@ -294,7 +294,7 @@ public class InputUI {
                 applicantAppliedJobManager.applyJob();
                 break;
             case 3:
-                applicantAppliedJobManager.handleCheckMyApplications();
+                applicantAppliedJobManager.viewApplications();
                 break;
             case 4:
                 menuUI.exitSystem();

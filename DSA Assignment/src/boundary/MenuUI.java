@@ -1119,14 +1119,14 @@ public class MenuUI {
     public void printJobPostTableHeader() {
         System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
-                + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
-        System.out.println(TABLE_VERTICAL + " Job Post ID " + " " + TABLE_VERTICAL + " Job Title             " + " "
-                + TABLE_VERTICAL + " Company Name       " + " " + TABLE_VERTICAL + " Location        " + " "
-                + TABLE_VERTICAL + " Exp (Yr)      " + " " + TABLE_VERTICAL + " Salary ($)               "
+                + "+" + repeat(TABLE_HORIZONTAL, 31) + "+");
+        System.out.println(TABLE_VERTICAL + " Job Post ID " + " " + TABLE_VERTICAL + " Job Title           " + " "
+                + TABLE_VERTICAL + " Company Name    " + " " + TABLE_VERTICAL + " Location      " + " "
+                + TABLE_VERTICAL + " Exp (Yr)  " + " " + TABLE_VERTICAL + " Salary ($)                    "
                 + TABLE_VERTICAL);
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
                 + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
-                + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
+                + "+" + repeat(TABLE_HORIZONTAL, 31) + "+");
     }
 
 
@@ -1216,7 +1216,7 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 16) + "+"
                 + repeat(TABLE_HORIZONTAL, 12) + "+"
                 + repeat(TABLE_HORIZONTAL, 16) + "+"
-                + repeat(TABLE_HORIZONTAL, 21) + "+");
+                + repeat(TABLE_HORIZONTAL, 22) + "+");
     }
 
     // Print all Removed JobPosts

@@ -36,8 +36,9 @@ public class ApplicantAppliedJobManager {
 
     public void viewAvailableJobs() {
 
-        jobPostManager.displayJobPosts();
-        inputUI.getInput("Press Enter to continue...");
+        DoublyLinkedListInterface<JobPost> jobposts = jobPostManager.getJobPostList();
+
+       menuUI.printJobPosts(jobposts);
 
     }
 
@@ -47,10 +48,14 @@ public class ApplicantAppliedJobManager {
 
     //author : Ma jian chun
     public void applyJob() {
-        System.out.println("\n======= Apply for a Job =======");
+        inputUI.displayMessage("\n======= Apply for a Job =======");
 
         // Step 1: Get Applicant ID
-        String applicantId = inputUI.getInput("Enter your Applicant ID: ");
+        String applicantId = inputUI.getInput("Enter your Applicant ID (or type 'back' to return): ");
+        if (applicantId.equalsIgnoreCase("back")) {
+            return;
+        }
+
         Applicant applicant = applicantManager.findApplicantById(applicantId);
 
         // Step 2: Validate Applicant
@@ -67,39 +72,45 @@ public class ApplicantAppliedJobManager {
             return;
         }
 
-        // Step 4: Display available jobs
-       // jobPostManager.displayJobPosts();
-
-        //Step 4: TESTING MATCHED JOB
+        // Step 4: Display matched jobs
         jobPostManager.displayMatchedJobPosts(applicant);
 
-        // Step 5: Get user choice
-        int choice = inputUI.getValidIntInput("\nEnter the job number to apply for: ", 1, jobPosts.getSize());
+        // Step 5: Loop for job selection
+        while (true) {
+            
+            int choice = inputUI.getValidIntInput("Enter the job number to apply for ('0' to back ): ", 0, jobPosts.getSize());
 
-        // Step 6: Validate choice and get the selected job
-        JobPost selectedJobPost = jobPosts.get(choice - 1);
-
-        boolean applicationExists = false;
-        for (ApplicantAppliedJob aaj : applicantAppliedJob) {
-            if (aaj.getApplicant().equals(applicant) && aaj.getJobPost().equals(selectedJobPost)) {
-                applicationExists = true;
-                break;
+            if (choice == 0) {
+                inputUI.displayMessage("Returning to previous menu...");
+                return;
             }
-        }
 
-        if (applicationExists) {
-            inputUI.displayMessage("❌ Error: Application already exists!");
-            return;
-        } else {
+            JobPost selectedJobPost = jobPosts.get(choice - 1);
+
+            // Check for duplicate application
+            boolean alreadyApplied = false;
+            for (ApplicantAppliedJob aaj : applicantAppliedJob) {
+                if (aaj.getApplicant().equals(applicant) && aaj.getJobPost().equals(selectedJobPost)) {
+                    alreadyApplied = true;
+                    break;
+                }
+            }
+
+            if (alreadyApplied) {
+                inputUI.displayMessage("️You have already applied for this job!");
+                continue; // Let user choose again
+            }
+
+            // Proceed to submit application
             ApplicantAppliedJob newApplication = new ApplicantAppliedJob(applicant, selectedJobPost);
             addApplicantAppliedJob(newApplication);
-        }
 
-        inputUI.displayMessage("\n✅ Application submitted successfully!");
-        inputUI.displayMessage("You applied for: " + selectedJobPost.getJob().getTitle()
-                + " at " + selectedJobPost.getCompany().getCompanyName());
-        inputUI.getInput("Press Enter to continue...");
-      
+            inputUI.displayMessage("\n Application submitted successfully!");
+            inputUI.displayMessage("You applied for: " + selectedJobPost.getJob().getTitle()
+                    + " at " + selectedJobPost.getCompany().getCompanyName());
+            inputUI.getInput("Press Enter to continue...");
+            break;
+        }
     }
 
     //author : Ma jian chun
@@ -202,7 +213,7 @@ public class ApplicantAppliedJobManager {
         }
         return counts;
     }
-    
+
     //author : Ma jian chun
     private DoublyLinkedListInterface<String> findMostAppliedCompanies(
             DoublyLinkedListInterface<String> companyNames,
@@ -359,8 +370,7 @@ public class ApplicantAppliedJobManager {
         menuUI.printEndOfReport(125);
     }
 
-    //Accept or rejct 
-    public void handleCheckMyApplications() {
+    public void viewApplications() {
         String applicantId = inputUI.getInput("\nEnter your Applicant ID (or type 'back' to return): ");
         if (applicantId.equalsIgnoreCase("back")) {
             inputUI.displayMessage("Returning to main menu...");
@@ -369,7 +379,7 @@ public class ApplicantAppliedJobManager {
 
         Applicant applicant = applicantManager.findApplicantById(applicantId);
         if (applicant == null) {
-            inputUI.displayMessage("❌ Applicant not found! Please check your ID.");
+            inputUI.displayMessage(" Applicant not found! Please check your ID.");
             return;
         }
 
@@ -384,13 +394,27 @@ public class ApplicantAppliedJobManager {
         }
 
         if (userApplications.isEmpty()) {
-            inputUI.displayMessage("❌ You have not applied for any jobs yet.");
+            inputUI.displayMessage(" You have not applied for any jobs yet.");
             return;
         }
 
         // ✅ Print nicely formatted table using MenuUI
         menuUI.printApplicantApplicationsTable(userApplications, interviews);
-        inputUI.getInput("Press Enter to continue...");
+
+        // ✅ Ask if user wants to remove an application
+        String removeChoice = inputUI.getInput("Do you want to remove any application? (yes/no): ");
+        if (removeChoice.equalsIgnoreCase("yes")) {
+            int removeIndex = inputUI.getValidIntInput("Enter the application number to remove (or 0 to cancel): ", 0, userApplications.getSize());
+            if (removeIndex == 0) {
+                inputUI.displayMessage("Removal cancelled.");
+                return;
+            }
+
+            ApplicantAppliedJob toRemove = userApplications.get(removeIndex - 1);
+            removeApplicantAppliedJob(toRemove);
+        }
+
+        inputUI.getInput("<< Press \"Enter\" to continue >>");
     }
 
     // New getter method to expose the list
