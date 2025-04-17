@@ -1,4 +1,5 @@
 package entities;
+import boundary.*;
 
 public class Interview {
 
@@ -9,10 +10,13 @@ public class Interview {
     private String interviewId;
     private ApplicantAppliedJob applicantAppliedJob;
     private TimeSlot timeslot;
-    private String mode;      
-    private String status;   
-    private String feedback;  
+    private String mode;
+    private String status;
+    private String feedback;
     private int favourRate;
+    
+    //InputUI
+    MenuUI menuUI = new MenuUI();
 
     public Interview(ApplicantAppliedJob applicantAppliedJob, TimeSlot timeslot, String mode, String status, String feedback, int favourRate) {
         this.interviewId = String.format("I%03d", nextId++);
@@ -22,7 +26,7 @@ public class Interview {
         this.status = status;
         this.feedback = feedback;
         this.favourRate = favourRate;
-        
+
     }
 
     public String getInterviewId() {
@@ -52,7 +56,7 @@ public class Interview {
     public int getFavourRate() {
         return favourRate;
     }
-    
+
     public void setInterviewId(String interviewId) {
         this.interviewId = interviewId;
     }
@@ -80,15 +84,25 @@ public class Interview {
     public void setFavourRate(int favourRate) {
         this.favourRate = favourRate;
     }
-    
+
     @Override
     public String toString() {
-        return "Interview ID: " + interviewId + "\n" +
-               "Applicant ID: " + applicantAppliedJob.getApplicant().getApplicantId() + "\n" +
-               "Time Slot: " + timeslot.getTime() + "\n" +
-               "Mode: " + mode + "\n" +
-               "Status: " + status + "\n" +
-               "Feedback: " + feedback + "\n" +
-               "Favour Rate: " + favourRate + "\n";
+        String line = menuUI.repeat("-", 160) + "\n";
+        return line
+                + String.format("| %-12s | %-14s | %-12s | %-19s | %-8s | %-10s | %-30s | %-11s |\n",
+                        "Interview ID", "Application ID", "Applicant ID", "Time Slot", "Mode", "Status", "Feedback", "Favour Rate")
+                + line
+                + String.format("| %-12s | %-14s | %-12s | %-19s | %-8s | %-10s | %-30s | %-11s |\n",
+                        interviewId,
+                        applicantAppliedJob.getApplicationId(),
+                        applicantAppliedJob.getApplicant().getApplicantId(),
+                        timeslot.getTime(),
+                        mode,
+                        status,
+                        feedback,
+                        favourRate)
+                + line;
     }
+
+
 }

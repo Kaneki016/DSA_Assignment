@@ -12,7 +12,7 @@ public interface DoublyLinkedListInterface<T> extends Iterable<T>  {
     boolean contains(T element);
     void removeAll();
     void clear();
-    void replace(int givenPosition, T newEntry);  // <-- Add this
+    void replace(int givenPosition, T newEntry); 
     int getSize();
     void mergeSort(Comparator<T> comparator);
     void backup();
