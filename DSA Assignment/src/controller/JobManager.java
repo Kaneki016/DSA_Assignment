@@ -108,11 +108,18 @@ public class JobManager {
                 addingRequirements = false;
             } else if (choice.equalsIgnoreCase("new")) {
                 jobRequirementsManager.resetNextIdFromList();
+                
                 String name = inputUI.getInput("Enter Requirement Name: ");
-                String proficiency = inputUI.getInput("Enter Proficiency Level (e.g., Beginner, Intermediate, Expert): ");
-                String category = inputUI.getInput("Enter Category (e.g., Technical, Soft Skill): ");
-                JobRequirements newReq = new JobRequirements(name, proficiency, category);
 
+                String proficiency;
+                while (true) {
+                    proficiency = inputUI.getInput("Enter Proficiency Level (1-5): ");
+                    if (proficiency.matches("[1-5]")) break;
+                    inputUI.displayMessage("Invalid input. Please enter a number from 1 to 5.");
+                }
+
+                String category = inputUI.getInput("Enter Category: ");
+                JobRequirements newReq = new JobRequirements(name, proficiency, category);
                 selectedRequirements.add(newReq);  // Add to this job
                 globalRequirements.add(newReq);    // Add globally
 
@@ -174,7 +181,7 @@ public class JobManager {
                 return job;
             }
         }
-        inputUI.displayMessage("Job with ID " + jobId + " not found.\n");
+        inputUI.displayMessage("Job with ID " + jobId + " not found.\nPlease try again.\n");
         return null;
     }
     
@@ -194,8 +201,6 @@ public class JobManager {
             if (job != null) {
                 break;
             }
-            inputUI.displayMessage("Job not found. Please try again.");
-
         }
 
         inputUI.displayMessage("Editing job: " + job.getTitle());
@@ -263,8 +268,21 @@ public class JobManager {
             if (choice.equalsIgnoreCase("x")) {
                 editingRequirements = false;
             } else if (choice.equalsIgnoreCase("new")) {
-                // Add new requirement as per the original logic
-                // ...
+                String name = inputUI.getInput("Enter Requirement Name: ");
+
+                String proficiency;
+                while (true) {
+                    proficiency = inputUI.getInput("Enter Proficiency Level (1-5): ");
+                    if (proficiency.matches("[1-5]")) break;
+                    inputUI.displayMessage("Invalid input. Please enter a number from 1 to 5.");
+                }
+
+                String category = inputUI.getInput("Enter Category: ");
+                JobRequirements newReq = new JobRequirements(name, proficiency, category);
+                jobRequirements.add(newReq);
+                globalRequirements.add(newReq);
+                inputUI.displayMessage("Requirement added successfully! ID: " + newReq.getJobRequirementId());
+
             } else if (choice.toLowerCase().startsWith("select(") && choice.endsWith(")")) {
                 String reqId = choice.substring(7, choice.length() - 1).trim();
                 JobRequirements toAdd = null;
@@ -276,12 +294,26 @@ public class JobManager {
                 }
 
                 if (toAdd != null) {
-                    jobRequirements.add(toAdd);
-                    inputUI.displayMessage("Requirement " + reqId + " selected and added to job.\n");
+                    boolean alreadyExists = false;
+                    for (JobRequirements existing : jobRequirements) {
+                        if (existing.getJobRequirementId().equalsIgnoreCase(reqId)) {
+                            alreadyExists = true;
+                            break;
+                        }
+                    }
+
+                    if (alreadyExists) {
+                        inputUI.displayMessage("Requirement " + reqId + " is already assigned to the job.\n");
+                    } else {
+                        jobRequirements.add(toAdd);
+                        inputUI.displayMessage("Requirement " + reqId + " selected and added to job.\n");
+                    }
                 } else {
                     inputUI.displayMessage("Requirement ID not found in global list.\n");
                 }
+                
             } else if (choice.toLowerCase().startsWith("remove(") && choice.endsWith(")")) {
+            while (true) {
                 String reqId = choice.substring(7, choice.length() - 1).trim();
                 JobRequirements toRemove = null;
                 int indexToRemove = -1;
@@ -298,87 +330,26 @@ public class JobManager {
                 if (toRemove != null && indexToRemove != -1) {
                     jobRequirements.remove(indexToRemove);
                     inputUI.displayMessage("Requirement " + reqId + " removed from job.\n");
+                    break;
                 } else {
-                    inputUI.displayMessage("Requirement ID not found in this job.\n");
+                    inputUI.displayMessage("Requirement ID not found in this job. Try again.");
+                    choice = inputUI.getInput("Enter 'remove(JRxxx)', or 'X' to cancel removal: ");
+                    if (choice.equalsIgnoreCase("x")) break;
+                    if (!choice.toLowerCase().startsWith("remove(") || !choice.endsWith(")")) break;
                 }
-            } else {
+            }
+
+        }else {
                 inputUI.displayMessage("Invalid command. Try again.\n");
             }
         }
-
         inputUI.displayMessage("Job updated successfully!");
     }
     
-    // ----------------- DELETE -----------------
-    public void removeJob() {
-        inputUI.displayMessage("\n===== Remove Job =====");
-        this.displayJobs();
-        Job job = null;
-        while (true) {
-            String jobId = inputUI.getInput("Enter Job ID to remove (or X to cancel): ");
-            if (jobId.equalsIgnoreCase("x")) {
-                inputUI.displayMessage("Job removal cancelled.\n");
-                return;
-            }
-
-            job = findJobById(jobId);
-            if (job != null) {
-                break;
-            }
-
-            inputUI.displayMessage("Job not found. Please try again.");
-        }
-
-        int index = getJobIndex(job);
-        if (index == -1) {
-            inputUI.displayMessage("Job not found in the list.\n");
-            return;
-        }
-
-        // Remove all job posts associated with the job
-        JobPostManager jobPostManager = JobPostManager.getInstance();
-        jobPostManager.removeJobPostsByJob(job.getJobId());  // Call removeJobPostsByJob()
-
-        // Now, remove the job itself
-        Job removedJob = jobList.get(index);
-        removedJob.setRemovedAt(LocalDateTime.now());
-        jobList.remove(index);
-        removedJobs.add(removedJob);
-
-        inputUI.displayMessage("Job " + removedJob.getJobId() + " removed successfully.\n");
-    }
-
-
-    public void displayRemovedJobs() {
-        inputUI.displayMessage("\n===== Removed Jobs =====");
-
-        if (removedJobs.isEmpty()) {
-            inputUI.displayMessage("No removed jobs found.\n");
-            return;
-        }
-
-        // Print the removed jobs using the existing printRemovedJobs method
-        menuUI.printRemovedJobs(removedJobs);
-
-        // Prompt the user to continue
-        inputUI.getInput("Press Enter to continue...");
-
-    }
-
     // ----------------- HELPER -----------------
-    private int getJobIndex(Job job) {
-        int index = 0;
-        for (Job j : jobList) {
-            if (j.getJobId().equals(job.getJobId())) {
-                return index;
-            }
-            index++;
-        }
-        return -1; // Not found
-    }
-
     public boolean isEmpty() {
         return jobList.isEmpty();
     }
+
 }
 

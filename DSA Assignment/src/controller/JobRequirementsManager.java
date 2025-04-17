@@ -3,7 +3,8 @@ package controller;
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import boundary.*;
-import entities.JobRequirements;
+import entities.*;
+import controller.*;
 import java.time.LocalDateTime;
 
 public class JobRequirementsManager {
@@ -47,36 +48,31 @@ public class JobRequirementsManager {
 
         String proficiencyLevel;
         while (true) {
-            proficiencyLevel = inputUI.getInput("Enter Proficiency Level (Beginner, Intermediate, Expert or X to cancel): ");
+            proficiencyLevel = inputUI.getInput("Enter Proficiency Level (1-5) or X to cancel): ");
             if (proficiencyLevel.equalsIgnoreCase("x")) {
                 inputUI.displayMessage("Job requirement creation cancelled.\n");
                 return;
             }
-            if (proficiencyLevel.equalsIgnoreCase("Beginner") ||
-                proficiencyLevel.equalsIgnoreCase("Intermediate") ||
-                proficiencyLevel.equalsIgnoreCase("Expert")) {
-                break;
-            }
-            inputUI.displayMessage("Invalid proficiency level. Please enter Beginner, Intermediate, or Expert.");
+            if (proficiencyLevel.matches("[1-5]")) break;
+            inputUI.displayMessage("Invalid value. Please enter between '1' and '5'.");
         }
 
         String category;
         while (true) {
-            category = inputUI.getInput("Enter Category (Technical, Soft Skill or X to cancel): ");
+            category = inputUI.getInput("Enter Category (or X to cancel): ");
             if (category.equalsIgnoreCase("x")) {
                 inputUI.displayMessage("Job requirement creation cancelled.\n");
                 return;
             }
-            if (category.equalsIgnoreCase("Technical") || category.equalsIgnoreCase("Soft Skill")) {
-                break;
-            }
-            inputUI.displayMessage("Invalid category. Please enter Technical or Soft Skill.");
+            if (!category.trim().isEmpty()) break;
+            inputUI.displayMessage("Category cannot be empty. Please try again.");
         }
 
         JobRequirements newRequirement = new JobRequirements(name, proficiencyLevel, category);
         jobRequirementsList.add(newRequirement);
         inputUI.displayMessage("Job Requirement added successfully!\n");
     }
+
 
     public void addJobRequirement(JobRequirements requirement) {
         jobRequirementsList.add(requirement);
@@ -102,14 +98,14 @@ public class JobRequirementsManager {
                 return requirement;
             }
         }
-        inputUI.displayMessage("Job Requirement with ID " + requirementId + " not found.\n");
+        inputUI.displayMessage("Job Requirement with ID " + requirementId + " not found.");
         return null;
     }
 
     // -------------------- EDIT --------------------
     public void editJobRequirement() {
         inputUI.displayMessage("\n===== Edit Job Requirement =====");
-        menuUI.printJobRequirements(jobRequirementsList); // Calls the table-based view
+        menuUI.printJobRequirements(jobRequirementsList); 
         JobRequirements requirement = null;
 
         while (true) {
@@ -120,82 +116,37 @@ public class JobRequirementsManager {
             }
 
             requirement = findJobRequirementById(requirementId);
-            if (requirement != null) break;
+            if (requirement == null) {
+               inputUI.displayMessage("Please try again.\n");
+
+            } else {
+                break;
+            }
         }
 
         inputUI.displayMessage("Editing Job Requirement: " + requirement.getName());
 
         String newName = inputUI.getInput("Enter New Requirement Name (or press Enter to keep: " + requirement.getName() + "): ");
-        if (!newName.isEmpty()) requirement.setName(newName);
+        if (!newName.trim().isEmpty()) requirement.setName(newName);
 
-        String newProficiencyLevel = inputUI.getInput("Enter New Proficiency Level (Beginner, Intermediate, Expert or press Enter to keep: " + requirement.getProficiencyLevel() + "): ");
-        if (!newProficiencyLevel.isEmpty()) requirement.setProficiencyLevel(newProficiencyLevel);
+        while (true) {
+            String newProficiencyLevel = inputUI.getInput("Enter New Proficiency Level (1-5 as string or press Enter to keep: " + requirement.getProficiencyLevel() + "): ");
+            if (newProficiencyLevel.isEmpty()) break;
+            if (newProficiencyLevel.matches("[1-5]")) {
+                requirement.setProficiencyLevel(newProficiencyLevel);
+                break;
+            } else {
+                inputUI.displayMessage("Invalid value. Please enter between '1' and '5', or press Enter to keep the current value.");
+            }
+        }
 
-        String newCategory = inputUI.getInput("Enter New Category (Technical, Soft Skill or press Enter to keep: " + requirement.getCategory() + "): ");
-        if (!newCategory.isEmpty()) requirement.setCategory(newCategory);
+        String newCategory = inputUI.getInput("Enter New Category (or press Enter to keep: " + requirement.getCategory() + "): ");
+        if (!newCategory.trim().isEmpty()) requirement.setCategory(newCategory);
 
         inputUI.displayMessage("Job Requirement updated successfully!\n");
     }
-    
-    // -------------------- REMOVE --------------------
-    public void removeJobRequirement() {
-        inputUI.displayMessage("\n===== Remove Job Requirement =====");
-        menuUI.printJobRequirements(jobRequirementsList); // Calls the table-based view
-
-        JobRequirements requirement = null;
-
-        while (true) {
-            String requirementId = inputUI.getInput("Enter Job Requirement ID to remove (or X to cancel): ");
-            if (requirementId.equalsIgnoreCase("x")) {
-                inputUI.displayMessage("Job requirement removal cancelled.\n");
-                return;
-            }
-
-            requirement = findJobRequirementById(requirementId);
-            if (requirement != null) break;
-        }
-
-        int index = getRequirementIndex(requirement);
-        if (index == -1) {
-            inputUI.displayMessage("Job Requirement not found in the list.\n");
-            return;
-        }
-
-        // Mark requirement as removed
-        requirement.setRemovedAt(LocalDateTime.now());
-        jobRequirementsList.remove(index);
-        removedRequirements.add(requirement);
-
-        inputUI.displayMessage("Job Requirement " + requirement.getJobRequirementId() + " removed successfully.\n");
-    }
-
-    
-    public void displayRemovedReq() {
-        inputUI.displayMessage("\n===== Removed Job Requirements =====");
-
-        if (removedRequirements.isEmpty()) {
-            inputUI.displayMessage("No removed job requirements found.\n");
-            return;
-        }
-
-        // Use MenuUI to print in tabular format
-        menuUI.printRemovedJobRequirements(removedRequirements);
-
-        // Prompt user to continue
-        inputUI.getInput("Press Enter to continue...");
-    }
 
     // -------------------- UTILITY METHODS --------------------
-    private int getRequirementIndex(JobRequirements requirement) {
-        int index = 0;
-        for (JobRequirements r : jobRequirementsList) {
-            if (r.getJobRequirementId().equals(requirement.getJobRequirementId())) {
-                return index;
-            }
-            index++;
-        }
-        return -1;
-    }
 
     public boolean isEmpty() {
         return jobRequirementsList.isEmpty();

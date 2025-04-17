@@ -76,7 +76,6 @@ public class CompanyManager {
         companyList.add(newCompany);
     }
 
-
     // ----------------- READ -----------------
     public Company findCompanyById(String companyId) {
         for (Company company : companyList) {
@@ -166,72 +165,18 @@ public class CompanyManager {
         inputUI.displayMessage("Company profile updated successfully!");
     }
 
-    // ----------------- DELETE -----------------
-    public void removeCompany() {
-        inputUI.displayMessage("===== Remove Company =====");
-        menuUI.printCompanies(companyList);
-        Company company = null;
-
-        // Loop until a valid company is found or user exits
-        while (company == null) {
-            String companyId = inputUI.getInput("Enter Company ID to remove (or 'x' to cancel): ");
-
-            if (companyId.equalsIgnoreCase("x")) {
-                inputUI.displayMessage("Remove operation cancelled.\n");
-                return;
-            }
-
-            company = findCompanyById(companyId);
-
-            if (company != null) {
-                // Find its index
-                int index = getCompanyIndex(company);
-                if (index == -1) {
-                    inputUI.displayMessage("Company not found in the list.\n");
-                    return;
-                }
-
-                // Remove from active list and archive
-                company.setRemovedAt(LocalDateTime.now());
-                companyList.remove(index);
-                removedCompanies.add(company);
-                inputUI.displayMessage("Company " + company.getCompanyId() + " removed successfully.\n");
-
-                return;
-            }
-        }
-    }
-
-    public void displayRemovedCompanies() {
-        inputUI.displayMessage("\n===== Removed Companies =====");
-
-        if (removedCompanies.isEmpty()) {
-            inputUI.displayMessage("No removed companies found.\n");
-            return;
-        }
-
-        // Print the removed companies using the new table method
-        menuUI.printRemovedCompanies(removedCompanies);
-
-        // Prompt the user to continue
-        inputUI.getInput("Press Enter to continue...");
-    }
-
-   
     // ----------------- HELPER METHODS -----------------
-    private int getCompanyIndex(Company company) {
-        int index = 0;
-        for (Company c : companyList) {
-            if (c.getCompanyId().equals(company.getCompanyId())) {
-                return index;
-            }
-            index++;
-        }
-        return -1; // not found
-    }
-
     public boolean isEmpty() {
         return companyList.isEmpty();  // Delegates to the list
+    }
+    
+    public boolean isCompanyExists(String companyId) {
+        for (Company c : companyList) {
+            if (c.getCompanyId().equalsIgnoreCase(companyId) && c.getRemovedAt() == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

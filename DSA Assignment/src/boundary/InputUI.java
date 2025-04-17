@@ -164,7 +164,17 @@ public class InputUI {
                     choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
                     switch (choice) {
                         case 1:
-                            handleJobPostManagement();
+                            String companyId;
+                            while (true) {
+                                companyId = inputUI.getInput("Please enter your Company ID: ");
+                                if (companyManager.isCompanyExists(companyId)) {
+                                    jobPostManager.setCurrentCompanyId(companyId);
+                                    handleJobPostManagement();
+                                    break; // exit the loop after successful handling
+                                } else {
+                                    System.out.println("Company ID not found. Please try again.\n");
+                                }
+                            }
                             break;
                         case 2:
                             handleJobManagement();
@@ -312,10 +322,10 @@ public class InputUI {
                     companyManager.displayCompanies();
                     break;
                 case 4:
-                    companyManager.removeCompany();
+                    jobPostManager.printJobPostReports();
                     break;
                 case 5:
-                    companyManager.displayRemovedCompanies();
+                    jobPostManager.displayJobLocationSummaryTable();
                     break;
                 case 6:
                     menuUI.exitSystem();
@@ -332,7 +342,7 @@ public class InputUI {
         int choice;
         do {
             menuUI.displayJobPostManagement();
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 8);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
             switch (choice) {
                 case 1:
                     jobPostManager.addJobPost();
@@ -353,16 +363,13 @@ public class InputUI {
                     jobPostManager.searchJobPost();
                     break;
                 case 7:
-                    jobPostManager.printJobPostReports();
-                    break;
-                case 8:
-                    menuUI.exitSystem();
+                   menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
                 default:
-                    inputUI.invalidMenuSelection(1, 8);
+                    inputUI.invalidMenuSelection(1, 7);
                     break; // Add break here to prevent fall-through
             }
-        } while (choice != 8);
+        } while (choice != 7);
 
     }
 
@@ -372,7 +379,7 @@ public class InputUI {
         int choice;
         do {
             menuUI.displayJobManagement();
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
             switch (choice) {
                 case 1:
                     jobManager.addJob();
@@ -384,19 +391,14 @@ public class InputUI {
                     jobManager.displayJobs();
                     break;
                 case 4:
-                    jobManager.removeJob();
-                    break;
-                case 5:
-                    jobManager.displayRemovedJobs();
-                    break;
-                case 6:
                     menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
                 default:
-                    inputUI.invalidMenuSelection(1, 6);
+                    inputUI.invalidMenuSelection(1, 4);
                     break; // Add break here to prevent fall-through
             }
-        } while (choice != 6);
+        } while (choice != 4);
+
         
     }
 
@@ -406,7 +408,7 @@ public class InputUI {
         int choice;
         do {
             menuUI.displayJobRequirementManagement();
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
             switch (choice) {
                 case 1:
                     jobRequirementsManager.addJobRequirement();
@@ -418,20 +420,13 @@ public class InputUI {
                     jobRequirementsManager.displayJobRequirements();
                     break;
                 case 4:
-                    jobRequirementsManager.removeJobRequirement();
-                    break;
-                case 5:
-                    jobRequirementsManager.displayRemovedReq();
-                    break;
-                   
-                case 6:
                     menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
                 default:
-                    inputUI.invalidMenuSelection(1, 6);
+                    inputUI.invalidMenuSelection(1, 4);
                     break; // Add break here to prevent fall-through
             }
-        } while (choice != 6);
+        } while (choice != 4);
     }
 
     // Handle Interview Main Menu
