@@ -57,6 +57,22 @@ public class InputUI {
         return value;
     }
 
+    public int getIntInputWithBackOption(String prompt, int min, int max, int cancelValue) {
+        while (true) {
+            String input = getInput(prompt + " (or " + cancelValue + " to cancel): ");
+            try {
+                int value = Integer.parseInt(input.trim());
+                if (value == cancelValue || (value >= min && value <= max)) {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                // Ignore and continue prompting
+            }
+            displayMessage("❌ Invalid input. Please enter a number between " + min + " and " + max
+                    + ", or " + cancelValue + " to cancel.");
+        }
+    }
+
     // Display Message
     public <T> void displayMessage(T element) {
         System.out.println(element);
@@ -121,7 +137,6 @@ public class InputUI {
                     choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
                     switch (choice) {
                         case 1:
-                            menuUI.displayApplicantMenu();
                             handleMiddleSideMenuChoice();
                             break;
                         case 2:
@@ -146,42 +161,46 @@ public class InputUI {
                 boolean running2 = true;
                 while (running2) {
                     menuUI.displayCompanyMainMenu();
-                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 9);
+                    choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
                     switch (choice) {
                         case 1:
-                            jobPostManager.addJobPost();
+                            String companyId;
+                            while (true) {
+                                companyId = inputUI.getInput("Please enter your Company ID: ");
+                                if (companyManager.isCompanyExists(companyId)) {
+                                    jobPostManager.setCurrentCompanyId(companyId);
+                                    handleJobPostManagement();
+                                    break; // exit the loop after successful handling
+                                } else {
+                                    System.out.println("Company ID not found. Please try again.\n");
+                                }
+                            }
                             break;
                         case 2:
-                            jobPostManager.editJobPost();
+                            handleJobManagement();
                             break;
                         case 3:
-                            jobPostManager.removeJobPost();
+                            handleJobReqManagement();
                             break;
                         case 4:
-                            jobPostManager.displayJobPosts();
-                            break;
-                        case 5:
-                            jobManager.displayJobs();
-                            break;
-                        case 6:
                             handleInterviewMenu();
                             break;
-                        case 7:
+                        case 5:
                             handleCompanyMatchingCategory();
-                            break; // ✅ Added missing break to prevent fall-through
-                        case 8:
+                            break;
+                        case 6:
                             running2 = false;
                             menuUI.exitSystem();
                             break;
                         default:
-                            inputUI.invalidMenuSelection(1, 9);
+                            inputUI.invalidMenuSelection(1, 6);
                             break;
                     }
                 }
                 break;
 
             case 4:
-                menuUI.exitSystem();
+                menuUI.terminateSystem();
                 break;
 
             default:
@@ -193,69 +212,72 @@ public class InputUI {
     // Middle Side Menu
     public void handleMiddleSideMenuChoice() {
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
-        switch (choice) {
-            case 1:
-                applicantManager.addApplicant();
-                break;
+        do {
+            menuUI.displayApplicantMenu(); // Show the applicant menu
 
-            case 2:
-                applicantManager.removeApplicant();
-                break;
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+            switch (choice) {
+                case 1:
+                    applicantManager.addApplicant();
+                    break;
 
-            case 3:
-                applicantManager.displayAllApplicants();
-                break;
+                case 2:
+                    applicantManager.removeApplicant();
+                    break;
 
-            case 4:
-                Applicant applicant = applicantManager.searchApplicantById();
+                case 3:
+                    applicantManager.displayAllApplicants();
+                    break;
 
-                break;
+                case 4:
+                    Applicant applicant = applicantManager.searchApplicantById();
+                    break;
 
-            case 5:
-                applicantManager.filterApplicants();
-                break;
+                case 5:
+                    applicantManager.filterApplicants();
+                    break;
 
-            case 6:
-                applicantAppliedJobManager.displayCompanyApplicantReport();
-                break;
+                case 6:
+                    applicantAppliedJobManager.displayCompanyApplicantReport();
+                    break;
 
-            case 7:
-                menuUI.exitSystem();
-                break;
-            default:
-                inputUI.invalidMenuSelection(1, 7);
-        }
+                case 7:
+                    // go back to previous menu 
+                    return; // Stop this loop
+                default:
+                    inputUI.invalidMenuSelection(1, 7);
+            }
+
+        } while (true); // Keep looping until user selects 7
     }
 
-    // Handle Client Menu
     public void handleClinetMenu() {
-        menuUI.displayClientMainMenu();
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
-        switch (choice) {
-            case 1:
-                applicantManager.addApplicant();
-                break;
-            case 2:
-                applicantManager.editApplicantProfile();
-                break;
+        do {
+            menuUI.displayClientMainMenu(); // Show menu every loop
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
 
-            case 3:
-                displayApplicantAppliedMenu();
-                break;
+            switch (choice) {
+                case 1:
+                    applicantManager.addApplicant();
+                    break;
+                case 2:
+                    applicantManager.editApplicantProfile();
+                    break;
+                case 3:
+                    displayApplicantAppliedMenu();
+                    break;
+                case 4:
+                    handleApplicantMatchingCategory();
+                    break;
+                case 5:
+                    menuUI.exitSystem(); // Optional: Add return here if exitSystem() doesn't terminate the app
+                    return;
+                default:
+                    inputUI.invalidMenuSelection(1, 5);
+            }
 
-            case 4:
-                handleApplicantMatchingCategory();
-                break;
-
-            case 5:
-                menuUI.exitSystem();
-                break; // Add break here to prevent fall-through
-            default:
-                inputUI.invalidMenuSelection(1, 5);
-                break; // Add break here to prevent fall-through
-        }
+        } while (choice != 5); // Loop ends only when user selects Exit
     }
 
     //Applicant apply job
@@ -272,10 +294,10 @@ public class InputUI {
                 applicantAppliedJobManager.applyJob();
                 break;
             case 3:
-                applicantAppliedJobManager.handleCheckMyApplications();
+                applicantAppliedJobManager.viewApplications();
                 break;
             case 4:
-                inputUI.displayMessage("Exiting menu. Thank you!");
+                menuUI.exitSystem();
                 return; // Exit the menu loop
             default:
                 System.out.println("❌ Invalid selection. Try again.");
@@ -285,29 +307,126 @@ public class InputUI {
 
     // Handle Company Management Menu in middle side
     public void handleCompanyManagement() {
-        menuUI.displayCompanyManagement();
         int choice;
-        choice = inputUI.getValidIntInput("Enter your choice: ", 1, 5);
-        switch (choice) {
-            case 1:
-                companyManager.addCompany();
-                break;
-            case 2:
-                companyManager.editCompany();
-                break;
-            case 3:
-                companyManager.displayCompanies();
-                break;
-            case 4:
-                companyManager.removeCompany();
-                break;
-            case 5:
-                menuUI.exitSystem();
-                break; // Add break here to prevent fall-through
-            default:
-                inputUI.invalidMenuSelection(1, 5);
-                break; // Add break here to prevent fall-through
-        }
+        do {
+            menuUI.displayCompanyManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
+            switch (choice) {
+                case 1:
+                    companyManager.addCompany();
+                    break;
+                case 2:
+                    companyManager.editCompany();
+                    break;
+                case 3:
+                    companyManager.displayCompanies();
+                    break;
+                case 4:
+                    jobPostManager.printJobPostReports();
+                    break;
+                case 5:
+                    jobPostManager.displayJobLocationSummaryTable();
+                    break;
+                case 6:
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 6);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 6);
+    }
+
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobPostManagement() {
+        int choice;
+        do {
+            menuUI.displayJobPostManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+            switch (choice) {
+                case 1:
+                    jobPostManager.addJobPost();
+                    break;
+                case 2:
+                    jobPostManager.editJobPost();
+                    break;
+                case 3:
+                    jobPostManager.displayJobPosts();
+                    break;
+                case 4:
+                    jobPostManager.removeJobPost();
+                    break;
+                case 5:
+                    jobPostManager.displayRemovedPosts();
+                    break;
+                case 6:
+                    jobPostManager.searchJobPost();
+                    break;
+                case 7:
+                   menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 7);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 7);
+
+    }
+
+
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobManagement() {
+        int choice;
+        do {
+            menuUI.displayJobManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            switch (choice) {
+                case 1:
+                    jobManager.addJob();
+                    break;
+                case 2:
+                    jobManager.editJob();
+                    break;
+                case 3:
+                    jobManager.displayJobs();
+                    break;
+                case 4:
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 4);
+
+        
+    }
+
+
+    // Handle Job Post Management Menu in Compnay side side
+    public void handleJobReqManagement() {
+        int choice;
+        do {
+            menuUI.displayJobRequirementManagement();
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 4);
+            switch (choice) {
+                case 1:
+                    jobRequirementsManager.addJobRequirement();
+                    break;
+                case 2:
+                    jobRequirementsManager.editJobRequirement();
+                    break;
+                case 3:
+                    jobRequirementsManager.displayJobRequirements();
+                    break;
+                case 4:
+                    menuUI.exitSystem();
+                    break; // Add break here to prevent fall-through
+                default:
+                    inputUI.invalidMenuSelection(1, 4);
+                    break; // Add break here to prevent fall-through
+            }
+        } while (choice != 4);
     }
 
     // Handle Interview Main Menu
@@ -351,7 +470,7 @@ public class InputUI {
         while (running) {
             menuUI.displayTimeSlotInterviewMenu(company.getCompanyName());
             int choice;
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 10);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 12);
             switch (choice) {
                 case 1:
                     // Assign Interview
@@ -390,11 +509,17 @@ public class InputUI {
                     interviewManager.searchInterview(company);
                     break;
                 case 10:
+                    interviewManager.rescheduleInterviewSlot(company);
+                    break;
+                case 11:
+                    interviewManager.displayAllInterivew(company);
+                    break;
+                case 12:
                     // Return to previous menu
                     running = false;
                     break;
                 default:
-                    inputUI.invalidMenuSelection(1, 10);
+                    inputUI.invalidMenuSelection(1, 12);
                     break;
             }
         }
@@ -558,5 +683,6 @@ public class InputUI {
             }
         }
     }
-   
+
+
 }

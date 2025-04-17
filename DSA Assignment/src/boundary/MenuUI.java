@@ -3,6 +3,7 @@ package boundary;
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import entities.*;
+import controller.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -13,6 +14,8 @@ import java.time.format.DateTimeFormatter;
  * @author MAMBA
  */
 public class MenuUI {
+    
+    private static JobPostManager jobPostManager = JobPostManager.getInstance();
 
     private InputUI inputUI = new InputUI();
     private static final int MENU_WIDTH = 50; // Standard width for all menus
@@ -28,8 +31,12 @@ public class MenuUI {
     private static final String TABLE_VERTICAL = "|";
     private static final String TABLE_CROSS = "+";
 
+    // Heatmap color codes
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_CYAN = "\u001B[36m";  // You can change this to RED, GREEN, etc.
+    public static final String ANSI_CYAN = "\u001B[36m"; // You can change this to RED, GREEN, etc.
+    public static final String ANSI_RED = "\u001B[31m"; // High (over 67%)
+    public static final String ANSI_YELLOW = "\u001B[33m"; // Medium (34–66%)
+    public static final String ANSI_GREEN = "\u001B[32m"; // Low (under 34%)
 
     private static final int REPORT_WIDTH = 125;
 
@@ -48,27 +55,43 @@ public class MenuUI {
 
     // Helper method to format menu options with consistent padding and icons
     private String formatMenuOption(int number, String option) {
-        return VERTICAL_LINE + " > " + number + ". " + option + " ".repeat(MENU_WIDTH - 8 - option.length()) + VERTICAL_LINE;
+        return VERTICAL_LINE + " > " + number + ". " + option + " ".repeat(MENU_WIDTH - 8 - option.length())
+                + VERTICAL_LINE;
     }
 
     // Display Main Menu
     public void displayMainMenu() {
 
-        System.out.println("                             ,----,                                                                                                                            ,--,                                            ,----,                                    ");
-        System.out.println("                 ,--.      ,/   .|                             ,--.                    ,--,        ,-.----.                          ,-.----.   ,-.----.   ,---.'|                                          ,/   .|            ,----..            ,--. ");
-        System.out.println("   ,---,       ,--.'|    ,`   .'  :   ,---,.,-.----.          ,--.'|  .--.--.         ,--.'|   ,---,\\    /  \\             ,---,       \\    /  \\  \\    /  \\  |   | :      ,---,  ,----..     ,---,          ,`   .'  :   ,---,   /   /   \\         ,--.'| ");
-        System.out.println(",--.' |   ,--,:  : |  ;    ;     / ,'  .' |\\    /  \\     ,--,:  : | /  /    '.    ,--,  | :,--.' ||   :    \\           '  .' \\      |   :    \\ |   :    \\ :   : |   ,--.' | /   /   \\   '  .' \\       ;    ;     /,--.' |  /   .     :    ,--,:  : | ");
-        System.out.println("|   :  :,--.'|  ' :.'_,/    ,',---.'   |;   :    \\ ,--.'|  ' :|  :  /. / ,---.'|  : '|   :  :|   |  .\\ :         /  ;    '.    |   |  .\\ :|   |  .\\ :|   ' :   |   :  :|   :     : /  ;    '.   .'___,/    ,' |   :  : .   /   ;.  \\,--.'`|  ' : ");
-        System.out.println(":   |  '|   :  :  | ||    :     | |   |   .'|   | .\\ : |   :  :  | |;  |  |--`  |   | : _' |:   |  '.   :  |: |        :  :       \\   .   :  |: |.   :  |: |;   ; '   :   |  '.   ; /--` :  |   /\\   \\ ;    :     |  :   |  '.   ;   /  ` ;|   :  :  | | ");
-        System.out.println("|   :  |:   |   \\ | :;    |.';  ; :   :  |-,.   : |: | :   |   \\ | :|  :  ;_    :   : |.'  ||   :  ||   |   \\ :        :  |   /\\   \\  |   |   \\ :|   |   \\ :'   | |__ |   :  |.   ; /--` :  |   /\\   \\ ;    |.';  ;  |   :  |;   |  ; \\ ; |:   |   \\ | : ");
-        System.out.println("'   '  ;|   : '  '; |----'  |  | :   |  ;/||   |  \\ : |   : '  '; | \\  \\    `. |   ' '  ; :'   '  ;|   : .   /        |  :  ' ;.   : |   : .   /|   : .   /|   | :.'|'   '  ;;   | ;    |  :  ' ;.   :----'  |  |  '   '  ;|   :  | ; | '|   : '  '; | ");
-        System.out.println("|   |  |'   ' ;.    ;    '   :  ; |   :   .'|   : .  / '   ' ;.    ;  ----.   \\|   |  .'. ||   |  |;   | |-'         |  |  ;/  \\   \\;   | |-' ;   | |-' '   :    ;|   |  ||   : |    |  |  ;/  \\   \\   '   :  ;  |   |  |.   |  ' ' ' :'   ' ;.    ; ");
-        System.out.println("'   :  ;|   | | \\   |    |   |  ' |   |  |-,;   | |  \\ |   | | \\   |  _ \\  \\  ||   | :  | ''   :  ;|   | ;            '  :  | \\  \\ ,'|   | ;    |   | ;    |   |  ./ '   :  ;.   | '__ '  :  | \\  \\ ,'   |   |  '  '   :  ;'   ;  \\; /  ||   | | \\   | ");
-        System.out.println("|   |  ''   : |  ; .'    '   :  | '   :  ;/||   | ;\\  \\'   : |  ; .' /  /`--'  /'   : |  : ;|   |  ':   ' |            |  |  '  '--'  :   ' |    :   ' |    ;   : ;   |   |  ''   ; : .'||  |  '  '--'     '   :  |  |   |  ' \\   \\  ',  / '   : |  ; .' ");
-        System.out.println("'   :  ||   | '--'      ;   |.'  |   |    \\:   ' | \\'|   | '--'  '--'.     / |   | '  ,/ '   :  |:   : :            |  :  :        :   : :    :   : :    |   ,/    '   :  |'   | '/  :|  :  :           ;   |.'   '   :  |  ;   :    /  |   | '`--'   ");
-        System.out.println(";   |.' '   : |          '---'    |   :   .':   : :-'  '   : |        `--'---'  ;   : ;--'  ;   |.' |   | :            |  | ,'        |   | :    |   | :    '---'     ;   |.' |   :    / |  | ,'           '---'     ;   |.'    \\   \\ .'   '   : |       ");
-        System.out.println("'---'   ;   |.'                   |   | ,'  |   |.'    ;   |.'                  |   ,/      '---'   ---'.|            `--''          `---'.|    `---'.|              '---'    \\   \\ .'  `--''                       '---'       `---     ;   |.'       ");
-        System.out.println("        '---'                     ----'    `---'      '---'                    '---'                 `---                             ---      ---                        ---                                                      '---'         ");
+        System.out.println(
+                "                             ,----,                                                                                                                            ,--,                                            ,----,                                    ");
+        System.out.println(
+                "                 ,--.      ,/   .|                             ,--.                    ,--,        ,-.----.                          ,-.----.   ,-.----.   ,---.'|                                          ,/   .|            ,----..            ,--. ");
+        System.out.println(
+                "   ,---,       ,--.'|    ,`   .'  :   ,---,.,-.----.          ,--.'|  .--.--.         ,--.'|   ,---,\\    /  \\             ,---,       \\    /  \\  \\    /  \\  |   | :      ,---,  ,----..     ,---,          ,`   .'  :   ,---,   /   /   \\         ,--.'| ");
+        System.out.println(
+                ",--.' |   ,--,:  : |  ;    ;     / ,'  .' |\\    /  \\     ,--,:  : | /  /    '.    ,--,  | :,--.' ||   :    \\           '  .' \\      |   :    \\ |   :    \\ :   : |   ,--.' | /   /   \\   '  .' \\       ;    ;     /,--.' |  /   .     :    ,--,:  : | ");
+        System.out.println(
+                "|   :  :,--.'|  ' :.'_,/    ,',---.'   |;   :    \\ ,--.'|  ' :|  :  /. / ,---.'|  : '|   :  :|   |  .\\ :         /  ;    '.    |   |  .\\ :|   |  .\\ :|   ' :   |   :  :|   :     : /  ;    '.   .'___,/    ,' |   :  : .   /   ;.  \\,--.'`|  ' : ");
+        System.out.println(
+                ":   |  '|   :  :  | ||    :     | |   |   .'|   | .\\ : |   :  :  | |;  |  |--`  |   | : _' |:   |  '.   :  |: |        :  :       \\   .   :  |: |.   :  |: |;   ; '   :   |  '.   ; /--` :  |   /\\   \\ ;    :     |  :   |  '.   ;   /  ` ;|   :  :  | | ");
+        System.out.println(
+                "|   :  |:   |   \\ | :;    |.';  ; :   :  |-,.   : |: | :   |   \\ | :|  :  ;_    :   : |.'  ||   :  ||   |   \\ :        :  |   /\\   \\  |   |   \\ :|   |   \\ :'   | |__ |   :  |.   ; /--` :  |   /\\   \\ ;    |.';  ;  |   :  |;   |  ; \\ ; |:   |   \\ | : ");
+        System.out.println(
+                "'   '  ;|   : '  '; |----'  |  | :   |  ;/||   |  \\ : |   : '  '; | \\  \\    `. |   ' '  ; :'   '  ;|   : .   /        |  :  ' ;.   : |   : .   /|   : .   /|   | :.'|'   '  ;;   | ;    |  :  ' ;.   :----'  |  |  '   '  ;|   :  | ; | '|   : '  '; | ");
+        System.out.println(
+                "|   |  |'   ' ;.    ;    '   :  ; |   :   .'|   : .  / '   ' ;.    ;  ----.   \\|   |  .'. ||   |  |;   | |-'         |  |  ;/  \\   \\;   | |-' ;   | |-' '   :    ;|   |  ||   : |    |  |  ;/  \\   \\   '   :  ;  |   |  |.   |  ' ' ' :'   ' ;.    ; ");
+        System.out.println(
+                "'   :  ;|   | | \\   |    |   |  ' |   |  |-,;   | |  \\ |   | | \\   |  _ \\  \\  ||   | :  | ''   :  ;|   | ;            '  :  | \\  \\ ,'|   | ;    |   | ;    |   |  ./ '   :  ;.   | '__ '  :  | \\  \\ ,'   |   |  '  '   :  ;'   ;  \\; /  ||   | | \\   | ");
+        System.out.println(
+                "|   |  ''   : |  ; .'    '   :  | '   :  ;/||   | ;\\  \\'   : |  ; .' /  /`--'  /'   : |  : ;|   |  ':   ' |            |  |  '  '--'  :   ' |    :   ' |    ;   : ;   |   |  ''   ; : .'||  |  '  '--'     '   :  |  |   |  ' \\   \\  ',  / '   : |  ; .' ");
+        System.out.println(
+                "'   :  ||   | '--'      ;   |.'  |   |    \\:   ' | \\'|   | '--'  '--'.     / |   | '  ,/ '   :  |:   : :            |  :  :        :   : :    :   : :    |   ,/    '   :  |'   | '/  :|  :  :           ;   |.'   '   :  |  ;   :    /  |   | '`--'   ");
+        System.out.println(
+                ";   |.' '   : |          '---'    |   :   .':   : :-'  '   : |        `--'---'  ;   : ;--'  ;   |.' |   | :            |  | ,'        |   | :    |   | :    '---'     ;   |.' |   :    / |  | ,'           '---'     ;   |.'    \\   \\ .'   '   : |       ");
+        System.out.println(
+                "'---'   ;   |.'                   |   | ,'  |   |.'    ;   |.'                  |   ,/      '---'   ---'.|            `--''          `---'.|    `---'.|              '---'    \\   \\ .'  `--''                       '---'       `---     ;   |.'       ");
+        System.out.println(
+                "        '---'                     ----'    `---'      '---'                    '---'                 `---                             ---      ---                        ---                                                      '---'         ");
 
         System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
         System.out.println(VERTICAL_LINE + centerText("MAIN MENU", MENU_WIDTH - 2) + VERTICAL_LINE);
@@ -123,14 +146,12 @@ public class MenuUI {
         System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
         System.out.println(VERTICAL_LINE + centerText("COMPANY SIDE MENU", MENU_WIDTH - 2) + VERTICAL_LINE);
         System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + MIDDLE_RIGHT);
-        System.out.println(formatMenuOption(1, "Add Job Post"));
-        System.out.println(formatMenuOption(2, "Edit Job Post"));
-        System.out.println(formatMenuOption(3, "Remove Job Post"));
-        System.out.println(formatMenuOption(4, "View Job Post"));
-        System.out.println(formatMenuOption(5, "View Job"));
-        System.out.println(formatMenuOption(6, "Interview Management"));
-        System.out.println(formatMenuOption(7, "Matching Management"));
-        System.out.println(formatMenuOption(8, "Exit"));
+        System.out.println(formatMenuOption(1, "Job Post Management"));
+        System.out.println(formatMenuOption(2, "Job Management"));
+        System.out.println(formatMenuOption(3, "Job Requirement Management"));
+        System.out.println(formatMenuOption(4, "Interview Management"));
+        System.out.println(formatMenuOption(5, "Matching Management"));
+        System.out.println(formatMenuOption(6, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
@@ -142,8 +163,48 @@ public class MenuUI {
         System.out.println(formatMenuOption(1, "Add Company"));
         System.out.println(formatMenuOption(2, "Edit Company"));
         System.out.println(formatMenuOption(3, "View Company"));
-        System.out.println(formatMenuOption(4, "Remove Company"));
-        System.out.println(formatMenuOption(5, "Exit"));
+        System.out.println(formatMenuOption(4, "Job Post Report based on Company"));
+        System.out.println(formatMenuOption(5, "Job Post Report based on Application"));
+        System.out.println(formatMenuOption(6,"Exit"));
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
+    }
+
+    // Display JobPost Management Menu
+    public void displayJobPostManagement() {
+        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
+        System.out.println(VERTICAL_LINE + centerText("JOB POST MANAGEMENT", MENU_WIDTH - 2) + VERTICAL_LINE);
+        System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + MIDDLE_RIGHT);
+        System.out.println(formatMenuOption(1, "Add Job Post"));
+        System.out.println(formatMenuOption(2, "Edit Job Post"));
+        System.out.println(formatMenuOption(3, "View Job Post"));
+        System.out.println(formatMenuOption(4, "Remove Job Post"));
+        System.out.println(formatMenuOption(5, "View Removed Post"));
+        System.out.println(formatMenuOption(6, "Search Job Post"));
+        System.out.println(formatMenuOption(7, "Exit"));
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
+    }
+
+    // Display Job Management Menu
+    public void displayJobManagement() {
+        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
+        System.out.println(VERTICAL_LINE + centerText("JOB MANAGEMENT", MENU_WIDTH - 2) + VERTICAL_LINE);
+        System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + MIDDLE_RIGHT);
+        System.out.println(formatMenuOption(1, "Add Job "));
+        System.out.println(formatMenuOption(2, "Edit Job "));
+        System.out.println(formatMenuOption(3, "View Job "));
+        System.out.println(formatMenuOption(4, "Exit"));
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
+    }
+
+    // Display JobRequirement Management Menu
+    public void displayJobRequirementManagement() {
+        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
+        System.out.println(VERTICAL_LINE + centerText("JOB REQUIREMENT MANAGEMENT", MENU_WIDTH - 2) + VERTICAL_LINE);
+        System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + MIDDLE_RIGHT);
+        System.out.println(formatMenuOption(1, "Add Job Requirement"));
+        System.out.println(formatMenuOption(2, "Edit Job Requirement"));
+        System.out.println(formatMenuOption(3, "View Job Requirement"));
+        System.out.println(formatMenuOption(4, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
@@ -189,23 +250,37 @@ public class MenuUI {
     }
 
     // Display Time Slot Interview Menu
+    // Display Time Slot Interview Menu
     public void displayTimeSlotInterviewMenu(String company) {
         String title = company.toUpperCase() + " - INTERVIEW TIME SLOT MANAGEMENT";
         int dynamicWidth = Math.max(MENU_WIDTH, title.length() + 6);
-        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 2) + TOP_RIGHT);
-        System.out.println(VERTICAL_LINE + centerText(title, dynamicWidth - 2) + VERTICAL_LINE);
-        System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 2) + MIDDLE_RIGHT);
+        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 3) + TOP_RIGHT);
+        System.out.println(VERTICAL_LINE + centerText(title, dynamicWidth - 3) + VERTICAL_LINE);
+        System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 3) + MIDDLE_RIGHT);
         System.out.println(VERTICAL_LINE + " >  1. Assign Interview" + " ".repeat(dynamicWidth - 26) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  2. View Waiting Interviews" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  3. View Completed Interviews" + " ".repeat(dynamicWidth - 35) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  4. View Interviews Based on Skills" + " ".repeat(dynamicWidth - 41) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  5. View Interviews Based on Experience" + " ".repeat(dynamicWidth - 45) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  6. Suggest Time Slot to Middle Side" + " ".repeat(dynamicWidth - 42) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  7. Give Interview Feedback" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " >  8. View Time Slot Table" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  2. View Waiting Interviews" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  3. View Completed Interviews" + " ".repeat(dynamicWidth - 35) + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  4. View Interviews Based on Skills" + " ".repeat(dynamicWidth - 41)
+                + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  5. View Interviews Based on Experience" + " ".repeat(dynamicWidth - 45)
+                + VERTICAL_LINE);
+        System.out.println(VERTICAL_LINE + " >  6. Suggest Time Slot to Middle Side" + " ".repeat(dynamicWidth - 42)
+                + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " >  7. Give Interview Feedback" + " ".repeat(dynamicWidth - 33) + VERTICAL_LINE);
+        System.out
+                .println(VERTICAL_LINE + " >  8. View Time Slot Table" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
         System.out.println(VERTICAL_LINE + " >  9. Search" + " ".repeat(dynamicWidth - 16) + VERTICAL_LINE);
-        System.out.println(VERTICAL_LINE + " > 10. Back to Previous Menu" + " ".repeat(dynamicWidth - 31) + VERTICAL_LINE);
-        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 2) + BOTTOM_RIGHT);
+        System.out
+                .println(VERTICAL_LINE + " > 10. Reschedule Interview" + " ".repeat(dynamicWidth - 30) + VERTICAL_LINE);
+        System.out.println(
+                VERTICAL_LINE + " > 11. Display All Interview" + " ".repeat(dynamicWidth - 31) + VERTICAL_LINE);
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 3) + BOTTOM_RIGHT);
+        System.out.println(
+                VERTICAL_LINE + " > 12. Back to Previous Menu" + " ".repeat(dynamicWidth - 31) + VERTICAL_LINE);
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, dynamicWidth - 3) + BOTTOM_RIGHT);
     }
 
     // Display Recruitment Menu
@@ -247,6 +322,56 @@ public class MenuUI {
                 + repeat(TABLE_HORIZONTAL, 21) + "+"
                 + repeat(TABLE_HORIZONTAL, 21) + "+"
                 + repeat(TABLE_HORIZONTAL, 16) + "+");
+    }
+
+    // Reschedule Time Slot
+    public void printReschedulableInterviewTable(DoublyLinkedListInterface<Interview> interviews, Company company) {
+        String header = String.format("| %-4s | %-15s | %-20s | %-35s | %-12s |",
+                "No.", "Interview ID", "Applicant", "Current Time Slot", "Status");
+        String separator = "+------+-----------------+----------------------+-------------------------------------+--------------+";
+
+        System.out.println(separator);
+        System.out.println(header);
+        System.out.println(separator);
+
+        int index = 1;
+        for (Interview i : interviews) {
+            if ((i.getStatus().equalsIgnoreCase("Waiting") || i.getStatus().equalsIgnoreCase("Accepted"))
+                    && i.getApplicantAppliedJob().getJobPost().getCompany().equals(company)) {
+
+                String applicant = i.getApplicantAppliedJob().getApplicant().getName();
+                String slot = i.getTimeslot().getTime() + " | " + i.getTimeslot().getDate() + " @ "
+                        + i.getTimeslot().getLocation();
+
+                System.out.printf("| %-4d | %-15s | %-20s | %-35s | %-12s |%n",
+                        index++, i.getInterviewId(), applicant, slot, i.getStatus());
+            }
+        }
+
+        System.out.println(separator);
+    }
+
+    // Reschedule Time Slot with Numbered
+    public void printNumberedTimeSlotTable(DoublyLinkedListInterface<TimeSlot> timeSlots) {
+        String header = String.format("| %-3s | %-12s | %-10s | %-10s | %-15s |", "No.", "Time Slot ID", "Start Time",
+                "End Time", "Location");
+        String separator = "+-----+--------------+------------+------------+-----------------+";
+
+        System.out.println(separator);
+        System.out.println(header);
+        System.out.println(separator);
+
+        int index = 1;
+        for (TimeSlot slot : timeSlots) {
+            System.out.printf("| %-3d | %-12s | %-10s | %-10s | %-15s |%n",
+                    index++,
+                    slot.getTimeSlotId(),
+                    slot.getTime(),
+                    slot.getDate(),
+                    slot.getLocation());
+        }
+
+        System.out.println(separator);
     }
 
     // Display Interview Report Menu
@@ -451,7 +576,7 @@ public class MenuUI {
         System.out.println(repeat("-", width));
     }
 
-// Helper method to build comma-separated applicant string
+    // Helper method to build comma-separated applicant string
     private String buildApplicantString(DoublyLinkedListInterface<String> applicants) {
         String result = "";
         boolean first = true;
@@ -481,9 +606,17 @@ public class MenuUI {
     // Exit System Message
     public void exitSystem() {
         System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
+        System.out.println(VERTICAL_LINE + centerText("RETURNING TO PREVIOUS MENU...", MENU_WIDTH - 2) + VERTICAL_LINE);
+        System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
+    }
+    
+    
+     public void terminateSystem() {
+        System.out.println("\n" + TOP_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + TOP_RIGHT);
         System.out.println(VERTICAL_LINE + centerText("EXITING SYSTEM...", MENU_WIDTH - 2) + VERTICAL_LINE);
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
+    
 
     // Print Applicant Table Header
     public void printApplicantTableHeader() {
@@ -512,16 +645,92 @@ public class MenuUI {
                 + TABLE_CROSS);
     }
 
+    // Print Applicant Table Header For Interview
+    public void printApplicantTableHeaderAAJ() {
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 5)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 10)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 25)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 28)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS);
+
+        System.out.printf("| %-12s | %-18s | %-14s | %-18s | %-3s | %-14s | %-8s | %-23s | %-26s | %-19s |\n",
+                "Applicant ID", "Applicant", "Application ID", "Job Title", "Age", "Location", "Exp (Yr)",
+                "Education", "Skills", "Registration Date");
+
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 5)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 10)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 25)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 28)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS);
+    }
+
     // Print a Single Applicant Row
     public void printApplicantRow(Applicant applicant) {
+        
         String skills = formatSkills(applicant.getSkills());
         String registrationTime = applicant.getDateAdded();
 
-        System.out.printf(TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-5d " + TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL + " %-25s " + TABLE_VERTICAL + " %-28s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + "\n",
+        System.out.printf(
+                TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-5d " + TABLE_VERTICAL
+                        + " %-16s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL + " %-25s " + TABLE_VERTICAL
+                        + " %-28s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + "\n",
                 applicant.getApplicantId(), truncate(applicant.getName(), 20), applicant.getAge(),
                 truncate(applicant.getLocation(), 16), applicant.getYearsOfExperience(),
                 truncate(applicant.getEducationLevel(), 25), truncate(skills, 28), registrationTime);
 
+    }
+
+    // Print Single Applicant Row for Interview
+    public void printApplicantRow(ApplicantAppliedJob aaj) {
+        Applicant applicant = aaj.getApplicant();
+        JobPost jp = aaj.getJobPost();
+        String skills = formatSkills(applicant.getSkills());
+        String registrationTime = applicant.getDateAdded();
+
+        System.out.printf(TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-18s " + TABLE_VERTICAL + " %-14s "
+                + TABLE_VERTICAL + " %-18s " + TABLE_VERTICAL + " %-3d " + TABLE_VERTICAL + " %-14s "
+                + TABLE_VERTICAL + " %-8d " + TABLE_VERTICAL + " %-23s " + TABLE_VERTICAL + " %-26s "
+                + TABLE_VERTICAL + " %-18s " + TABLE_VERTICAL + "\n",
+                applicant.getApplicantId(), truncate(applicant.getName(), 18), truncate(aaj.getApplicationId(), 14),
+                truncate(jp.getJob().getTitle(), 18), applicant.getAge(),
+                truncate(applicant.getLocation(), 14), applicant.getYearsOfExperience(),
+                truncate(applicant.getEducationLevel(), 23), truncate(skills, 26), registrationTime);
+    }
+
+    // Print Applicant Table Footer
+    public void printApplicantsTableFooter() {
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+"
+                + repeat(TABLE_HORIZONTAL, 22) + "+");
+
+    }
+
+    // Print Applicant Table Footer For Interview
+    public void printApplicantsTableFooterAAJ() {
+        System.out.println(TABLE_CROSS + repeat(TABLE_HORIZONTAL, 14)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 20)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 5)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 16)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 10)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 25)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 28)
+                + TABLE_CROSS + repeat(TABLE_HORIZONTAL, 22)
+                + TABLE_CROSS);
     }
 
     // Print Applicants Table
@@ -535,12 +744,10 @@ public class MenuUI {
         for (Applicant applicant : applicants) {
             printApplicantRow(applicant);
         }
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+" + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+");
-    }
-
-    public void printApplicantsTableFooter() {
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+" + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+");
-
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 7) + "+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 27) + "+" + repeat(TABLE_HORIZONTAL, 30) + "+"
+                + repeat(TABLE_HORIZONTAL, 22) + "+");
     }
 
     // Format Skills for Display
@@ -564,13 +771,15 @@ public class MenuUI {
     // Print Skill Table Header
     public void printSkillTableHeader() {
         System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
-        System.out.println(TABLE_VERTICAL + " Skill Name       " + " " + TABLE_VERTICAL + " Category      " + " " + TABLE_VERTICAL + " Proficiency   " + " " + TABLE_VERTICAL);
+        System.out.println(TABLE_VERTICAL + " Skill Name      " + " " + TABLE_VERTICAL + " Category     " + " " + TABLE_VERTICAL + " Proficiency  " + " " + TABLE_VERTICAL);
         System.out.println("+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
     }
 
     // Print a Single Skill Row
     public void printSkillRow(Skill skill) {
-        System.out.printf(TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL + " %-13s " + TABLE_VERTICAL + " %-13d " + TABLE_VERTICAL + "\n",
+        System.out.printf(
+                TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL + " %-13s " + TABLE_VERTICAL + " %-13d " + TABLE_VERTICAL
+                + "\n",
                 truncate(skill.getName(), 16), truncate(skill.getCategory(), 13), skill.getProficiency_level());
     }
 
@@ -585,13 +794,18 @@ public class MenuUI {
         for (Skill skill : skills) {
             printSkillRow(skill);
         }
-        System.out.println("+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+");
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+"
+                + repeat(TABLE_HORIZONTAL, 15) + "+");
     }
 
-    public void printApplicantApplicationsTable(DoublyLinkedListInterface<ApplicantAppliedJob> apps, DoublyLinkedListInterface<Interview> interviews) {
-        System.out.println("=====================================================================================================================");
-        System.out.printf("| %-3s | %-30s | %-20s | %-12s | %-30s |\n", "No.", "Job Title", "Company", "Status", "Interview TimeSlot");
-        System.out.println("---------------------------------------------------------------------------------------------------------------------");
+    public void printApplicantApplicationsTable(DoublyLinkedListInterface<ApplicantAppliedJob> apps,
+            DoublyLinkedListInterface<Interview> interviews) {
+        System.out.println(
+                "=====================================================================================================================");
+        System.out.printf("| %-3s | %-30s | %-20s | %-12s | %-30s |\n", "No.", "Job Title", "Company", "Status",
+                "Interview TimeSlot");
+        System.out.println(
+                "---------------------------------------------------------------------------------------------------------------------");
 
         int index = 1;
         for (ApplicantAppliedJob app : apps) {
@@ -609,10 +823,12 @@ public class MenuUI {
                 }
             }
 
-            System.out.printf("| %-3d | %-30s | %-20s | %-12s | %-30s |\n", index++, jobTitle, company, status, timeSlot);
+            System.out.printf("| %-3d | %-30s | %-20s | %-12s | %-30s |\n", index++, jobTitle, company, status,
+                    timeSlot);
         }
 
-        System.out.println("=====================================================================================================================");
+        System.out.println(
+                "=====================================================================================================================");
     }
 
     // Helper method to repeat a string
@@ -637,7 +853,8 @@ public class MenuUI {
         String separator = "=".repeat(REPORT_WIDTH);
 
         System.out.println(separator);
-        System.out.println(ANSI_CYAN + centerText("TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY", REPORT_WIDTH) + ANSI_RESET);
+        System.out.println(ANSI_CYAN
+                + centerText("TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY", REPORT_WIDTH) + ANSI_RESET);
         System.out.println(ANSI_CYAN + centerText(reportTitle.toUpperCase(), REPORT_WIDTH) + ANSI_RESET);
         printTimestamp(); // Centered timestamp
         System.out.println(separator);
@@ -649,7 +866,7 @@ public class MenuUI {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String timestamp = "🕒 Generated On: " + now.format(formatter);
-        System.out.println(timestamp);
+        System.out.println(ANSI_CYAN + centerText(timestamp, REPORT_WIDTH) + ANSI_RESET);
     }
 
     // Helper method to print end of report
@@ -661,44 +878,69 @@ public class MenuUI {
 
     // Yoke Yau - Report Printing ===============================================
     // =====================================================================
-    public void printApplicantMatchReportHeader(Applicant applicant, int totalJobsApplied, String topJobTitle, double highestScore, int width) {
+    public void printApplicantMatchReportHeader(Applicant applicant, int totalJobsApplied, String topJobTitle,
+            double highestScore, int width) {
         String separator = repeat("=", width);
         // Center-align headers and other text
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format(
+                "%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s",
+                "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
         System.out.println(String.format("%" + (width + applicant.getName().length()) / 2 + "s", applicant.getName()));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION REPORT".length()) / 2 + "s", "INTERNSHIP APPLICATION REPORT"));
+        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION REPORT".length()) / 2 + "s",
+                "INTERNSHIP APPLICATION REPORT"));
         System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL JOB MATCHING REPORT FOR APPLICANT".length()) / 2 + "s", "OVERALL JOB MATCHING REPORT FOR APPLICANT"));
+        System.out.println(String.format("%" + (width + "OVERALL JOB MATCHING REPORT FOR APPLICANT".length()) / 2 + "s",
+                "OVERALL JOB MATCHING REPORT FOR APPLICANT"));
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println();
-        System.out.println(String.format("%" + (width + ("Total Jobs Applied: " + totalJobsApplied).length()) / 2 + "s", "Total Jobs Applied: " + totalJobsApplied));
-        System.out.println(String.format("%" + (width + ("Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
+        System.out.println(String.format("%" + (width + ("Total Jobs Applied: " + totalJobsApplied).length()) / 2 + "s",
+                "Total Jobs Applied: " + totalJobsApplied));
+        System.out.println(String.format(
+                "%" + (width + ("Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")")
+                        .length()) / 2 + "s",
+                "Top Job: " + topJobTitle + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
         System.out.println();
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
 
         // Header for job details including Level
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
+        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "🏢 Company", "📌 Job Title",
+                "📍 Job Location", "⭐ Match Score", "📊 Level");
         System.out.println(header);
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
 
     }
 
-    public void printCompanyMatchReportHeader(String companyId, int totalApplicants, String topApplicant, double highestScore, int width) {
+    public void printCompanyMatchReportHeader(String companyId, int totalApplicants, String topApplicant,
+            double highestScore, int width) {
         String separator = repeat("=", width);
-        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title", "📍 Job Location", "⭐ Match Score", "📊 Level");
+        String header = String.format("%-20s | %-20s | %-20s | %-15s | %-10s", "👤 Applicant Name", "📌 Job Title",
+                "📍 Job Location", "⭐ Match Score", "📊 Level");
 
         // Center-align headers and other text
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
-        System.out.println(String.format("%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s", "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
-        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION PROGRAM".length()) / 2 + "s", "INTERNSHIP APPLICATION PROGRAM"));
+        System.out.println(String.format(
+                "%" + (width + "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY".length()) / 2 + "s",
+                "TUNKU ABDUL RAHMAN UNIVERSITY OF MANAGEMENT AND TECHNOLOGY"));
+        System.out.println(String.format("%" + (width + "INTERNSHIP APPLICATION PROGRAM".length()) / 2 + "s",
+                "INTERNSHIP APPLICATION PROGRAM"));
         System.out.println();
-        System.out.println(String.format("%" + (width + "OVERALL SCORE MATCHING RANKING REPORT".length()) / 2 + "s", "OVERALL SCORE MATCHING RANKING REPORT"));
+        System.out.println(String.format("%" + (width + "OVERALL SCORE MATCHING RANKING REPORT".length()) / 2 + "s",
+                "OVERALL SCORE MATCHING RANKING REPORT"));
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println();
-        System.out.println(String.format("%" + (width + ("📊 Job-Applicant Overall Match Report for Company: " + companyId).length()) / 2 + "s", "📊 Job-Applicant Overall Match Report for Company: " + companyId));
-        System.out.println(String.format("%" + (width + ("Total Applicants Considered: " + totalApplicants).length()) / 2 + "s", "Total Applicants Considered: " + totalApplicants));
-        System.out.println(String.format("%" + (width + ("Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")").length()) / 2 + "s", "Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
+        System.out.println(String.format(
+                "%" + (width + ("📊 Job-Applicant Overall Match Report for Company: " + companyId).length()) / 2 + "s",
+                "📊 Job-Applicant Overall Match Report for Company: " + companyId));
+        System.out.println(
+                String.format("%" + (width + ("Total Applicants Considered: " + totalApplicants).length()) / 2 + "s",
+                        "Total Applicants Considered: " + totalApplicants));
+        System.out.println(String.format(
+                "%" + (width
+                + ("Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")")
+                        .length())
+                / 2 + "s",
+                "Top Applicant: " + topApplicant + " (Score: " + String.format("%.2f%%", highestScore) + ")"));
         System.out.println();
         System.out.println(String.format("%" + (width + separator.length()) / 2 + "s", separator));
         System.out.println(header);
@@ -749,21 +991,22 @@ public class MenuUI {
         System.out.println("\n📄 " + status + " Job Matches for: " + applicant.getName());
 
         if (jobPosts.isEmpty()) {
-            System.out.println("❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
+            System.out.println(
+                    "❌ No " + status.toLowerCase() + " jobs found for you. Keep learning and check back later!");
         } else {
             System.out.println("✅ " + jobPosts.size() + " " + status + " job(s) found:\n");
 
             // Table header
             String header = String.format(
                     "%-4s %-25s %-20s %-20s %-12s %-40s",
-                    "No.", "Company", "Job Title", "Location", "Experience", "Requirements"
-            );
+                    "No.", "Company", "Job Title", "Location", "Experience", "Requirements");
             System.out.println(header);
             System.out.println(repeat("=", header.length()));
 
             int count = 1;
             for (JobPost jobPost : jobPosts) {
-                String company = jobPost.getCompany().getCompanyName() + " (" + jobPost.getCompany().getCompanyLocation() + ")";
+                String company = jobPost.getCompany().getCompanyName() + " ("
+                        + jobPost.getCompany().getCompanyLocation() + ")";
                 String title = jobPost.getJob().getTitle();
                 String location = jobPost.getJob().getLocation();
                 String experience = jobPost.getJob().getRequired_experience() + " yrs";
@@ -776,8 +1019,7 @@ public class MenuUI {
 
                 System.out.printf(
                         "%-4d %-25s %-20s %-20s %-12s %-40s\n",
-                        count, company, title, location, experience, requirements
-                );
+                        count, company, title, location, experience, requirements);
                 count++;
             }
         }
@@ -785,7 +1027,8 @@ public class MenuUI {
 
     // Print out the suitable applicants with enhanced formatting
     public void listApplicants(DoublyLinkedListInterface<Applicant> applicants, JobPost jobPost, String status) {
-        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at " + jobPost.getCompany().getCompanyName());
+        System.out.println("\n👥 " + status + " Applicants for " + jobPost.getJob().getTitle() + " at "
+                + jobPost.getCompany().getCompanyName());
 
         if (applicants.isEmpty()) {
             System.out.println("❌ No " + status.toLowerCase() + " applicants found.");
@@ -795,8 +1038,7 @@ public class MenuUI {
             // Print table header
             String header = String.format(
                     "%-4s %-20s %-15s %-15s %-12s %-30s",
-                    "No.", "Name", "Education", "Location", "Experience", "Skills"
-            );
+                    "No.", "Name", "Education", "Location", "Experience", "Skills");
             System.out.println(header);
             System.out.println(repeat("=", header.length()));
 
@@ -814,11 +1056,493 @@ public class MenuUI {
                         applicant.getEducationLevel(),
                         applicant.getLocation(),
                         applicant.getYearsOfExperience() + " yr",
-                        skills
-                );
+                        skills);
                 count++;
             }
         }
     }
+
+    // SHU HAN - UI PRINTING
+    // ======================================================================================================================================================================
+// Print Company Table Header
+
+    public void printCompanyTableHeader() {
+        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
+                + "+");
+        System.out.println(TABLE_VERTICAL + " Company ID  " + " " + TABLE_VERTICAL + " Company Name        " + " "
+                + TABLE_VERTICAL + " Location       " + " " + TABLE_VERTICAL + " Company Size " + " " + TABLE_VERTICAL
+                + " Description                   " + TABLE_VERTICAL);
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
+                + "+");
+    }
+
+
+    // Print a Single Company Row
+    public void printCompanyRow(Company company) {
+        String description = truncate(company.getCompanyDescription(), 30); // Truncate description to fit the table
+        // width
+
+        System.out.printf(
+                TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL
+                + " %-10d " + TABLE_VERTICAL + " %-28s " + TABLE_VERTICAL + "\n",
+                company.getCompanyId(), truncate(company.getCompanyName(), 20),
+                truncate(company.getCompanyLocation(), 16),
+                company.getCompanySize(), description);
+    }
+
+    // Print Companies Table
+    public void printCompanies(DoublyLinkedListInterface<Company> companies) {
+        if (companies.isEmpty()) {
+            System.out.println("No companies found.");
+            return;
+        }
+
+        printCompanyTableHeader();
+        for (Company company : companies) {
+            printCompanyRow(company);
+        }
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
+                + "+");
+    }
+
+    // Print Companies Footer
+    public void printCompaniesTableFooter() {
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 30)
+                + "+");
+    }
+
+// Print JobPost Table Header
+    public void printJobPostTableHeader() {
+        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 31) + "+");
+        System.out.println(TABLE_VERTICAL + " Job Post ID " + " " + TABLE_VERTICAL + " Job Title           " + " "
+                + TABLE_VERTICAL + " Company Name    " + " " + TABLE_VERTICAL + " Location      " + " "
+                + TABLE_VERTICAL + " Exp (Yr)  " + " " + TABLE_VERTICAL + " Salary ($)                    "
+                + TABLE_VERTICAL);
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 31) + "+");
+    }
+
+
+    // Print a Single JobPost Row
+    public void printJobPostRow(JobPost jobPost) {
+        System.out.printf(
+                TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-20s " + TABLE_VERTICAL + " %-16s " + TABLE_VERTICAL
+                + " %-14s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL + " $%-28.2f " + TABLE_VERTICAL
+                + "\n",
+                jobPost.getJobPostId(), truncate(jobPost.getJob().getTitle(), 20),
+                truncate(jobPost.getCompany().getCompanyName(), 16),
+                truncate(jobPost.getJob().getLocation(), 14), jobPost.getJob().getRequired_experience(),
+                jobPost.getJob().getSalary());
+    }
+
+    // Print JobPosts Table
+    public void printJobPosts(DoublyLinkedListInterface<JobPost> jobPosts) {
+        if (jobPosts.isEmpty()) {
+            System.out.println("No job posts found.");
+            return;
+        }
+
+        printJobPostTableHeader();
+        for (JobPost jobPost : jobPosts) {
+            printJobPostRow(jobPost);
+        }
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
+    }
+
+    // Print JobPost Table Footer
+    public void printJobPostsTableFooter() {
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+" + repeat(TABLE_HORIZONTAL, 22) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 12)
+                + "+" + repeat(TABLE_HORIZONTAL, 30) + "+");
+    }
+
+// Print Removed JobPost Table Header
+    public void printRemovedJobPostTableHeader() {
+        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 14) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 12) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+");
+        System.out.println(TABLE_VERTICAL + " JobPost ID    " + TABLE_VERTICAL
+                + " Job Title           " + TABLE_VERTICAL
+                + " Company Name       " + TABLE_VERTICAL
+                + " Location        " + TABLE_VERTICAL
+                + " Exp (Yr)    " + TABLE_VERTICAL
+                + " Salary ($)      " + TABLE_VERTICAL
+                + " Removed At         " + TABLE_VERTICAL);
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 12) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 21) + "+");
+    }
+
+    // Print a single Removed JobPost row
+    public void printRemovedJobPostRow(JobPost jobPost) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Job job = jobPost.getJob();
+        Company company = jobPost.getCompany();
+
+        System.out.printf(TABLE_VERTICAL + " %-12s " + TABLE_VERTICAL + " %-18s " + TABLE_VERTICAL
+                + " %-18s " + TABLE_VERTICAL + " %-14s " + TABLE_VERTICAL + " %-10d " + TABLE_VERTICAL
+                + " $%-14.2f " + TABLE_VERTICAL + " %-19s " + TABLE_VERTICAL + "\n",
+                jobPost.getJobPostId(),
+                truncate(job.getTitle(), 18),
+                truncate(company.getCompanyName(), 18),
+                truncate(job.getLocation(), 14),
+                job.getRequired_experience(),
+                job.getSalary(),
+                jobPost.getRemovedAt().format(formatter));
+    }
+
+    // Print Removed JobPost Table Footer
+    public void printRemovedJobPostTableFooter() {
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 14) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 20) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 12) + "+"
+                + repeat(TABLE_HORIZONTAL, 16) + "+"
+                + repeat(TABLE_HORIZONTAL, 22) + "+");
+    }
+
+    // Print all Removed JobPosts
+    public void printRemovedJobPosts(DoublyLinkedListInterface<JobPost> removedJobPosts) {
+        if (removedJobPosts.isEmpty()) {
+            System.out.println("No removed job posts found.");
+            return;
+        }
+
+        printRemovedJobPostTableHeader();
+        for (JobPost jobPost : removedJobPosts) {
+            printRemovedJobPostRow(jobPost);
+        }
+        printRemovedJobPostTableFooter();
+    }
+
+// ----------------- Print Job Table Header -----------------
+    public void printJobTableHeader() {
+        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 25) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
+                + "+");
+        System.out.println(TABLE_VERTICAL + " Job ID      " + TABLE_VERTICAL + " Title                    "
+                + TABLE_VERTICAL + " Location             " + TABLE_VERTICAL + " Exp (Yr)   "
+                + TABLE_VERTICAL + " Salary ($)        " + TABLE_VERTICAL);
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 25) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
+                + "+");
+    }
+
+    // ----------------- Print a Single Job Row -----------------
+    public void printJobRow(Job job) {
+        System.out.printf(TABLE_VERTICAL + " %-10s " + TABLE_VERTICAL + " %-22s " + TABLE_VERTICAL
+                + " %-16s " + TABLE_VERTICAL + " %-12d " + TABLE_VERTICAL + " $%-16.2f " + TABLE_VERTICAL + "\n",
+                job.getJobId(),
+                truncate(job.getTitle(), 22), // Truncating the job title to 22 characters
+                truncate(job.getLocation(), 16), // Truncating the location to 16 characters
+                job.getRequired_experience(),
+                job.getSalary());
+
+        // Print associated requirements if available
+        if (job.getJobRequirements() != null && !job.getJobRequirements().isEmpty()) {
+            int count = 1;
+            for (JobRequirements req : job.getJobRequirements()) {
+                System.out.printf("    -> Req %d: %-24s | Level: %-15s | Category: %-15s\n",
+                        count++,
+                        truncate(req.getName(), 24), // Truncate requirement name to 24 characters
+                        truncate(req.getProficiencyLevel(), 15), // Truncate proficiency level to 15 characters
+                        truncate(req.getCategory(), 15)); // Truncate category to 15 characters
+            }
+        } else {
+            System.out.println("    -> No requirements listed.");
+        }
+
+        // Print a border after each job for separation
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 25) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
+                + "+");
+    }
+
+    // ----------------- Print All Job Records -----------------
+    public void printJobs(DoublyLinkedListInterface<Job> jobList) {
+        if (jobList.isEmpty()) {
+            System.out.println("No jobs found.");
+            return;
+        }
+
+        printJobTableHeader();
+        for (Job job : jobList) {
+            printJobRow(job);
+        }
+    }
+
+    // ----------------- Print Job Table Footer -----------------
+    public void printJobTableFooter() {
+        // Optional: You can add a footer at the very end of the table
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 12) + "+" + repeat(TABLE_HORIZONTAL, 25) + "+"
+                + repeat(TABLE_HORIZONTAL, 18) + "+" + repeat(TABLE_HORIZONTAL, 15) + "+" + repeat(TABLE_HORIZONTAL, 18)
+                + "+");
+    }
+ 
+// Print JobRequirement Table Header
+    public void printJobRequirementTableHeader() {
+        System.out.println("\n+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+"
+                + repeat(TABLE_HORIZONTAL, 24) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+");
+        System.out.println(
+                TABLE_VERTICAL + " Requirement ID  " + TABLE_VERTICAL + " Name                   " + TABLE_VERTICAL
+                + " Proficiency Level     " + TABLE_VERTICAL + " Category               " + TABLE_VERTICAL);
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+"
+                + repeat(TABLE_HORIZONTAL, 24) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+");
+    }
+
+    // Print a single JobRequirement row
+    public void printJobRequirementRow(JobRequirements req) {
+        System.out.printf(
+                TABLE_VERTICAL + " %-14s " + TABLE_VERTICAL + " %-22s " + TABLE_VERTICAL + " %-22s " + TABLE_VERTICAL
+                + " %-22s " + TABLE_VERTICAL + "\n",
+                req.getJobRequirementId(),
+                truncate(req.getName(), 22),
+                truncate(req.getProficiencyLevel(), 22),
+                truncate(req.getCategory(), 22));
+    }
+
+    // Print the entire list of JobRequirements
+    public void printJobRequirements(DoublyLinkedListInterface<JobRequirements> requirementsList) {
+        if (requirementsList.isEmpty()) {
+            System.out.println("No job requirements found.");
+            return;
+        }
+
+        printJobRequirementTableHeader();
+        for (JobRequirements req : requirementsList) {
+            printJobRequirementRow(req);
+        }
+        printJobRequirementTableFooter();
+    }
+
+    // Print JobRequirement Table Footer
+    public void printJobRequirementTableFooter() {
+        System.out.println("+" + repeat(TABLE_HORIZONTAL, 16) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+"
+                + repeat(TABLE_HORIZONTAL, 24) + "+" + repeat(TABLE_HORIZONTAL, 24) + "+");
+    }
+
+    
+// ======================================================================================================================================================================
+    // SHU HAN - REPORT PRINTING
+
+    public void printJobPostReports(DoublyLinkedListInterface<JobPost> jobPosts) {
+        final int width = 125;
+        final String separator = repeat("=", width);
+
+        DoublyLinkedListInterface<Company> companies = new DoublyLinkedList<>();
+        int totalActivePosts = 0;
+        int totalInactivePosts = 0;
+
+        // Collect all companies based on job posts
+        for (JobPost jp : jobPosts) {
+            if (jp.getRemovedAt() != null) {
+                totalInactivePosts++;
+                continue;
+            }
+            totalActivePosts++;
+
+            Company company = jp.getCompany();
+            if (!companies.contains(company)) {
+                companies.add(company);
+            }
+        }
+
+        // Display overall report header
+        printReportHeader("JOB POST SUMMARY REPORTS");
+
+
+        // Display total active/inactive job posts across all companies
+        System.out.println(centerText(">> JOB POST SUMMARY REPORTS FOR COMPANY <<", width));
+        System.out.printf("%-30s : %d  %s (%.0f%%)%n", "Active Job Posts", totalActivePosts,
+                getBar(totalActivePosts, totalActivePosts + totalInactivePosts),
+                getPercentage(totalActivePosts, totalActivePosts + totalInactivePosts));
+        System.out.printf("%-30s : %d  %s (%.0f%%)%n", "Inactive Job Posts", totalInactivePosts,
+                getBar(totalInactivePosts, totalActivePosts + totalInactivePosts),
+                getPercentage(totalInactivePosts, totalActivePosts + totalInactivePosts));
+        System.out.println(separator);
+
+        System.out.println("Available Companies:");
+        for (Company company : companies) {
+            System.out.println("ID: " + company.getCompanyId() + " - " + company.getCompanyName());
+        }
+
+        // Allow user to input the company ID for which they want to view the report
+        String input = inputUI.getInput("Enter the company ID to view its report (or 'X' to exit): ").toUpperCase();
+        if (input.equalsIgnoreCase("X")) {
+            System.out.println("Exiting the report view.");
+            return;
+        }
+
+        Company selectedCompany = null;
+        for (Company company : companies) {
+            if (company.getCompanyId().equalsIgnoreCase(input)) {
+                selectedCompany = company;
+                break;
+            }
+        }
+
+        if (selectedCompany == null) {
+            System.out.println("Company ID not found. Please try again.");
+            return;
+        }
+
+
+        // Proceed with generating the report for the selected company
+        generateCompanyReport(selectedCompany, jobPosts);
+    }
+
+    private void generateCompanyReport(Company selectedCompany, DoublyLinkedListInterface<JobPost> jobPosts) {
+        final int width = 125;
+        final String separator = repeat("=", width);
+
+        int totalActivePosts = 0; // Keep track of total active posts for the company
+        int totalInactivePosts = 0; // Keep track of total inactive posts for the company
+
+        // Variables for storing job post data by location and salary range
+        DoublyLinkedListInterface<String> locations = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> locationCounts = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<String> salaryRanges = new DoublyLinkedList<>();
+        DoublyLinkedListInterface<Integer> salaryCounts = new DoublyLinkedList<>();
+
+        int activePosts = 0;
+        int inactivePosts = 0;
+
+        // Loop through job posts to gather data for the selected company
+        for (JobPost jp : jobPosts) {
+            if (jp.getCompany().getCompanyId().equalsIgnoreCase(selectedCompany.getCompanyId())) {
+                if (jp.getRemovedAt() != null) {
+                    inactivePosts++; // Increment for inactive posts
+                    totalInactivePosts++; // Update the total inactive posts for the company
+                    continue;
+                }
+                activePosts++; // Increment for active posts
+                totalActivePosts++; // Update the total active posts for the company
+
+                // Count location
+                String location = jp.getJob().getLocation();
+                int locIndex = findIndexIgnoreCase(locations, location);
+                if (locIndex != -1) {
+                    locationCounts.replace(locIndex, locationCounts.get(locIndex) + 1);
+                } else {
+                    locations.add(location);
+                    locationCounts.add(1);
+                }
+
+                // Count salary range
+                double salary = jp.getJob().getSalary();
+                String range = (salary < 3000) ? "< RM3000" : (salary <= 5000 ? "RM3000 - RM5000" : "> RM5000");
+                int salIndex = salaryRanges.indexOf(range);
+                if (salIndex != -1) {
+                    salaryCounts.replace(salIndex, salaryCounts.get(salIndex) + 1);
+                } else {
+                    salaryRanges.add(range);
+                    salaryCounts.add(1);
+                }
+            }
+        }
+
+        // Display report for active and inactive job posts for the selected company
+        System.out.printf("%-30s : %d  %s (%.0f%%)%n", "Active Job Posts", totalActivePosts,
+                getBar(totalActivePosts, totalActivePosts + totalInactivePosts),
+                getPercentage(totalActivePosts, totalActivePosts + totalInactivePosts));
+        System.out.printf("%-30s : %d  %s (%.0f%%)%n", "Inactive Job Posts", totalInactivePosts,
+                getBar(totalInactivePosts, totalActivePosts + totalInactivePosts),
+                getPercentage(totalInactivePosts, totalActivePosts + totalInactivePosts));
+        System.out.println();
+
+        // Display job posts by location
+        System.out.println(centerText(">> JOB POSTS BY LOCATION <<", width));
+        sortByFrequency(locations, locationCounts);
+        int totalLocationPosts = sumList(locationCounts);
+        for (int i = 0; i < locations.size(); i++) {
+            String color = getHeatmapColor(locationCounts.get(i), totalLocationPosts);
+            System.out.printf("%-40s : %d %s%s%s%n", locations.get(i), locationCounts.get(i), color,
+                    getBar(locationCounts.get(i), totalLocationPosts), ANSI_RESET);
+        }
+
+        System.out.println();
+        // Display job posts by salary range
+        System.out.println(centerText(">> JOB POSTS BY SALARY RANGE <<", width));
+        for (int i = 0; i < salaryRanges.size(); i++) {
+            System.out.printf("%-40s : %d%n", salaryRanges.get(i), salaryCounts.get(i));
+        }
+        System.out.println(separator);
+        System.out.println(centerText("END OF JOB POST REPORTS", width));
+        System.out.println(separator);
+    }
+
+    private int findIndexIgnoreCase(DoublyLinkedListInterface<String> list, String value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equalsIgnoreCase(value)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private double getPercentage(int part, int total) {
+        return total == 0 ? 0 : ((double) part / total) * 100;
+    }
+
+    private int sumList(DoublyLinkedListInterface<Integer> list) {
+        int sum = 0;
+        for (Integer val : list) {
+            sum += val;
+        }
+        return sum;
+    }
+
+    private void sortByFrequency(DoublyLinkedListInterface<String> keys, DoublyLinkedListInterface<Integer> values) {
+        for (int i = 0; i < values.size() - 1; i++) {
+            for (int j = i + 1; j < values.size(); j++) {
+                if (values.get(j) > values.get(i)) {
+                    int tempVal = values.get(i);
+                    values.replace(i, values.get(j));
+                    values.replace(j, tempVal);
+
+                    String tempKey = keys.get(i);
+                    keys.replace(i, keys.get(j));
+                    keys.replace(j, tempKey);
+                }
+            }
+        }
+    }
+
+    private String getBar(int count, int total) {
+        int barLength = 20;
+        int filled = total == 0 ? 0 : (int) Math.round(((double) count / total) * barLength);
+        return " ".repeat(1) + "█".repeat(filled);
+    }
+
+    private String getHeatmapColor(int count, int total) {
+        double percent = getPercentage(count, total);
+        if (percent > 67) {
+            return ANSI_RED;
+        } else if (percent > 33) {
+            return ANSI_YELLOW;
+        } else {
+            return ANSI_GREEN;
+        }
+    }
+
+
 
 }
