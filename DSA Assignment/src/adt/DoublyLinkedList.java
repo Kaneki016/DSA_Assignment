@@ -23,7 +23,6 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         head = null;
         tail = null;
         size = 0;
-        backupList = null; // Initialize backupList as null
     }
 
 
