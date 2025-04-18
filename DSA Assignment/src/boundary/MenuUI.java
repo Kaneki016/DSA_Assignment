@@ -175,12 +175,11 @@ public class MenuUI {
         System.out.println(VERTICAL_LINE + centerText("JOB POST MANAGEMENT", MENU_WIDTH - 2) + VERTICAL_LINE);
         System.out.println(MIDDLE_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + MIDDLE_RIGHT);
         System.out.println(formatMenuOption(1, "Add Job Post"));
-        System.out.println(formatMenuOption(2, "Edit Job Post"));
-        System.out.println(formatMenuOption(3, "View Job Post"));
-        System.out.println(formatMenuOption(4, "Remove Job Post"));
-        System.out.println(formatMenuOption(5, "View Removed Post"));
-        System.out.println(formatMenuOption(6, "Search Job Post"));
-        System.out.println(formatMenuOption(7, "Exit"));
+        System.out.println(formatMenuOption(2, "View Job Post"));
+        System.out.println(formatMenuOption(3, "Remove Job Post"));
+        System.out.println(formatMenuOption(4, "View Removed Post"));
+        System.out.println(formatMenuOption(5, "Search Job Post"));
+        System.out.println(formatMenuOption(6, "Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
 
