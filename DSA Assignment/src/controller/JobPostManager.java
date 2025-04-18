@@ -7,6 +7,8 @@ import boundary.InputUI;
 import boundary.MenuUI;
 import entities.*;
 import controller.*;
+import java.time.LocalDateTime;
+
 
 public class JobPostManager {
     private String currentCompanyId = null;
