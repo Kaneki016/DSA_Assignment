@@ -222,16 +222,14 @@ public class JobPostManager {
             return;
         }
 
-        // Display current company ID
         inputUI.displayMessage("Current Company ID: " + currentCompanyId);
 
-        // Filter job posts to show only those belonging to the current company
-        DoublyLinkedList<JobPost> companyJobPosts = new DoublyLinkedList<>();  // This will store job posts for the current company
-
+        // Filter job posts for current company
+        DoublyLinkedList<JobPost> companyJobPosts = new DoublyLinkedList<>();
         for (int i = 0; i < jobPostList.size(); i++) {
-            JobPost jobPost = jobPostList.get(i);
-            if (jobPost.getCompany().getCompanyId().equalsIgnoreCase(currentCompanyId)) {
-                companyJobPosts.add(jobPost);  // Add job posts belonging to the current company
+            JobPost jp = jobPostList.get(i);
+            if (jp.getCompany().getCompanyId().equalsIgnoreCase(currentCompanyId)) {
+                companyJobPosts.add(jp);
             }
         }
 
@@ -240,14 +238,18 @@ public class JobPostManager {
             return;
         }
 
-        // Display job posts that belong to the current company
+        // Show job posts for this company
         menuUI.printJobPosts(companyJobPosts);
 
+        // Prepare applied jobs once
+        ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
+        DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager.getApplicantAppliedJobs();
+
         while (true) {
-            String jobPostId = inputUI.getInput("Enter Job Post ID to edit (Enter 'x' to cancel): ");
-            if (jobPostId.equalsIgnoreCase("x")) {
+            String jobPostId = inputUI.getInput("Enter Job Post ID to edit (or 'X' to cancel): ");
+            if (jobPostId.equalsIgnoreCase("X")) {
                 inputUI.displayMessage("Edit cancelled.\n");
-                return;
+                break;
             }
 
             JobPost jobPost = findJobPostById(jobPostId);
@@ -256,56 +258,52 @@ public class JobPostManager {
                 continue;
             }
 
-            // Check if the job post is applied by any applicants
-            ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-            DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager.getApplicantAppliedJobs();
-
-            boolean isAppliedJob = false;
+            boolean isApplied = false;
             for (int i = 0; i < appliedJobs.size(); i++) {
                 ApplicantAppliedJob appliedJob = appliedJobs.get(i);
-                if (appliedJob.getJobPost().getJobPostId().equals(jobPostId)) {
-                    isAppliedJob = true;
+                JobPost appliedJobPost = appliedJob.getJobPost();
+                if (appliedJobPost != null && appliedJobPost.getJobPostId().equalsIgnoreCase(jobPostId)) {
+                    isApplied = true;
                     break;
                 }
             }
 
-            // If the job post has been applied to, disallow editing
-            if (isAppliedJob) {
-                inputUI.displayMessage("This job post has already been applied to by an applicant and cannot be edited.\n");
+            if (isApplied) {
+                inputUI.displayMessage("Cannot edit this job post. It has already been assigned to an interview timeslot.\n");
                 continue;
             }
 
             inputUI.displayMessage("Editing Job Post: " + jobPost.toString());
 
-            //================================================ Option to update the Job=======================================================
+            // Option to update the Job
             if (inputUI.getInput("Change Job? (y/n): ").equalsIgnoreCase("y")) {
                 JobManager jobManager = JobManager.getInstance();
                 jobManager.displayJobs();
 
                 while (true) {
-                    String newJobId = inputUI.getInput("Enter New Job ID (or 'x' to cancel): ");
-                    if (newJobId.equalsIgnoreCase("x")) break;
+                    String newJobId = inputUI.getInput("Enter New Job ID (or 'X' to cancel): ");
+                    if (newJobId.equalsIgnoreCase("X")) break;
 
                     Job newJob = jobManager.findJobById(newJobId);
                     if (newJob != null) {
                         jobPost.setJob(newJob);
                         break;
+                    } else {
+                        inputUI.displayMessage("Invalid Job ID.\n");
                     }
                 }
             }
 
-            // Find the index and update the job post
             int index = getJobPostIndex(jobPostId);
             if (index != -1) {
                 jobPostList.replace(index, jobPost);
-                inputUI.displayMessage("Job Post updated successfully!\n");
+                inputUI.displayMessage("Job Post updated successfully.\n");
+                return;
             } else {
                 inputUI.displayMessage("Unexpected error: Unable to update job post.\n");
             }
-            break;
         }
     }
-
 
 
     // ----------------- DELETE -----------------
