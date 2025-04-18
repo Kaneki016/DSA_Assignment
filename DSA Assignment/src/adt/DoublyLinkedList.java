@@ -7,7 +7,6 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
     private Node<T> head;
     private Node<T> tail;
     private int size;
-    private DoublyLinkedList<T> backupList; // Backup list storage
 
 
     private static class Node<T> {
