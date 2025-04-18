@@ -1,3 +1,4 @@
+/*Author: Wong Shu Han*/
 package controller;
 
 import adt.DoublyLinkedList;
@@ -363,7 +364,7 @@ public class JobPostManager {
             }
 
             if (isApplied) {
-                inputUI.displayMessage("Cannot remove this job post. It has already been applied to by an applicant.\n");
+                inputUI.displayMessage("Cannot remove this job post. It has already been assigned to an interview timeslot.\n");
                 continue;
             }
 

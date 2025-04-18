@@ -1,11 +1,10 @@
-/*shu han*/
+/*Author: Wong Shu Han*/
 package controller;
 
 import adt.DoublyLinkedList;
 import adt.DoublyLinkedListInterface;
 import entities.*;
 import boundary.*;
-import java.time.LocalDateTime;
 
 public class CompanyManager {
 
