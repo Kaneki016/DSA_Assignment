@@ -153,9 +153,11 @@ public class InterviewManager {
                         if (skill.getName().equalsIgnoreCase(skillName.trim())) {
                             if (!found) {
                                 inputUI.displayMessage("\nApplicants with the skills '" + skillNames + "':");
+                                menuUI.printApplicantTableHeaderAAJ();
                             }
                             if (!applicantAdded) {
-                                applicants.add(aaj.getApplicant());
+                                //  applicants.add(aaj.getApplicant());
+                                menuUI.printApplicantRow(aaj);
                                 applicantAdded = true;
                             }
                             found = true;
@@ -168,7 +170,8 @@ public class InterviewManager {
                 }
             }
         }
-        menuUI.printApplicants(applicants);
+        menuUI.printApplicantsTableFooterAAJ();
+        //menuUI.printApplicants(applicants);
         if (!found) {
             System.out.println("No applicants found with the specified skills.");
         }
@@ -188,13 +191,16 @@ public class InterviewManager {
                 if (aaj.getApplicant().getYearsOfExperience() >= minYears) {
                     if (!found) {
                         inputUI.displayMessage("\nApplicants with at least " + minYears + " years of experience:");
+                        menuUI.printApplicantTableHeaderAAJ();
                     }
-                    applicants.add(aaj.getApplicant());
+                    // applicants.add(aaj.getApplicant());
+                    menuUI.printApplicantRow(aaj);
                     found = true;
                 }
             }
         }
-        menuUI.printApplicants(applicants);
+        //menuUI.printApplicants(applicants);
+        menuUI.printApplicantsTableFooterAAJ();
         if (!found) {
             System.out.println("No applicants found with the specified years of experience.");
         }
@@ -386,7 +392,7 @@ public class InterviewManager {
         System.out.println("\n===== Filter Applicants Based On Interview Rating =====");
         boolean found = false;
         int minRating = inputUI.getIntInput("Enter minimum rating: ", 0, 5);
-        
+
         for (ApplicantAppliedJob aaj : appliedJobs) {
             if (aaj.getJobPost().getCompany().getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
                 for (Interview i : interview) {
