@@ -164,7 +164,7 @@ public class MenuUI {
         System.out.println(formatMenuOption(2, "Edit Company"));
         System.out.println(formatMenuOption(3, "View Company"));
         System.out.println(formatMenuOption(4, "Job Post Report based on Company"));
-        System.out.println(formatMenuOption(5, "Job Post Report based on Application"));
+        System.out.println(formatMenuOption(5, "Application Report based on Job Location"));
         System.out.println(formatMenuOption(6,"Exit"));
         System.out.println(BOTTOM_LEFT + repeat(HORIZONTAL_LINE, MENU_WIDTH - 2) + BOTTOM_RIGHT);
     }
