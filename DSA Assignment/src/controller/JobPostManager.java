@@ -339,7 +339,7 @@ public class JobPostManager {
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager.getApplicantAppliedJobs();
 
         // Print report header
-        menuUI.printReportHeader("APPLICANT SUMMARY REPORT");
+        menuUI.printReportHeader("APPLICATION LOCATION SUMMARY REPORT");
 
         final int REPORT_WIDTH = 125;
 
