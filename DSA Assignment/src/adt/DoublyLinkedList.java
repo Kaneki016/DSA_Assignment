@@ -260,20 +260,4 @@ public class DoublyLinkedList<T> implements DoublyLinkedListInterface<T> {
         return slow;
     }
 
-    @Override
-    public void backup() {
-        backupList = copyList(); // Ensure backup is a deep copy
-    }
-
-    @Override
-    public DoublyLinkedList<T> copyList() {
-        DoublyLinkedList<T> newList = new DoublyLinkedList<>();
-        Node<T> current = head;
-        while (current != null) {
-            newList.add(current.data); // Deep copy of each node's data
-            current = current.next;
-        }
-        return newList;
-    }
-
 }
