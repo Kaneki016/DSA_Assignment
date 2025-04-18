@@ -381,30 +381,30 @@ public class InterviewManager {
 
     // Filter Applicant by Interview Rating
     public void filterApplicantBasedOnInterview(Company company) {
-        DoublyLinkedListInterface<Applicant> applicants = new DoublyLinkedList<>();
         DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager
                 .getApplicantAppliedJobs();
         System.out.println("\n===== Filter Applicants Based On Interview Rating =====");
         boolean found = false;
         int minRating = inputUI.getIntInput("Enter minimum rating: ", 0, 5);
-
+        
         for (ApplicantAppliedJob aaj : appliedJobs) {
             if (aaj.getJobPost().getCompany().getCompanyName().equalsIgnoreCase(company.getCompanyName())) {
                 for (Interview i : interview) {
-                    if (i.getApplicantAppliedJob().getApplicant().getApplicantId()
-                            .equals(aaj.getApplicant().getApplicantId())
+                    if (i.getApplicantAppliedJob().getApplicationId()
+                            .equals(aaj.getApplicationId())
                             && i.getFavourRate() >= minRating) {
                         if (!found) {
                             inputUI.displayMessage("\nApplicants with at least " + minRating + " rating:");
+                            menuUI.printApplicantTableHeaderAAJ();
                         }
-                        applicants.add(aaj.getApplicant());
+                        menuUI.printApplicantRow(aaj);
                         found = true;
                         break;
                     }
                 }
             }
         }
-        menuUI.printApplicants(applicants);
+        menuUI.printApplicantsTableFooterAAJ();
         if (!found) {
             System.out.println("No applicants found with the specified rating.");
         }
@@ -511,8 +511,6 @@ public class InterviewManager {
                 newSlot.getTime(), newSlot.getDate(), newSlot.getLocation());
         inputUI.getInput("Press Enter to continue...");
     }
-
-  
 
     // Interview Feedback of Completed Interviews
     public void viewInterviewFeedback(Company company) {
