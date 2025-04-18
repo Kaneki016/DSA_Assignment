@@ -342,34 +342,31 @@ public class InputUI {
         int choice;
         do {
             menuUI.displayJobPostManagement();
-            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 7);
+            choice = inputUI.getValidIntInput("Enter your choice: ", 1, 6);
             switch (choice) {
                 case 1:
                     jobPostManager.addJobPost();
                     break;
                 case 2:
-                    jobPostManager.editJobPost();
-                    break;
-                case 3:
                     jobPostManager.displayJobPosts();
                     break;
-                case 4:
+                case 3:
                     jobPostManager.removeJobPost();
                     break;
-                case 5:
+                case 4:
                     jobPostManager.displayRemovedPosts();
                     break;
-                case 6:
+                case 5:
                     jobPostManager.searchJobPost();
                     break;
-                case 7:
+                case 6:
                    menuUI.exitSystem();
                     break; // Add break here to prevent fall-through
                 default:
-                    inputUI.invalidMenuSelection(1, 7);
+                    inputUI.invalidMenuSelection(1, 6);
                     break; // Add break here to prevent fall-through
             }
-        } while (choice != 7);
+        } while (choice != 6);
 
     }
 

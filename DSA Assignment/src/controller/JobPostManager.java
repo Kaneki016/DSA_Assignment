@@ -213,100 +213,7 @@ public class JobPostManager {
         return null;
     }
 
-    // ----------------- UPDATE -----------------
-    public void editJobPost() {
-        inputUI.displayMessage("\n===== Edit Job Post =====");
-
-        if (jobPostList.isEmpty()) {
-            inputUI.displayMessage("No job posts to edit.\n");
-            return;
-        }
-
-        inputUI.displayMessage("Current Company ID: " + currentCompanyId);
-
-        // Filter job posts for current company
-        DoublyLinkedList<JobPost> companyJobPosts = new DoublyLinkedList<>();
-        for (int i = 0; i < jobPostList.size(); i++) {
-            JobPost jp = jobPostList.get(i);
-            if (jp.getCompany().getCompanyId().equalsIgnoreCase(currentCompanyId)) {
-                companyJobPosts.add(jp);
-            }
-        }
-
-        if (companyJobPosts.isEmpty()) {
-            inputUI.displayMessage("No job posts available for your company to edit.\n");
-            return;
-        }
-
-        // Show job posts for this company
-        menuUI.printJobPosts(companyJobPosts);
-
-        // Prepare applied jobs once
-        ApplicantAppliedJobManager applicantAppliedJobManager = ApplicantAppliedJobManager.getInstance();
-        DoublyLinkedListInterface<ApplicantAppliedJob> appliedJobs = applicantAppliedJobManager.getApplicantAppliedJobs();
-
-        while (true) {
-            String jobPostId = inputUI.getInput("Enter Job Post ID to edit (or 'X' to cancel): ");
-            if (jobPostId.equalsIgnoreCase("X")) {
-                inputUI.displayMessage("Edit cancelled.\n");
-                break;
-            }
-
-            JobPost jobPost = findJobPostById(jobPostId);
-            if (jobPost == null || !jobPost.getCompany().getCompanyId().equalsIgnoreCase(currentCompanyId)) {
-                inputUI.displayMessage("Invalid Job Post ID or not associated with your company.\n");
-                continue;
-            }
-
-            boolean isApplied = false;
-            for (int i = 0; i < appliedJobs.size(); i++) {
-                ApplicantAppliedJob appliedJob = appliedJobs.get(i);
-                JobPost appliedJobPost = appliedJob.getJobPost();
-                if (appliedJobPost != null && appliedJobPost.getJobPostId().equalsIgnoreCase(jobPostId)) {
-                    isApplied = true;
-                    break;
-                }
-            }
-
-            if (isApplied) {
-                inputUI.displayMessage("Cannot edit this job post. It has already been applied by applicant(s).\n");
-                continue;
-            }
-
-            inputUI.displayMessage("Editing Job Post: " + jobPost.toString());
-
-            // Option to update the Job
-            if (inputUI.getInput("Change Job? (y/n): ").equalsIgnoreCase("y")) {
-                JobManager jobManager = JobManager.getInstance();
-                jobManager.displayJobs();
-
-                while (true) {
-                    String newJobId = inputUI.getInput("Enter New Job ID (or 'X' to cancel): ");
-                    if (newJobId.equalsIgnoreCase("X")) break;
-
-                    Job newJob = jobManager.findJobById(newJobId);
-                    if (newJob != null) {
-                        jobPost.setJob(newJob);
-                        break;
-                    } else {
-                        inputUI.displayMessage("Invalid Job ID.\n");
-                    }
-                }
-            }
-
-            int index = getJobPostIndex(jobPostId);
-            if (index != -1) {
-                jobPostList.replace(index, jobPost);
-                inputUI.displayMessage("Job Post updated successfully.\n");
-                return;
-            } else {
-                inputUI.displayMessage("Unexpected error: Unable to update job post.\n");
-            }
-        }
-    }
-
-
-    // ----------------- DELETE -----------------
+     // ----------------- DELETE -----------------
     public void removeJobPost() {
         inputUI.displayMessage("\n===== Remove Job Post =====");
 
@@ -680,9 +587,6 @@ public class JobPostManager {
             }
         }
     }
-
-
-
 
     // ----------------- Helper Methods -----------------
     private int getJobPostIndex(String jobPostId) {
