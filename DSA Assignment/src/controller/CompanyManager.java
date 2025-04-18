@@ -1,4 +1,4 @@
-/*shu han*/
+/*Author: Wong Shu Han*/
 package controller;
 
 import adt.DoublyLinkedList;
