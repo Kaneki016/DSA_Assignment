@@ -269,7 +269,7 @@ public class JobPostManager {
             }
 
             if (isApplied) {
-                inputUI.displayMessage("Cannot edit this job post. It has already been assigned to an interview timeslot.\n");
+                inputUI.displayMessage("Cannot edit this job post. It has already been applied by applicant(s).\n");
                 continue;
             }
 
@@ -362,7 +362,7 @@ public class JobPostManager {
             }
 
             if (isApplied) {
-                inputUI.displayMessage("Cannot remove this job post. It has already been assigned to an interview timeslot.\n");
+                inputUI.displayMessage("Cannot remove this job post. It has already been applied by applicant(s).\n");
                 continue;
             }
 
